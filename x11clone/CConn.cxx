@@ -61,16 +61,6 @@ using namespace std;
 
 static rfb::LogWriter vlog("CConn");
 
-// 8 colours (1 bit per component)
-static const PixelFormat verylowColourPF(8, 3,false, true,
-                                         1, 1, 1, 2, 1, 0);
-// 64 colours (2 bits per component)
-static const PixelFormat lowColourPF(8, 6, false, true,
-                                     3, 3, 3, 4, 2, 0);
-// 256 colours (2-3 bits per component)
-static const PixelFormat mediumColourPF(8, 8, false, true,
-                                        7, 7, 3, 5, 2, 0);
-
 CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
   : serverHost(0), serverPort(0), desktop(NULL),
     frameCount(0), pixelCount(0), pendingPFChange(false),
@@ -297,8 +287,6 @@ void CConn::socketEvent(FL_SOCKET fd, void *data)
 void CConn::serverInit()
 {
   CConnection::serverInit();
-
-  fullColour.setParam(true);
 
   serverPF = cp.pf();
 
@@ -533,17 +521,7 @@ void CConn::requestNewUpdate()
     /* Catch incorrect requestNewUpdate calls */
     assert(!pendingUpdate || supportsSyncFence);
 
-    if (fullColour) {
-      pf = fullColourPF;
-    } else {
-      if (lowColourLevel == 0)
-        pf = verylowColourPF;
-      else if (lowColourLevel == 1)
-        pf = lowColourPF;
-      else
-        pf = mediumColourPF;
-    }
-
+    pf = fullColourPF;
     if (supportsSyncFence) {
       // We let the fence carry the pixel format and switch once we
       // get the response back. That way we will be synchronised with
@@ -608,16 +586,7 @@ void CConn::handleOptions(void *data)
   // here.
   PixelFormat pf;
 
-  if (fullColour) {
-    pf = self->fullColourPF;
-  } else {
-    if (lowColourLevel == 0)
-      pf = verylowColourPF;
-    else if (lowColourLevel == 1)
-      pf = lowColourPF;
-    else
-      pf = mediumColourPF;
-  }
+  pf = self->fullColourPF;
 
   if (!pf.equal(self->cp.pf())) {
     self->formatChange = true;

@@ -27,10 +27,6 @@ extern rfb::BoolParameter dotWhenNoCursor;
 
 extern rfb::StringParameter passwordFile;
 
-extern rfb::BoolParameter fullColour;
-extern rfb::AliasParameter fullColourAlias;
-extern rfb::IntParameter lowColourLevel;
-extern rfb::AliasParameter lowColourLevelAlias;
 extern rfb::StringParameter preferredEncoding;
 
 extern rfb::BoolParameter maximize;

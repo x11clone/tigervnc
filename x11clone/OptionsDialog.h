@@ -78,12 +78,6 @@ protected:
   Fl_Round_Button *hextileButton;
   Fl_Round_Button *rawButton;
 
-  Fl_Group *colorlevelGroup;
-  Fl_Round_Button *fullcolorCheckbox;
-  Fl_Round_Button *mediumcolorCheckbox;
-  Fl_Round_Button *lowcolorCheckbox;
-  Fl_Round_Button *verylowcolorCheckbox;
-
   /* Security */
   Fl_Group *encryptionGroup;
   Fl_Check_Button *encNoneCheckbox;

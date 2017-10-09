@@ -67,14 +67,6 @@ StringParameter passwordFile("PasswordFile",
                              "Password file for VNC authentication", "");
 AliasParameter passwd("passwd", "Alias for PasswordFile", &passwordFile);
 
-BoolParameter fullColour("FullColor",
-                         "Use full color", true);
-AliasParameter fullColourAlias("FullColour", "Alias for FullColor", &fullColour);
-IntParameter lowColourLevel("LowColorLevel",
-                            "Color level to use on slow connections. "
-                            "0 = Very Low (8 colors), 1 = Low (64 colors), "
-                            "2 = Medium (256 colors)", 2);
-AliasParameter lowColourLevelAlias("LowColourLevel", "Alias for LowColorLevel", &lowColourLevel);
 StringParameter preferredEncoding("PreferredEncoding",
                                   "Preferred encoding to use (Tight, ZRLE, Hextile or"
                                   " Raw)", "Tight");

@@ -156,22 +156,6 @@ void OptionsDialog::loadOptions(void)
     break;
   }
 
-  if (fullColour)
-    fullcolorCheckbox->setonly();
-  else {
-    switch (lowColourLevel) {
-    case 0:
-      verylowcolorCheckbox->setonly();
-      break;
-    case 1:
-      lowcolorCheckbox->setonly();
-      break;
-    case 2:
-      mediumcolorCheckbox->setonly();
-      break;
-    }
-  }
-
 #ifdef HAVE_GNUTLS
   /* Security */
   Security security(SecurityClient::secTypes);
@@ -304,14 +288,6 @@ void OptionsDialog::storeOptions(void)
     preferredEncoding.setParam(encodingName(encodingHextile));
   else if (rawButton->value())
     preferredEncoding.setParam(encodingName(encodingRaw));
-
-  fullColour.setParam(fullcolorCheckbox->value());
-  if (verylowcolorCheckbox->value())
-    lowColourLevel.setParam(0);
-  else if (lowcolorCheckbox->value())
-    lowColourLevel.setParam(1);
-  else if (mediumcolorCheckbox->value())
-    lowColourLevel.setParam(2);
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -466,50 +442,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
   /* Second column */
   tx = orig_tx + half_width + INNER_MARGIN;
   ty = orig_ty;
-
-  /* Color box */
-  ty += GROUP_LABEL_OFFSET;
-  height = GROUP_MARGIN * 2 + TIGHT_MARGIN * 3 + RADIO_HEIGHT * 4;
-  colorlevelGroup = new Fl_Group(tx, ty, half_width, height, _("Color level"));
-  colorlevelGroup->box(FL_ENGRAVED_BOX);
-  colorlevelGroup->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-
-  {
-    tx += GROUP_MARGIN;
-    ty += GROUP_MARGIN;
-
-    fullcolorCheckbox = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                                     RADIO_MIN_WIDTH,
-                                                     RADIO_HEIGHT,
-                                                     _("Full (all available colors)")));
-    fullcolorCheckbox->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    mediumcolorCheckbox = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                                       RADIO_MIN_WIDTH,
-                                                       RADIO_HEIGHT,
-                                                       _("Medium (256 colors)")));
-    mediumcolorCheckbox->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    lowcolorCheckbox = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                                    RADIO_MIN_WIDTH,
-                                                    RADIO_HEIGHT,
-                                                    _("Low (64 colors)")));
-    lowcolorCheckbox->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    verylowcolorCheckbox = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                                        RADIO_MIN_WIDTH,
-                                                        RADIO_HEIGHT,
-                                                        _("Very low (8 colors)")));
-    verylowcolorCheckbox->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-  }
-
-  ty += GROUP_MARGIN - TIGHT_MARGIN;
-
-  colorlevelGroup->end();
 
   /* Back to normal */
   tx = orig_tx;
