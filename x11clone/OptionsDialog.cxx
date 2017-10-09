@@ -26,12 +26,6 @@
 
 #include <rdr/types.h>
 
-#ifdef HAVE_GNUTLS
-#include <rfb/Security.h>
-#include <rfb/SecurityClient.h>
-#include <rfb/CSecurityTLS.h>
-#endif
-
 #include "OptionsDialog.h"
 #include "fltk_layout.h"
 #include "i18n.h"
@@ -68,7 +62,6 @@ OptionsDialog::OptionsDialog()
     tabs->client_area(tx, ty, tw, th, TABS_HEIGHT);
 
     createCompressionPage(tx, ty, tw, th);
-    createSecurityPage(tx, ty, tw, th);
     createInputPage(tx, ty, tw, th);
     createScreenPage(tx, ty, tw, th);
     createMiscPage(tx, ty, tw, th);
@@ -136,79 +129,6 @@ void OptionsDialog::show(void)
 
 void OptionsDialog::loadOptions(void)
 {
-
-#ifdef HAVE_GNUTLS
-  /* Security */
-  Security security(SecurityClient::secTypes);
-
-  list<U8> secTypes;
-  list<U8>::iterator iter;
-
-   list<U32> secTypesExt;
-   list<U32>::iterator iterExt;
-
-  encNoneCheckbox->value(false);
-  encTLSCheckbox->value(false);
-  encX509Checkbox->value(false);
-
-  authNoneCheckbox->value(false);
-  authVncCheckbox->value(false);
-  authPlainCheckbox->value(false);
-
-  secTypes = security.GetEnabledSecTypes();
-  for (iter = secTypes.begin(); iter != secTypes.end(); ++iter) {
-    switch (*iter) {
-    case secTypeNone:
-      encNoneCheckbox->value(true);
-      authNoneCheckbox->value(true);
-      break;
-    case secTypeVncAuth:
-      encNoneCheckbox->value(true);
-      authVncCheckbox->value(true);
-      break;
-    }
-  }
-
-  secTypesExt = security.GetEnabledExtSecTypes();
-  for (iterExt = secTypesExt.begin(); iterExt != secTypesExt.end(); ++iterExt) {
-    switch (*iterExt) {
-    case secTypePlain:
-      encNoneCheckbox->value(true);
-      authPlainCheckbox->value(true);
-      break;
-    case secTypeTLSNone:
-      encTLSCheckbox->value(true);
-      authNoneCheckbox->value(true);
-      break;
-    case secTypeTLSVnc:
-      encTLSCheckbox->value(true);
-      authVncCheckbox->value(true);
-      break;
-    case secTypeTLSPlain:
-      encTLSCheckbox->value(true);
-      authPlainCheckbox->value(true);
-      break;
-    case secTypeX509None:
-      encX509Checkbox->value(true);
-      authNoneCheckbox->value(true);
-      break;
-    case secTypeX509Vnc:
-      encX509Checkbox->value(true);
-      authVncCheckbox->value(true);
-      break;
-    case secTypeX509Plain:
-      encX509Checkbox->value(true);
-      authPlainCheckbox->value(true);
-      break;
-    }
-  }
-
-  caInput->value(CSecurityTLS::X509CA);
-  crlInput->value(CSecurityTLS::X509CRL);
-
-  handleX509(encX509Checkbox, this);
-#endif
-
   /* Input */
   const char *menuKeyBuf;
 
@@ -259,47 +179,6 @@ void OptionsDialog::loadOptions(void)
 
 void OptionsDialog::storeOptions(void)
 {
-
-#ifdef HAVE_GNUTLS
-  /* Security */
-  Security security;
-
-  /* Process security types which don't use encryption */
-  if (encNoneCheckbox->value()) {
-    if (authNoneCheckbox->value())
-      security.EnableSecType(secTypeNone);
-    if (authVncCheckbox->value())
-      security.EnableSecType(secTypeVncAuth);
-    if (authPlainCheckbox->value())
-      security.EnableSecType(secTypePlain);
-  }
-
-  /* Process security types which use TLS encryption */
-  if (encTLSCheckbox->value()) {
-    if (authNoneCheckbox->value())
-      security.EnableSecType(secTypeTLSNone);
-    if (authVncCheckbox->value())
-      security.EnableSecType(secTypeTLSVnc);
-    if (authPlainCheckbox->value())
-      security.EnableSecType(secTypeTLSPlain);
-  }
-
-  /* Process security types which use X509 encryption */
-  if (encX509Checkbox->value()) {
-    if (authNoneCheckbox->value())
-      security.EnableSecType(secTypeX509None);
-    if (authVncCheckbox->value())
-      security.EnableSecType(secTypeX509Vnc);
-    if (authPlainCheckbox->value())
-      security.EnableSecType(secTypeX509Plain);
-  }
-
-  SecurityClient::secTypes.setParam(security.ToString());
-
-  CSecurityTLS::X509CA.setParam(caInput->value());
-  CSecurityTLS::X509CRL.setParam(crlInput->value());
-#endif
-
   /* Input */
   viewOnly.setParam(viewOnlyCheckbox->value());
   acceptClipboard.setParam(acceptClipboardCheckbox->value());
@@ -374,118 +253,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
 
   group->end();
 }
-
-
-void OptionsDialog::createSecurityPage(int tx, int ty, int tw, int th)
-{
-#ifdef HAVE_GNUTLS
-  Fl_Group *group = new Fl_Group(tx, ty, tw, th, _("Security"));
-
-  int orig_tx;
-  int width, height;
-
-  tx += OUTER_MARGIN;
-  ty += OUTER_MARGIN;
-
-  width = tw - OUTER_MARGIN * 2;
-
-  orig_tx = tx;
-
-  /* Encryption */
-  ty += GROUP_LABEL_OFFSET;
-  height = GROUP_MARGIN * 2 + TIGHT_MARGIN * 4 + CHECK_HEIGHT * 3 + (INPUT_LABEL_OFFSET + INPUT_HEIGHT) * 2;
-  encryptionGroup = new Fl_Group(tx, ty, width, height, _("Encryption"));
-  encryptionGroup->box(FL_ENGRAVED_BOX);
-  encryptionGroup->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-
-  {
-    tx += GROUP_MARGIN;
-    ty += GROUP_MARGIN;
-
-    encNoneCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                   CHECK_MIN_WIDTH,
-                                                   CHECK_HEIGHT,
-                                                   _("None")));
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-    encTLSCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                  CHECK_MIN_WIDTH,
-                                                  CHECK_HEIGHT,
-                                                  _("TLS with anonymous certificates")));
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-    encX509Checkbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                   CHECK_MIN_WIDTH,
-                                                   CHECK_HEIGHT,
-                                                   _("TLS with X509 certificates")));
-    encX509Checkbox->callback(handleX509, this);
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-    ty += INPUT_LABEL_OFFSET;
-    caInput = new Fl_Input(tx + INDENT, ty, 
-                           width - GROUP_MARGIN*2 - INDENT, INPUT_HEIGHT,
-                           _("Path to X509 CA certificate"));
-    caInput->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-    ty += INPUT_HEIGHT + TIGHT_MARGIN;
-
-    ty += INPUT_LABEL_OFFSET;
-    crlInput = new Fl_Input(tx + INDENT, ty,
-                            width - GROUP_MARGIN*2 - INDENT, INPUT_HEIGHT,
-                            _("Path to X509 CRL file"));
-    crlInput->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-    ty += INPUT_HEIGHT + TIGHT_MARGIN;
-  }
-
-  ty += GROUP_MARGIN - TIGHT_MARGIN;
-
-  encryptionGroup->end();
-
-  /* Back to normal */
-  tx = orig_tx;
-  ty += INNER_MARGIN;
-
-  /* Authentication */
-  ty += GROUP_LABEL_OFFSET;
-  height = GROUP_MARGIN * 2 + TIGHT_MARGIN * 2 + CHECK_HEIGHT * 3;
-  authenticationGroup = new Fl_Group(tx, ty, width, height, _("Authentication"));
-  authenticationGroup->box(FL_ENGRAVED_BOX);
-  authenticationGroup->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-
-  {
-    tx += GROUP_MARGIN;
-    ty += GROUP_MARGIN;
-
-    authNoneCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                    CHECK_MIN_WIDTH,
-                                                    CHECK_HEIGHT,
-                                                    _("None")));
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-    authVncCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                   CHECK_MIN_WIDTH,
-                                                   CHECK_HEIGHT,
-                                                   _("Standard VNC (insecure without encryption)")));
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-    authPlainCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                     CHECK_MIN_WIDTH,
-                                                     CHECK_HEIGHT,
-                                                     _("Username and password (insecure without encryption)")));
-    ty += CHECK_HEIGHT + TIGHT_MARGIN;
-  }
-
-  ty += GROUP_MARGIN - TIGHT_MARGIN;
-
-  authenticationGroup->end();
-
-  /* Back to normal */
-  tx = orig_tx;
-  ty += INNER_MARGIN;
-
-  group->end();
-#endif
-}
-
 
 void OptionsDialog::createInputPage(int tx, int ty, int tw, int th)
 {
@@ -613,21 +380,6 @@ void OptionsDialog::createMiscPage(int tx, int ty, int tw, int th)
 
   group->end();
 }
-
-
-void OptionsDialog::handleX509(Fl_Widget *widget, void *data)
-{
-  OptionsDialog *dialog = (OptionsDialog*)data;
-
-  if (dialog->encX509Checkbox->value()) {
-    dialog->caInput->activate();
-    dialog->crlInput->activate();
-  } else {
-    dialog->caInput->deactivate();
-    dialog->crlInput->deactivate();
-  }
-}
-
 
 void OptionsDialog::handleDesktopSize(Fl_Widget *widget, void *data)
 {

@@ -51,14 +51,11 @@ protected:
   void storeOptions(void);
 
   void createCompressionPage(int tx, int ty, int tw, int th);
-  void createSecurityPage(int tx, int ty, int tw, int th);
   void createInputPage(int tx, int ty, int tw, int th);
   void createScreenPage(int tx, int ty, int tw, int th);
   void createMiscPage(int tx, int ty, int tw, int th);
 
   static void handleCompression(Fl_Widget *widget, void *data);
-
-  static void handleX509(Fl_Widget *widget, void *data);
 
   static void handleDesktopSize(Fl_Widget *widget, void *data);
 
@@ -69,19 +66,6 @@ protected:
 
 protected:
   static std::map<OptionsCallback*, void*> callbacks;
-
-  /* Security */
-  Fl_Group *encryptionGroup;
-  Fl_Check_Button *encNoneCheckbox;
-  Fl_Check_Button *encTLSCheckbox;
-  Fl_Check_Button *encX509Checkbox;
-  Fl_Input *caInput;
-  Fl_Input *crlInput;
-
-  Fl_Group *authenticationGroup;
-  Fl_Check_Button *authNoneCheckbox;
-  Fl_Check_Button *authVncCheckbox;
-  Fl_Check_Button *authPlainCheckbox;
 
   /* Input */
   Fl_Check_Button *viewOnlyCheckbox;

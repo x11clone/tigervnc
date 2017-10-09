@@ -197,11 +197,6 @@ const char *CConn::connectionInfo()
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 
-  snprintf(scratch, sizeof(scratch),
-           _("Security method: %s"), secTypeName(csecurity->getType()));
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
   return infoText;
 }
 
