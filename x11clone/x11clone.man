@@ -62,12 +62,6 @@ Specifies the X display on which the x11clone window should appear.
 Standard X position and sizing specification.
 .
 .TP
-.B \-passwd, \-PasswordFile \fIpassword-file\fP
-If you are on a filesystem which gives you access to the password file used by
-the server, you can specify it here to avoid typing it in.  It will usually be
-"~/.vnc/passwd".
-.
-.TP
 .B \-ViewOnly
 Specifies that no keyboard or mouse events should be sent to the server.
 Useful if you want to view a desktop without interfering; often needs to be
