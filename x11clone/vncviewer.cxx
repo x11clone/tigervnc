@@ -368,82 +368,6 @@ static void usage(const char *programName)
   exit(1);
 }
 
-#ifndef WIN32
-static int
-interpretViaParam(char *remoteHost, int *remotePort, int localPort)
-{
-  const int SERVER_PORT_OFFSET = 5900;
-  char *pos = strchr(vncServerName, ':');
-  if (pos == NULL)
-    *remotePort = SERVER_PORT_OFFSET;
-  else {
-    int portOffset = SERVER_PORT_OFFSET;
-    size_t len;
-    *pos++ = '\0';
-    len = strlen(pos);
-    if (*pos == ':') {
-      /* Two colons is an absolute port number, not an offset. */
-      pos++;
-      len--;
-      portOffset = 0;
-    }
-    if (!len || strspn (pos, "-0123456789") != len )
-      return 1;
-    *remotePort = atoi(pos) + portOffset;
-  }
-
-  if (*vncServerName != '\0')
-    strncpy(remoteHost, vncServerName, VNCSERVERNAMELEN);
-  else
-    strncpy(remoteHost, "localhost", VNCSERVERNAMELEN);
-
-  remoteHost[VNCSERVERNAMELEN - 1] = '\0';
-
-  snprintf(vncServerName, VNCSERVERNAMELEN, "localhost::%d", localPort);
-  vncServerName[VNCSERVERNAMELEN - 1] = '\0';
-
-  return 0;
-}
-
-static void
-createTunnel(const char *gatewayHost, const char *remoteHost,
-             int remotePort, int localPort)
-{
-  const char *cmd = getenv("VNC_VIA_CMD");
-  char *cmd2, *percent;
-  char lport[10], rport[10];
-  sprintf(lport, "%d", localPort);
-  sprintf(rport, "%d", remotePort);
-  setenv("G", gatewayHost, 1);
-  setenv("H", remoteHost, 1);
-  setenv("R", rport, 1);
-  setenv("L", lport, 1);
-  if (!cmd)
-    cmd = "/usr/bin/ssh -f -L \"$L\":\"$H\":\"$R\" \"$G\" sleep 20";
-  /* Compatibility with TigerVNC's method. */
-  cmd2 = strdup(cmd);
-  while ((percent = strchr(cmd2, '%')) != NULL)
-    *percent = '$';
-  system(cmd2);
-  free(cmd2);
-}
-
-static int mktunnel()
-{
-  const char *gatewayHost;
-  char remoteHost[VNCSERVERNAMELEN];
-  int localPort = findFreeTcpPort();
-  int remotePort;
-
-  gatewayHost = strDup(via.getValueStr());
-  if (interpretViaParam(remoteHost, &remotePort, localPort) != 0)
-    return 1;
-  createTunnel(gatewayHost, remoteHost, remotePort, localPort);
-
-  return 0;
-}
-#endif /* !WIN32 */
-
 int main(int argc, char** argv)
 {
   UserDialog dlg;
@@ -528,19 +452,6 @@ int main(int argc, char** argv)
 
   Socket *sock = NULL;
 
-#ifndef WIN32
-  /* Specifying -via and -listen together is nonsense */
-  if (listenMode && strlen(via.getValueStr()) > 0) {
-    // TRANSLATORS: "Parameters" are command line arguments, or settings
-    // from a file or the Windows registry.
-    vlog.error(_("Parameters -listen and -via are incompatible"));
-    if (alertOnFatalError)
-      fl_alert(_("Parameters -listen and -via are incompatible"));
-    exit_vncviewer();
-    return 1;
-  }
-#endif
-
   if (listenMode) {
     std::list<TcpListener*> listeners;
     try {
@@ -600,10 +511,6 @@ int main(int argc, char** argv)
         return 1;
     }
 
-#ifndef WIN32
-    if (strlen (via.getValueStr()) > 0 && mktunnel() != 0)
-      usage(argv[0]);
-#endif
   }
 
   CConn *cc = new CConn(vncServerName, sock);
