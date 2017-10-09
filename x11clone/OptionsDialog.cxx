@@ -175,14 +175,10 @@ void OptionsDialog::loadOptions(void)
   char digit[2] = "0";
 
   compressionCheckbox->value(customCompressLevel);
-  jpegCheckbox->value(!noJpeg);
   digit[0] = '0' + compressLevel;
   compressionInput->value(digit);
-  digit[0] = '0' + qualityLevel;
-  jpegInput->value(digit);
 
   handleCompression(compressionCheckbox, this);
-  handleJpeg(jpegCheckbox, this);
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -326,9 +322,7 @@ void OptionsDialog::storeOptions(void)
     lowColourLevel.setParam(2);
 
   customCompressLevel.setParam(compressionCheckbox->value());
-  noJpeg.setParam(!jpegCheckbox->value());
   compressLevel.setParam(atoi(compressionInput->value()));
-  qualityLevel.setParam(atoi(jpegInput->value()));
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -544,19 +538,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
                                       INPUT_HEIGHT, INPUT_HEIGHT,
                                       _("level (1=fast, 6=best [4-6 are rarely useful])"));
   compressionInput->align(FL_ALIGN_RIGHT);
-  ty += INPUT_HEIGHT + INNER_MARGIN;
-
-  jpegCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                              CHECK_MIN_WIDTH,
-                                              CHECK_HEIGHT,
-                                              _("Allow JPEG compression:")));
-  jpegCheckbox->callback(handleJpeg, this);
-  ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-  jpegInput = new Fl_Int_Input(tx + INDENT, ty,
-                               INPUT_HEIGHT, INPUT_HEIGHT,
-                               _("quality (0=poor, 9=best)"));
-  jpegInput->align(FL_ALIGN_RIGHT);
   ty += INPUT_HEIGHT + INNER_MARGIN;
 
   group->end();
@@ -810,17 +791,6 @@ void OptionsDialog::handleCompression(Fl_Widget *widget, void *data)
     dialog->compressionInput->activate();
   else
     dialog->compressionInput->deactivate();
-}
-
-
-void OptionsDialog::handleJpeg(Fl_Widget *widget, void *data)
-{
-  OptionsDialog *dialog = (OptionsDialog*)data;
-
-  if (dialog->jpegCheckbox->value())
-    dialog->jpegInput->activate();
-  else
-    dialog->jpegInput->deactivate();
 }
 
 

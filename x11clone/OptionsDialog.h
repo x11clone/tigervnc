@@ -57,7 +57,6 @@ protected:
   void createMiscPage(int tx, int ty, int tw, int th);
 
   static void handleCompression(Fl_Widget *widget, void *data);
-  static void handleJpeg(Fl_Widget *widget, void *data);
 
   static void handleX509(Fl_Widget *widget, void *data);
 
@@ -86,9 +85,7 @@ protected:
   Fl_Round_Button *verylowcolorCheckbox;
 
   Fl_Check_Button *compressionCheckbox;
-  Fl_Check_Button *jpegCheckbox;
   Fl_Int_Input *compressionInput;
-  Fl_Int_Input *jpegInput;
 
   /* Security */
   Fl_Group *encryptionGroup;

@@ -99,10 +99,7 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
   else
     cp.compressLevel = -1;
 
-  if (!noJpeg)
-    cp.qualityLevel = qualityLevel;
-  else
-    cp.qualityLevel = -1;
+  cp.qualityLevel = -1;
 
   if(sock == NULL) {
     try {
@@ -610,10 +607,7 @@ void CConn::handleOptions(void *data)
   else
     self->cp.compressLevel = -1;
 
-  if (!noJpeg)
-    self->cp.qualityLevel = qualityLevel;
-  else
-    self->cp.qualityLevel = -1;
+  self->cp.qualityLevel = -1;
 
   self->encodingChange = true;
 

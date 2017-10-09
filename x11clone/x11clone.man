@@ -182,15 +182,6 @@ This option specifies the preferred encoding to use from one of "Tight", "ZRLE",
 "hextile" or "raw".
 .
 .TP
-.B \-NoJpeg
-Disable lossy JPEG compression in Tight encoding. Default is off.
-.
-.TP
-.B \-QualityLevel \fIlevel\fP
-JPEG quality level. 0 = Low, 9 = High. May be adjusted automatically if
-\fB-AutoSelect\fP is turned on. Default is 8.
-.
-.TP
 .B \-CompressLevel \fIlevel\fP
 Use specified lossless compression level. 0 = Low, 6 = High. Default is 2.
 .

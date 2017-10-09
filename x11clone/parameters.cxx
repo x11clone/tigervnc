@@ -84,13 +84,6 @@ BoolParameter customCompressLevel("CustomCompressLevel",
 IntParameter compressLevel("CompressLevel",
                            "Use specified compression level 0 = Low, 6 = High",
                            2);
-BoolParameter noJpeg("NoJPEG",
-                     "Disable lossy JPEG compression in Tight encoding.",
-                     false);
-IntParameter qualityLevel("QualityLevel",
-                          "JPEG quality level. 0 = Low, 9 = High",
-                          8);
-
 BoolParameter maximize("Maximize", "Maximize viewer window", false);
 BoolParameter fullScreen("FullScreen", "Full screen mode", false);
 BoolParameter fullScreenAllMonitors("FullScreenAllMonitors",
