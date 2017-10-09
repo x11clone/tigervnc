@@ -378,7 +378,7 @@ int main(int argc, char** argv)
   bindtextdomain(PACKAGE_NAME, LOCALE_DIR);
   textdomain(PACKAGE_NAME);
 
-  rfb::SecurityClient::setDefaults();
+  rfb::SecurityClient::secTypes.setParam("None");
 
   // Write about text to console, still using normal locale codeset
   fprintf(stderr,"\n%s\n", about_text());
