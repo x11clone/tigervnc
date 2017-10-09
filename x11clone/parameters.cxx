@@ -67,10 +67,6 @@ StringParameter passwordFile("PasswordFile",
                              "Password file for VNC authentication", "");
 AliasParameter passwd("passwd", "Alias for PasswordFile", &passwordFile);
 
-BoolParameter autoSelect("AutoSelect",
-                         "Auto select pixel format and encoding. "
-                         "Default if PreferredEncoding and FullColor are not specified.", 
-                         true);
 BoolParameter fullColour("FullColor",
                          "Use full color", true);
 AliasParameter fullColourAlias("FullColour", "Alias for FullColor", &fullColour);

@@ -138,7 +138,6 @@ void OptionsDialog::show(void)
 void OptionsDialog::loadOptions(void)
 {
   /* Compression */
-  autoselectCheckbox->value(autoSelect);
 
   int encNum = encodingNum(preferredEncoding);
 
@@ -182,7 +181,6 @@ void OptionsDialog::loadOptions(void)
   digit[0] = '0' + qualityLevel;
   jpegInput->value(digit);
 
-  handleAutoselect(autoselectCheckbox, this);
   handleCompression(compressionCheckbox, this);
   handleJpeg(jpegCheckbox, this);
 
@@ -309,7 +307,6 @@ void OptionsDialog::loadOptions(void)
 void OptionsDialog::storeOptions(void)
 {
   /* Compression */
-  autoSelect.setParam(autoselectCheckbox->value());
 
   if (tightButton->value())
     preferredEncoding.setParam(encodingName(encodingTight));
@@ -432,12 +429,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
   full_width = tw - OUTER_MARGIN * 2;
   half_width = (full_width - INNER_MARGIN) / 2;
 
-  /* AutoSelect checkbox */
-  autoselectCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                     CHECK_MIN_WIDTH,
-                                                     CHECK_HEIGHT,
-                                                     _("Auto select")));
-  autoselectCheckbox->callback(handleAutoselect, this);
   ty += CHECK_HEIGHT + INNER_MARGIN;
 
   /* Two columns */
@@ -811,23 +802,6 @@ void OptionsDialog::createMiscPage(int tx, int ty, int tw, int th)
 }
 
 
-void OptionsDialog::handleAutoselect(Fl_Widget *widget, void *data)
-{
-  OptionsDialog *dialog = (OptionsDialog*)data;
-
-  if (dialog->autoselectCheckbox->value()) {
-    dialog->encodingGroup->deactivate();
-    dialog->colorlevelGroup->deactivate();
-  } else {
-    dialog->encodingGroup->activate();
-    dialog->colorlevelGroup->activate();
-  }
-
-  // JPEG setting is also affected by autoselection
-  dialog->handleJpeg(dialog->jpegCheckbox, dialog);
-}
-
-
 void OptionsDialog::handleCompression(Fl_Widget *widget, void *data)
 {
   OptionsDialog *dialog = (OptionsDialog*)data;
@@ -843,8 +817,7 @@ void OptionsDialog::handleJpeg(Fl_Widget *widget, void *data)
 {
   OptionsDialog *dialog = (OptionsDialog*)data;
 
-  if (dialog->jpegCheckbox->value() &&
-      !dialog->autoselectCheckbox->value())
+  if (dialog->jpegCheckbox->value())
     dialog->jpegInput->activate();
   else
     dialog->jpegInput->deactivate();

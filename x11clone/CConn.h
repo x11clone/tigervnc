@@ -80,7 +80,6 @@ private:
 
   void resizeFramebuffer();
 
-  void autoSelectFormatAndEncoding();
   void checkEncodings();
   void requestNewUpdate();
 

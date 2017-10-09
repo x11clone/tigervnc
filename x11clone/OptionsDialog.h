@@ -56,7 +56,6 @@ protected:
   void createScreenPage(int tx, int ty, int tw, int th);
   void createMiscPage(int tx, int ty, int tw, int th);
 
-  static void handleAutoselect(Fl_Widget *widget, void *data);
   static void handleCompression(Fl_Widget *widget, void *data);
   static void handleJpeg(Fl_Widget *widget, void *data);
 
@@ -73,7 +72,6 @@ protected:
   static std::map<OptionsCallback*, void*> callbacks;
 
   /* Compression */
-  Fl_Check_Button *autoselectCheckbox;
 
   Fl_Group *encodingGroup;
   Fl_Round_Button *tightButton;

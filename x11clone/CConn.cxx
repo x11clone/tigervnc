@@ -305,10 +305,7 @@ void CConn::serverInit()
 {
   CConnection::serverInit();
 
-  // If using AutoSelect with old servers, start in FullColor
-  // mode. See comment in autoSelectFormatAndEncoding. 
-  if (cp.beforeVersion(3, 8) && autoSelect)
-    fullColour.setParam(true);
+  fullColour.setParam(true);
 
   serverPF = cp.pf();
 
@@ -404,9 +401,6 @@ void CConn::framebufferUpdateEnd()
     pendingPFChange = false;
   }
 
-  // Compute new settings based on updated bandwidth values
-  if (autoSelect)
-    autoSelectFormatAndEncoding();
 }
 
 // The rest of the callbacks are fairly self-explanatory...
@@ -526,76 +520,6 @@ void CConn::resizeFramebuffer()
   desktop->resizeFramebuffer(cp.width, cp.height);
 }
 
-// autoSelectFormatAndEncoding() chooses the format and encoding appropriate
-// to the connection speed:
-//
-//   First we wait for at least one second of bandwidth measurement.
-//
-//   Above 16Mbps (i.e. LAN), we choose the second highest JPEG quality,
-//   which should be perceptually lossless.
-//
-//   If the bandwidth is below that, we choose a more lossy JPEG quality.
-//
-//   If the bandwidth drops below 256 Kbps, we switch to palette mode.
-//
-//   Note: The system here is fairly arbitrary and should be replaced
-//         with something more intelligent at the server end.
-//
-void CConn::autoSelectFormatAndEncoding()
-{
-  int kbitsPerSecond = sock->inStream().kbitsPerSecond();
-  unsigned int timeWaited = sock->inStream().timeWaited();
-  bool newFullColour = fullColour;
-  int newQualityLevel = qualityLevel;
-
-  // Always use Tight
-  if (currentEncoding != encodingTight) {
-    currentEncoding = encodingTight;
-    encodingChange = true;
-  }
-
-  // Check that we have a decent bandwidth measurement
-  if ((kbitsPerSecond == 0) || (timeWaited < 10000))
-    return;
-
-  // Select appropriate quality level
-  if (!noJpeg) {
-    if (kbitsPerSecond > 16000)
-      newQualityLevel = 8;
-    else
-      newQualityLevel = 6;
-
-    if (newQualityLevel != qualityLevel) {
-      vlog.info(_("Throughput %d kbit/s - changing to quality %d"),
-                kbitsPerSecond, newQualityLevel);
-      cp.qualityLevel = newQualityLevel;
-      qualityLevel.setParam(newQualityLevel);
-      encodingChange = true;
-    }
-  }
-
-  if (cp.beforeVersion(3, 8)) {
-    // Xvnc from TightVNC 1.2.9 sends out FramebufferUpdates with
-    // cursors "asynchronously". If this happens in the middle of a
-    // pixel format change, the server will encode the cursor with
-    // the old format, but the client will try to decode it
-    // according to the new format. This will lead to a
-    // crash. Therefore, we do not allow automatic format change for
-    // old servers.
-    return;
-  }
-  
-  // Select best color level
-  newFullColour = (kbitsPerSecond > 256);
-  if (newFullColour != fullColour) {
-    vlog.info(_("Throughput %d kbit/s - full color is now %s"), 
-              kbitsPerSecond,
-              newFullColour ? _("enabled") : _("disabled"));
-    fullColour.setParam(newFullColour);
-    formatChange = true;
-  } 
-}
-
 // checkEncodings() sends a setEncodings message if one is needed.
 void CConn::checkEncodings()
 {
@@ -672,7 +596,7 @@ void CConn::handleOptions(void *data)
   // a pain. Assume something has changed, as resending the encoding
   // list is cheap. Avoid overriding what the auto logic has selected
   // though.
-  if (!autoSelect) {
+  {
     int encNum = encodingNum(preferredEncoding);
 
     if (encNum != -1)
@@ -686,7 +610,7 @@ void CConn::handleOptions(void *data)
   else
     self->cp.compressLevel = -1;
 
-  if (!noJpeg && !autoSelect)
+  if (!noJpeg)
     self->cp.qualityLevel = qualityLevel;
   else
     self->cp.qualityLevel = -1;
