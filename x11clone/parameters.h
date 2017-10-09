@@ -37,7 +37,6 @@ extern rfb::BoolParameter remoteResize;
 extern rfb::BoolParameter listenMode;
 
 extern rfb::BoolParameter viewOnly;
-extern rfb::BoolParameter shared;
 
 extern rfb::BoolParameter acceptClipboard;
 extern rfb::BoolParameter setPrimary;

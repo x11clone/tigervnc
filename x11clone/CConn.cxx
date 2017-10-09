@@ -69,7 +69,6 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
     firstUpdate(true), pendingUpdate(false), continuousUpdates(false),
     forceNonincremental(true), supportsSyncFence(false)
 {
-  setShared(::shared);
   sock = socket;
 
   cp.supportsLocalCursor = true;

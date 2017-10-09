@@ -89,7 +89,6 @@ protected:
   Fl_Check_Button *fullScreenAllMonitorsCheckbox;
 
   /* Misc. */
-  Fl_Check_Button *sharedCheckbox;
   Fl_Check_Button *dotCursorCheckbox;
 };
 

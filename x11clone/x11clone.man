@@ -78,17 +78,10 @@ the server, you can specify it here to avoid typing it in.  It will usually be
 "~/.vnc/passwd".
 .
 .TP
-.B \-Shared
-When you make a connection to a VNC server, all other existing connections are
-normally closed.  This option requests that they be left open, allowing you to
-share the desktop with someone already using it.
-.
-.TP
 .B \-ViewOnly
 Specifies that no keyboard or mouse events should be sent to the server.
 Useful if you want to view a desktop without interfering; often needs to be
 combined with
-.B \-Shared.
 .
 .TP
 .B \-AcceptClipboard

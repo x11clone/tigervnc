@@ -88,10 +88,6 @@ BoolParameter remoteResize("RemoteResize",
 BoolParameter viewOnly("ViewOnly",
                        "Don't send any mouse or keyboard events to the server",
                        false);
-BoolParameter shared("Shared",
-                     "Don't disconnect other viewers upon connection - "
-                     "share the desktop instead",
-                     false);
 
 BoolParameter acceptClipboard("AcceptClipboard",
                               "Accept clipboard changes from the server",

@@ -172,7 +172,6 @@ void OptionsDialog::loadOptions(void)
   handleDesktopSize(desktopSizeCheckbox, this);
 
   /* Misc. */
-  sharedCheckbox->value(shared);
   dotCursorCheckbox->value(dotWhenNoCursor);
 }
 
@@ -214,7 +213,6 @@ void OptionsDialog::storeOptions(void)
   fullScreenAllMonitors.setParam(fullScreenAllMonitorsCheckbox->value());
 
   /* Misc. */
-  shared.setParam(sharedCheckbox->value());
   dotWhenNoCursor.setParam(dotCursorCheckbox->value());
 
   std::map<OptionsCallback*, void*>::const_iterator iter;
@@ -365,12 +363,6 @@ void OptionsDialog::createMiscPage(int tx, int ty, int tw, int th)
 
   tx += OUTER_MARGIN;
   ty += OUTER_MARGIN;
-
-  sharedCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                  CHECK_MIN_WIDTH,
-                                                  CHECK_HEIGHT,
-                                                  _("Shared (don't disconnect other viewers)")));
-  ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   dotCursorCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                   CHECK_MIN_WIDTH,
