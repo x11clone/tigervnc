@@ -78,8 +78,6 @@ StringParameter desktopSize("DesktopSize",
 StringParameter geometry("geometry",
                          "Specify size and position of viewer window", "");
 
-BoolParameter listenMode("listen", "Listen for connections from VNC servers", false);
-
 BoolParameter remoteResize("RemoteResize",
                            "Dynamically resize the remote desktop size as "
                            "the size of the local client window changes. "

@@ -348,9 +348,8 @@ static void usage(const char *programName)
 #endif
 
   fprintf(stderr,
-          "\nusage: %s [parameters] [host:displayNum] [parameters]\n"
-          "       %s [parameters] -listen [port] [parameters]\n",
-          programName, programName);
+          "\nusage: %s [parameters] [host:displayNum] [parameters]\n",
+          programName);
   fprintf(stderr,"\n"
           "Parameters can be turned on with -<param> or off with -<param>=0\n"
           "Parameters which take a value can be specified as "
@@ -439,70 +438,13 @@ int main(int argc, char** argv)
   CSecurityTLS::msg = &dlg;
 #endif
 
-  Socket *sock = NULL;
-
-  if (listenMode) {
-    std::list<TcpListener*> listeners;
-    try {
-      int port = 5500;
-      if (isdigit(vncServerName[0]))
-        port = atoi(vncServerName);
-
-      createTcpListeners(&listeners, 0, port);
-
-      vlog.info(_("Listening on port %d"), port);
-
-      /* Wait for a connection */
-      while (sock == NULL) {
-        fd_set rfds;
-        FD_ZERO(&rfds);
-        for (std::list<TcpListener*>::iterator i = listeners.begin();
-             i != listeners.end();
-             i++)
-          FD_SET((*i)->getFd(), &rfds);
-
-        int n = select(FD_SETSIZE, &rfds, 0, 0, 0);
-        if (n < 0) {
-          if (errno == EINTR) {
-            vlog.debug("Interrupted select() system call");
-            continue;
-          } else {
-            throw rdr::SystemException("select", errno);
-          }
-        }
-
-        for (std::list<TcpListener*>::iterator i = listeners.begin ();
-             i != listeners.end();
-             i++)
-          if (FD_ISSET((*i)->getFd(), &rfds)) {
-            sock = (*i)->accept();
-            if (sock)
-              /* Got a connection */
-              break;
-          }
-      }
-    } catch (rdr::Exception& e) {
-      vlog.error("%s", e.str());
-      if (alertOnFatalError)
-        fl_alert("%s", e.str());
-      exit_x11clone();
-      return 1; 
-    }
-
-    while (!listeners.empty()) {
-      delete listeners.back();
-      listeners.pop_back();
-    }
-  } else {
-    if (vncServerName[0] == '\0') {
-      ServerDialog::run("", vncServerName);
-      if (vncServerName[0] == '\0')
-        return 1;
-    }
-
+  if (vncServerName[0] == '\0') {
+    ServerDialog::run("", vncServerName);
+    if (vncServerName[0] == '\0')
+      return 1;
   }
 
-  CConn *cc = new CConn(vncServerName, sock);
+  CConn *cc = new CConn(vncServerName, NULL);
 
   while (!exitMainloop)
     run_mainloop();
