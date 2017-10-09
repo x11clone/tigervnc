@@ -84,9 +84,6 @@ protected:
   Fl_Round_Button *lowcolorCheckbox;
   Fl_Round_Button *verylowcolorCheckbox;
 
-  Fl_Check_Button *compressionCheckbox;
-  Fl_Int_Input *compressionInput;
-
   /* Security */
   Fl_Group *encryptionGroup;
   Fl_Check_Button *encNoneCheckbox;

@@ -172,14 +172,6 @@ void OptionsDialog::loadOptions(void)
     }
   }
 
-  char digit[2] = "0";
-
-  compressionCheckbox->value(customCompressLevel);
-  digit[0] = '0' + compressLevel;
-  compressionInput->value(digit);
-
-  handleCompression(compressionCheckbox, this);
-
 #ifdef HAVE_GNUTLS
   /* Security */
   Security security(SecurityClient::secTypes);
@@ -320,9 +312,6 @@ void OptionsDialog::storeOptions(void)
     lowColourLevel.setParam(1);
   else if (mediumcolorCheckbox->value())
     lowColourLevel.setParam(2);
-
-  customCompressLevel.setParam(compressionCheckbox->value());
-  compressLevel.setParam(atoi(compressionInput->value()));
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -525,20 +514,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
   /* Back to normal */
   tx = orig_tx;
   ty += INNER_MARGIN;
-
-  /* Checkboxes */
-  compressionCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                     CHECK_MIN_WIDTH,
-                                                     CHECK_HEIGHT,
-                                                     _("Custom compression level:")));
-  compressionCheckbox->callback(handleCompression, this);
-  ty += CHECK_HEIGHT + TIGHT_MARGIN;
-
-  compressionInput = new Fl_Int_Input(tx + INDENT, ty,
-                                      INPUT_HEIGHT, INPUT_HEIGHT,
-                                      _("level (1=fast, 6=best [4-6 are rarely useful])"));
-  compressionInput->align(FL_ALIGN_RIGHT);
-  ty += INPUT_HEIGHT + INNER_MARGIN;
 
   group->end();
 }
@@ -780,17 +755,6 @@ void OptionsDialog::createMiscPage(int tx, int ty, int tw, int th)
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   group->end();
-}
-
-
-void OptionsDialog::handleCompression(Fl_Widget *widget, void *data)
-{
-  OptionsDialog *dialog = (OptionsDialog*)data;
-
-  if (dialog->compressionCheckbox->value())
-    dialog->compressionInput->activate();
-  else
-    dialog->compressionInput->deactivate();
 }
 
 

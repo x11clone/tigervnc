@@ -94,11 +94,7 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
 
   cp.supportsLEDState = true;
 
-  if (customCompressLevel)
-    cp.compressLevel = compressLevel;
-  else
-    cp.compressLevel = -1;
-
+  cp.compressLevel = -1;
   cp.qualityLevel = -1;
 
   if(sock == NULL) {
@@ -602,11 +598,7 @@ void CConn::handleOptions(void *data)
 
   self->cp.supportsLocalCursor = true;
 
-  if (customCompressLevel)
-    self->cp.compressLevel = compressLevel;
-  else
-    self->cp.compressLevel = -1;
-
+  self->cp.compressLevel = -1;
   self->cp.qualityLevel = -1;
 
   self->encodingChange = true;

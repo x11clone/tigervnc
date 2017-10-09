@@ -78,12 +78,6 @@ AliasParameter lowColourLevelAlias("LowColourLevel", "Alias for LowColorLevel", 
 StringParameter preferredEncoding("PreferredEncoding",
                                   "Preferred encoding to use (Tight, ZRLE, Hextile or"
                                   " Raw)", "Tight");
-BoolParameter customCompressLevel("CustomCompressLevel",
-                                  "Use custom compression level. "
-                                  "Default if CompressLevel is specified.", false);
-IntParameter compressLevel("CompressLevel",
-                           "Use specified compression level 0 = Low, 6 = High",
-                           2);
 BoolParameter maximize("Maximize", "Maximize viewer window", false);
 BoolParameter fullScreen("FullScreen", "Full screen mode", false);
 BoolParameter fullScreenAllMonitors("FullScreenAllMonitors",

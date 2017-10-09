@@ -182,14 +182,6 @@ This option specifies the preferred encoding to use from one of "Tight", "ZRLE",
 "hextile" or "raw".
 .
 .TP
-.B \-CompressLevel \fIlevel\fP
-Use specified lossless compression level. 0 = Low, 6 = High. Default is 2.
-.
-.TP
-.B \-CustomCompressLevel
-Use custom compression level. Default if \fBCompressLevel\fP is specified.
-.
-.TP
 .B \-DotWhenNoCursor
 Show the dot cursor when the server sends an invisible cursor. Default is off.
 .
