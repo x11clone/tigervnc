@@ -409,8 +409,6 @@ int main(int argc, char** argv)
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
 #endif
 
-  Configuration::enableViewerParams();
-
   int i = 1;
   if (!Fl::args(argc, argv, i) || i < argc)
     for (; i < argc; i++) {
