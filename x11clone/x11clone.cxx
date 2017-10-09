@@ -412,17 +412,6 @@ int main(int argc, char** argv)
 
   Configuration::enableViewerParams();
 
-  /* Load the default parameter settings */
-  const char* defaultServerName;
-  try {
-    defaultServerName = loadViewerParameters(NULL);
-  } catch (rfb::Exception& e) {
-    defaultServerName = "";
-    vlog.error("%s", e.str());
-    if (alertOnFatalError)
-      fl_alert("%s", e.str());
-  }
-  
   int i = 1;
   if (!Fl::args(argc, argv, i) || i < argc)
     for (; i < argc; i++) {
@@ -506,7 +495,7 @@ int main(int argc, char** argv)
     }
   } else {
     if (vncServerName[0] == '\0') {
-      ServerDialog::run(defaultServerName, vncServerName);
+      ServerDialog::run("", vncServerName);
       if (vncServerName[0] == '\0')
         return 1;
     }

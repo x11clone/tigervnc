@@ -64,16 +64,6 @@ ServerDialog::ServerDialog()
   button = new Fl_Button(x, y, button_width, BUTTON_HEIGHT, _("Options..."));
   button->callback(this->handleOptions, this);
   
-  x += adjust;
-  
-  button = new Fl_Button(x, y, button_width, BUTTON_HEIGHT, _("Load..."));
-  button->callback(this->handleLoad, this);
-
-  x += adjust;
-
-  button = new Fl_Button(x, y, button_width, BUTTON_HEIGHT, _("Save As..."));
-  button->callback(this->handleSaveAs, this);
-  
   x = 0;
   y += margin/2 + BUTTON_HEIGHT;
 
@@ -131,92 +121,6 @@ void ServerDialog::handleOptions(Fl_Widget *widget, void *data)
 }
 
 
-void ServerDialog::handleLoad(Fl_Widget *widget, void *data)
-{
-  ServerDialog *dialog = (ServerDialog*)data;
-  Fl_File_Chooser* file_chooser = new Fl_File_Chooser("", _("TigerVNC configuration (*.tigervnc)"), 
-						      0, _("Select a TigerVNC configuration file"));
-  file_chooser->preview(0);
-  file_chooser->previewButton->hide();
-  file_chooser->show();
-  
-  // Block until user picks something.
-  while(file_chooser->shown())
-    Fl::wait();
-  
-  // Did the user hit cancel?
-  if (file_chooser->value() == NULL) {
-    delete(file_chooser);
-    return;
-  }
-  
-  const char* filename = strdup(file_chooser->value());
-
-  try {
-    dialog->serverName->value(loadViewerParameters(filename));
-  } catch (rfb::Exception& e) {
-    fl_alert("%s", e.str());
-  }
-
-  delete(file_chooser);
-}
-
-
-void ServerDialog::handleSaveAs(Fl_Widget *widget, void *data)
-{ 
-  ServerDialog *dialog = (ServerDialog*)data;
-  const char* servername = strdup(dialog->serverName->value());
-  char* filename;
-
-  Fl_File_Chooser* file_chooser = new Fl_File_Chooser("", _("TigerVNC configuration (*.tigervnc)"), 
-						      2, _("Save the TigerVNC configuration to file"));
-  
-  file_chooser->preview(0);
-  file_chooser->previewButton->hide();
-  file_chooser->show();
-  
-  while(1) {
-    
-    // Block until user picks something.
-    while(file_chooser->shown())
-      Fl::wait();
-    
-    // Did the user hit cancel?
-    if (file_chooser->value() == NULL) {
-      delete(file_chooser);
-      return;
-    }
-    
-    filename = strdup(file_chooser->value());
-    
-    FILE* f = fopen(filename, "r");
-    if (f) {
-
-      // The file already exists.
-      fclose(f);
-      int overwrite_choice = fl_choice(_("%s already exists. Do you want to overwrite?"), 
-				       _("Overwrite"), _("No"), NULL, filename);
-      if (overwrite_choice == 1) {
-
-	// If the user doesn't want to overwrite:
-	file_chooser->show();
-	continue;
-      }
-    }
-
-    break;
-  }
-  
-  try {
-    saveViewerParameters(filename, servername);
-  } catch (rfb::Exception& e) {
-    fl_alert("%s", e.str());
-  }
-  
-  delete(file_chooser);
-}
-
-
 void ServerDialog::handleAbout(Fl_Widget *widget, void *data)
 {
   about_x11clone();
@@ -235,13 +139,7 @@ void ServerDialog::handleCancel(Fl_Widget *widget, void *data)
 void ServerDialog::handleConnect(Fl_Widget *widget, void *data)
 {
   ServerDialog *dialog = (ServerDialog*)data;
-  const char* servername = strdup(dialog->serverName->value());
 
   dialog->hide();
   
-  try {
-    saveViewerParameters(NULL, servername);
-  } catch (rfb::Exception& e) {
-    fl_alert("%s", e.str());
-  }
 }

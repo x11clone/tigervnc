@@ -62,7 +62,4 @@ extern rfb::StringParameter menuKey;
 extern rfb::BoolParameter fullscreenSystemKeys;
 extern rfb::BoolParameter alertOnFatalError;
 
-void saveViewerParameters(const char *filename, const char *servername=NULL);
-char* loadViewerParameters(const char *filename);
-
 #endif
