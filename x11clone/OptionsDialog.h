@@ -70,14 +70,6 @@ protected:
 protected:
   static std::map<OptionsCallback*, void*> callbacks;
 
-  /* Compression */
-
-  Fl_Group *encodingGroup;
-  Fl_Round_Button *tightButton;
-  Fl_Round_Button *zrleButton;
-  Fl_Round_Button *hextileButton;
-  Fl_Round_Button *rawButton;
-
   /* Security */
   Fl_Group *encryptionGroup;
   Fl_Check_Button *encNoneCheckbox;

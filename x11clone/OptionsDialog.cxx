@@ -25,7 +25,6 @@
 #include <list>
 
 #include <rdr/types.h>
-#include <rfb/encodings.h>
 
 #ifdef HAVE_GNUTLS
 #include <rfb/Security.h>
@@ -137,24 +136,6 @@ void OptionsDialog::show(void)
 
 void OptionsDialog::loadOptions(void)
 {
-  /* Compression */
-
-  int encNum = encodingNum(preferredEncoding);
-
-  switch (encNum) {
-  case encodingTight:
-    tightButton->setonly();
-    break;
-  case encodingZRLE:
-    zrleButton->setonly();
-    break;
-  case encodingHextile:
-    hextileButton->setonly();
-    break;
-  case encodingRaw:
-    rawButton->setonly();
-    break;
-  }
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -278,16 +259,6 @@ void OptionsDialog::loadOptions(void)
 
 void OptionsDialog::storeOptions(void)
 {
-  /* Compression */
-
-  if (tightButton->value())
-    preferredEncoding.setParam(encodingName(encodingTight));
-  else if (zrleButton->value())
-    preferredEncoding.setParam(encodingName(encodingZRLE));
-  else if (hextileButton->value())
-    preferredEncoding.setParam(encodingName(encodingHextile));
-  else if (rawButton->value())
-    preferredEncoding.setParam(encodingName(encodingRaw));
 
 #ifdef HAVE_GNUTLS
   /* Security */
@@ -380,7 +351,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
 
   int orig_tx, orig_ty;
   int half_width, full_width;
-  int height;
 
   tx += OUTER_MARGIN;
   ty += OUTER_MARGIN;
@@ -393,51 +363,6 @@ void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
   /* Two columns */
   orig_tx = tx;
   orig_ty = ty;
-
-  /* VNC encoding box */
-  ty += GROUP_LABEL_OFFSET;
-  height = GROUP_MARGIN * 2 + TIGHT_MARGIN * 3 + RADIO_HEIGHT * 4;
-  encodingGroup = new Fl_Group(tx, ty, half_width, height,
-                                _("Preferred encoding"));
-  encodingGroup->box(FL_ENGRAVED_BOX);
-  encodingGroup->align(FL_ALIGN_LEFT | FL_ALIGN_TOP);
-
-  {
-    tx += GROUP_MARGIN;
-    ty += GROUP_MARGIN;
-
-    tightButton = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                               RADIO_MIN_WIDTH,
-                                               RADIO_HEIGHT,
-                                               "Tight"));
-    tightButton->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    zrleButton = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                              RADIO_MIN_WIDTH,
-                                              RADIO_HEIGHT,
-                                              "ZRLE"));
-    zrleButton->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    hextileButton = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                                 RADIO_MIN_WIDTH,
-                                                 RADIO_HEIGHT,
-                                                 "Hextile"));
-    hextileButton->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-
-    rawButton = new Fl_Round_Button(LBLRIGHT(tx, ty,
-                                             RADIO_MIN_WIDTH,
-                                             RADIO_HEIGHT,
-                                             "Raw"));
-    rawButton->type(FL_RADIO_BUTTON);
-    ty += RADIO_HEIGHT + TIGHT_MARGIN;
-  }
-
-  ty += GROUP_MARGIN - TIGHT_MARGIN;
-
-  encodingGroup->end();
 
   /* Second column */
   tx = orig_tx + half_width + INNER_MARGIN;

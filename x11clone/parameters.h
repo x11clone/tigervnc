@@ -27,8 +27,6 @@ extern rfb::BoolParameter dotWhenNoCursor;
 
 extern rfb::StringParameter passwordFile;
 
-extern rfb::StringParameter preferredEncoding;
-
 extern rfb::BoolParameter maximize;
 extern rfb::BoolParameter fullScreen;
 extern rfb::BoolParameter fullScreenAllMonitors;

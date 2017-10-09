@@ -64,17 +64,13 @@ static rfb::LogWriter vlog("CConn");
 CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
   : serverHost(0), serverPort(0), desktop(NULL),
     frameCount(0), pixelCount(0), pendingPFChange(false),
-    currentEncoding(encodingTight), lastServerEncoding((unsigned int)-1),
+    currentEncoding(encodingRaw), lastServerEncoding((unsigned int)-1),
     formatChange(false), encodingChange(false),
     firstUpdate(true), pendingUpdate(false), continuousUpdates(false),
     forceNonincremental(true), supportsSyncFence(false)
 {
   setShared(::shared);
   sock = socket;
-
-  int encNum = encodingNum(preferredEncoding);
-  if (encNum != -1)
-    currentEncoding = encNum;
 
   cp.supportsLocalCursor = true;
 
@@ -182,7 +178,7 @@ const char *CConn::connectionInfo()
   strcat(infoText, "\n");
 
   snprintf(scratch, sizeof(scratch),
-           _("Requested encoding: %s"), encodingName(currentEncoding));
+           _("Requested encoding: %s"), encodingName(encodingRaw));
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 
@@ -563,23 +559,10 @@ void CConn::handleOptions(void *data)
 {
   CConn *self = (CConn*)data;
 
-  // Checking all the details of the current set of encodings is just
-  // a pain. Assume something has changed, as resending the encoding
-  // list is cheap. Avoid overriding what the auto logic has selected
-  // though.
-  {
-    int encNum = encodingNum(preferredEncoding);
-
-    if (encNum != -1)
-      self->currentEncoding = encNum;
-  }
-
   self->cp.supportsLocalCursor = true;
 
   self->cp.compressLevel = -1;
   self->cp.qualityLevel = -1;
-
-  self->encodingChange = true;
 
   // Format changes refreshes the entire screen though and are therefore
   // very costly. It's probably worth the effort to see if it is necessary

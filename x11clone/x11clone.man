@@ -164,11 +164,6 @@ the viewer tests the speed of the connection to the server and chooses the
 encoding and pixel format appropriately.  Turn it off with \fB-AutoSelect=0\fP.
 .
 .TP
-.B \-PreferredEncoding \fIencoding\fP
-This option specifies the preferred encoding to use from one of "Tight", "ZRLE",
-"hextile" or "raw".
-.
-.TP
 .B \-DotWhenNoCursor
 Show the dot cursor when the server sends an invisible cursor. Default is off.
 .

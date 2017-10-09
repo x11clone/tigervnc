@@ -67,9 +67,6 @@ StringParameter passwordFile("PasswordFile",
                              "Password file for VNC authentication", "");
 AliasParameter passwd("passwd", "Alias for PasswordFile", &passwordFile);
 
-StringParameter preferredEncoding("PreferredEncoding",
-                                  "Preferred encoding to use (Tight, ZRLE, Hextile or"
-                                  " Raw)", "Tight");
 BoolParameter maximize("Maximize", "Maximize viewer window", false);
 BoolParameter fullScreen("FullScreen", "Full screen mode", false);
 BoolParameter fullScreenAllMonitors("FullScreenAllMonitors",
