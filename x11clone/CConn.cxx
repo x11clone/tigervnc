@@ -49,7 +49,7 @@
 #include "PlatformPixelBuffer.h"
 #include "i18n.h"
 #include "parameters.h"
-#include "vncviewer.h"
+#include "x11clone.h"
 
 #ifdef WIN32
 #include "win32.h"
@@ -114,7 +114,7 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
       vlog.error("%s", e.str());
       if (alertOnFatalError)
         fl_alert("%s", e.str());
-      exit_vncviewer();
+      exit_x11clone();
       return;
     }
   }
@@ -284,13 +284,13 @@ void CConn::socketEvent(FL_SOCKET fd, void *data)
     } while (cc->sock->inStream().checkNoWait(1));
   } catch (rdr::EndOfStream& e) {
     vlog.info("%s", e.str());
-    exit_vncviewer();
+    exit_x11clone();
   } catch (rdr::Exception& e) {
     vlog.error("%s", e.str());
     // Somebody might already have requested us to terminate, and
     // might have already provided an error message.
     if (!should_exit())
-      exit_vncviewer(e.str());
+      exit_x11clone(e.str());
   }
 
   recursing = false;

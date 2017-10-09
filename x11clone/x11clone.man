@@ -1,60 +1,22 @@
-.TH vncviewer 1 "" "TigerVNC" "Virtual Network Computing"
+.TH x11clone 1 "" "TigerVNC" "Virtual Network Computing"
 .SH NAME
-vncviewer \- VNC viewer for X
+x11clone
 .SH SYNOPSIS
-.B vncviewer
+.B x11clone
 .RI [ options ] 
 .RI [ host ][: display# ]
 .br
-.B vncviewer
+.B x11clone
 .RI [ options ] 
 .RI [ host ][:: port ]
 .br
-.B vncviewer
+.B x11clone
 .RI [ options ] 
 .B \-listen
 .RI [ port ]
 .SH DESCRIPTION
-.B vncviewer
-is a viewer (client) for Virtual Network Computing.  This manual page documents
-version 4 for the X window system.
-
-If you run the viewer with no arguments it will prompt you for a VNC server to
-connect to.  Alternatively, specify the VNC server as an argument, e.g.:
-
-.RS
-vncviewer snoopy:2
-.RE
-
-where 'snoopy' is the name of the machine, and '2' is the display number of the
-VNC server on that machine.  Either the machine name or display number can be
-omitted.  So for example ":1" means display number 1 on the same machine, and
-"snoopy" means "snoopy:0" i.e. display 0 on machine "snoopy".
-
-If the VNC server is successfully contacted, you will be prompted for a
-password to authenticate you.  If the password is correct, a window will appear
-showing the desktop of the VNC server.
-
-.SH AUTOMATIC PROTOCOL SELECTION
-
-The viewer tests the speed of the connection to the server and chooses the
-encoding and pixel format (color level) appropriately.  This makes it much
-easier to use than previous versions where the user had to specify arcane
-command line arguments.
-
-The viewer normally starts out assuming the link is slow, using the
-encoding with the best compression.  If it turns out that the link is
-fast enough it switches to an encoding which compresses less but is
-faster to generate, thus improving the interactive feel.
-
-The viewer normally starts in full-color mode, but switches to
-low-color mode if the bandwidth is insufficient. However, this only
-occurs when communicating with servers supporting protocol 3.8 or
-newer, since many old servers does not support color mode changes
-safely.
-
-Automatic selection can be turned off by setting the
-\fBAutoSelect\fP parameter to false, or from the options dialog.
+.B x11clone
+FIXME - entire page
 
 .SH POPUP MENU
 The viewer has a popup menu containing entries which perform various actions.
@@ -83,7 +45,7 @@ screen.
 
 .SH OPTIONS (PARAMETERS)
 You can get a list of parameters by giving \fB\-h\fP as a command-line option
-to vncviewer.  Parameters can be turned on with -\fIparam\fP or off with
+to x11clone.  Parameters can be turned on with -\fIparam\fP or off with
 -\fIparam\fP=0.  Parameters which take a value can be specified as
 -\fIparam\fP \fIvalue\fP.  Other valid forms are \fIparam\fP\fB=\fP\fIvalue\fP
 -\fIparam\fP=\fIvalue\fP --\fIparam\fP=\fIvalue\fP.  Parameter names are
@@ -95,7 +57,7 @@ dialog box.
 
 .TP
 .B \-display \fIXdisplay\fP
-Specifies the X display on which the VNC viewer window should appear.
+Specifies the X display on which the x11clone window should appear.
 .
 .TP
 .B \-geometry \fIgeometry\fP
@@ -103,7 +65,7 @@ Standard X position and sizing specification.
 .
 .TP
 .B \-listen \fI[port]\fP
-Causes vncviewer to listen on the given port (default 5500) for reverse
+Causes x11clone to listen on the given port (default 5500) for reverse
 connections from a VNC server.  WinVNC supports reverse connections initiated
 using the 'Add New Client' menu option or the '\-connect' command-line option.
 Xvnc supports reverse connections with a helper program called
@@ -211,7 +173,7 @@ display.  This is default.
 Selects the reduced color level to use on slow links.  \fIlevel\fP can range
 from 0 to 2, 0 meaning 8 colors, 1 meaning 64 colors (the default), 2 meaning
 256 colors. Note that decision if reduced color level is used is made by
-vncviewer. If you would like to force vncviewer to use reduced color level
+x11clone. If you would like to force x11clone to use reduced color level
 use \fB-AutoSelect=0\fP parameter.
 .
 .TP

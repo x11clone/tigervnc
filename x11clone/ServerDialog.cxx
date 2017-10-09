@@ -34,12 +34,12 @@
 #include "OptionsDialog.h"
 #include "fltk_layout.h"
 #include "i18n.h"
-#include "vncviewer.h"
+#include "x11clone.h"
 #include "parameters.h"
 #include "rfb/Exception.h"
 
 ServerDialog::ServerDialog()
-  : Fl_Window(450, 160, _("VNC Viewer: Connection Details"))
+  : Fl_Window(450, 160, _("x11clone: Connection Details"))
 {
   int x, y;
   Fl_Button *button;
@@ -219,7 +219,7 @@ void ServerDialog::handleSaveAs(Fl_Widget *widget, void *data)
 
 void ServerDialog::handleAbout(Fl_Widget *widget, void *data)
 {
-  about_vncviewer();
+  about_x11clone();
 }
 
 

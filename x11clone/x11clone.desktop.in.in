@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=x11clone
+GenericName=x11clone
+Comment=Clone another X11 display
+Exec=@BIN_DIR@/x11clone
+Icon=tigervnc
+Terminal=false
+Type=Application
+StartupWMClass=x11clone: Connection Details
+Categories=Network;RemoteAccess;

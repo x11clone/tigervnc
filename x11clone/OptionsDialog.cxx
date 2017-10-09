@@ -54,7 +54,7 @@ using namespace rfb;
 std::map<OptionsCallback*, void*> OptionsDialog::callbacks;
 
 OptionsDialog::OptionsDialog()
-  : Fl_Window(450, 450, _("VNC Viewer: Connection Options"))
+  : Fl_Window(450, 450, _("x11clone: Connection Options"))
 {
   int x, y;
   Fl_Button *button;

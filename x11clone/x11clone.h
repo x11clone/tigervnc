@@ -16,14 +16,14 @@
  * USA.
  */
 
-#ifndef __VNCVIEWER_H__
-#define __VNCVIEWER_H__
+#ifndef __X11CLONE_H__
+#define __X11CLONE_H__
 
 #define VNCSERVERNAMELEN 64
 
-void exit_vncviewer(const char *error = NULL);
+void exit_x11clone(const char *error = NULL);
 bool should_exit();
-void about_vncviewer();
+void about_x11clone();
 void run_mainloop();
 
 #endif

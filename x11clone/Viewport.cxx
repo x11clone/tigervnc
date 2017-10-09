@@ -64,7 +64,7 @@
 #include "parameters.h"
 #include "keysym2ucs.h"
 #include "menukey.h"
-#include "vncviewer.h"
+#include "x11clone.h"
 
 #include "PlatformPixelBuffer.h"
 
@@ -523,7 +523,7 @@ int Viewport::handle(int event)
       cc->writer()->clientCutText(buffer, ret);
     } catch (rdr::Exception& e) {
       vlog.error("%s", e.str());
-      exit_vncviewer(e.str());
+      exit_x11clone(e.str());
     }
 
     delete [] buffer;
@@ -669,7 +669,7 @@ void Viewport::handlePointerEvent(const rfb::Point& pos, int buttonMask)
         cc->writer()->pointerEvent(pos, buttonMask);
       } catch (rdr::Exception& e) {
         vlog.error("%s", e.str());
-        exit_vncviewer(e.str());
+        exit_x11clone(e.str());
       }
     } else {
       if (!Fl::has_timeout(handlePointerTimeout, this))
@@ -692,7 +692,7 @@ void Viewport::handlePointerTimeout(void *data)
     self->cc->writer()->pointerEvent(self->lastPointerPos, self->lastButtonMask);
   } catch (rdr::Exception& e) {
     vlog.error("%s", e.str());
-    exit_vncviewer(e.str());
+    exit_x11clone(e.str());
   }
 }
 
@@ -755,7 +755,7 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
       cc->writer()->keyEvent(downKeySym[0xb8], 0xb8, false);
     } catch (rdr::Exception& e) {
       vlog.error("%s", e.str());
-      exit_vncviewer(e.str());
+      exit_x11clone(e.str());
     }
   }
 #endif
@@ -781,7 +781,7 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
       cc->writer()->keyEvent(keySym, keyCode, true);
   } catch (rdr::Exception& e) {
     vlog.error("%s", e.str());
-    exit_vncviewer(e.str());
+    exit_x11clone(e.str());
   }
 
 #ifdef WIN32
@@ -793,7 +793,7 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
       cc->writer()->keyEvent(downKeySym[0xb8], 0xb8, true);
     } catch (rdr::Exception& e) {
       vlog.error("%s", e.str());
-      exit_vncviewer(e.str());
+      exit_x11clone(e.str());
     }
   }
 #endif
@@ -829,7 +829,7 @@ void Viewport::handleKeyRelease(int keyCode)
       cc->writer()->keyEvent(iter->second, keyCode, false);
   } catch (rdr::Exception& e) {
     vlog.error("%s", e.str());
-    exit_vncviewer(e.str());
+    exit_x11clone(e.str());
   }
 
   downKeySym.erase(iter);
@@ -1066,7 +1066,7 @@ void Viewport::initContextMenu()
                 0, NULL, (void*)ID_OPTIONS, 0);
   fltk_menu_add(contextMenu, p_("ContextMenu|", "Connection &info..."),
                 0, NULL, (void*)ID_INFO, 0);
-  fltk_menu_add(contextMenu, p_("ContextMenu|", "About &TigerVNC viewer..."),
+  fltk_menu_add(contextMenu, p_("ContextMenu|", "About &x11clone..."),
                 0, NULL, (void*)ID_ABOUT, FL_MENU_DIVIDER);
 
   fltk_menu_add(contextMenu, p_("ContextMenu|", "Dismiss &menu"),
@@ -1102,7 +1102,7 @@ void Viewport::popupContextMenu()
 
   switch (m->argument()) {
   case ID_EXIT:
-    exit_vncviewer();
+    exit_x11clone();
     break;
   case ID_FULLSCREEN:
     if (window()->fullscreen_active())
@@ -1153,12 +1153,12 @@ void Viewport::popupContextMenu()
     break;
   case ID_INFO:
     if (fltk_escape(cc->connectionInfo(), buffer, sizeof(buffer)) < sizeof(buffer)) {
-      fl_message_title(_("VNC connection info"));
+      fl_message_title(_("x11clone connection info"));
       fl_message("%s", buffer);
     }
     break;
   case ID_ABOUT:
-    about_vncviewer();
+    about_x11clone();
     break;
   case ID_DISMISS:
     // Don't need to do anything

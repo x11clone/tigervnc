@@ -18,8 +18,8 @@
  * USA.
  */
 
-#ifndef __VNCVIEWER_WIN32_H__
-#define __VNCVIEWER_WIN32_H__
+#ifndef __X11CLONE_WIN32_H__
+#define __X11CLONE_WIN32_H__
 
 #ifdef _MSC_VER
 #define snprintf(str, n, format, ...) _snprintf_s(str, n, _TRUNCATE, format, __VA_ARGS__)

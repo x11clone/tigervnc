@@ -300,6 +300,11 @@ if(BUILD_VIEWER)
   add_subdirectory(media)
 endif()
 
+option(BUILD_VIEWER "Build x11clone" ON)
+if(BUILD_VIEWER)
+  add_subdirectory(x11clone)
+endif()
+
 add_subdirectory(tests)
 
 

@@ -33,7 +33,7 @@
 #include "OptionsDialog.h"
 #include "i18n.h"
 #include "parameters.h"
-#include "vncviewer.h"
+#include "x11clone.h"
 #include "CConn.h"
 #include "Surface.h"
 #include "Viewport.h"
@@ -223,7 +223,7 @@ void DesktopWindow::setName(const char *name)
   CharArray windowNameStr;
   windowNameStr.replaceBuf(new char[256]);
 
-  snprintf(windowNameStr.buf, 256, "%.240s - TigerVNC", name);
+  snprintf(windowNameStr.buf, 256, "%.240s - x11clone", name);
 
   copy_label(windowNameStr.buf);
 }
@@ -1171,7 +1171,7 @@ void DesktopWindow::repositionWidgets()
 
 void DesktopWindow::handleClose(Fl_Widget *wnd, void *data)
 {
-  exit_vncviewer();
+  exit_x11clone();
 }
 
 
