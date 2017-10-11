@@ -15,15 +15,15 @@ set(X11CLONE_SOURCES
   Viewport.cxx
   parameters.cxx
   keysym2ucs.c
-  ../unix/x0vncserver/Geometry.cxx
-  ../unix/x0vncserver/XDesktop.cxx
-  ../unix/x0vncserver/Image.cxx
-  ../unix/x0vncserver/XPixelBuffer.cxx
-  ../unix/x0vncserver/PollingManager.cxx
-  ../unix/x0vncserver/PollingScheduler.cxx
-  ../unix/x0vncserver/TimeMillis.cxx
-  ../unix/x0vncserver/qnum_to_xorgevdev.c
-  ../unix/x0vncserver/qnum_to_xorgkbd.c
+  ../x0vncserver/Geometry.cxx
+  ../x0vncserver/XDesktop.cxx
+  ../x0vncserver/Image.cxx
+  ../x0vncserver/XPixelBuffer.cxx
+  ../x0vncserver/PollingManager.cxx
+  ../x0vncserver/PollingScheduler.cxx
+  ../x0vncserver/TimeMillis.cxx
+  ../x0vncserver/qnum_to_xorgevdev.c
+  ../x0vncserver/qnum_to_xorgkbd.c
   x11clone.cxx)
 
 if(WIN32)
