@@ -29,7 +29,6 @@
 
 #include <rfb/CMsgWriter.h>
 #include <rfb/CSecurity.h>
-#include <rfb/Hostname.h>
 #include <rfb/LogWriter.h>
 #include <rfb/Security.h>
 #include <rfb/util.h>
@@ -38,7 +37,7 @@
 #include <rfb/Timer.h>
 #include <rdr/MemInStream.h>
 #include <rdr/MemOutStream.h>
-#include <network/TcpSocket.h>
+#include <network/Socket.h>
 
 #include <FL/Fl.H>
 #include <FL/fl_ask.H>
@@ -61,8 +60,9 @@ using namespace std;
 
 static rfb::LogWriter vlog("CConn");
 
-CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
-  : serverHost(0), serverPort(0), desktop(NULL),
+
+CConn::CConn(network::Socket* socket)
+  : desktop(NULL),
     frameCount(0), pixelCount(0), pendingPFChange(false),
     currentEncoding(encodingRaw), lastServerEncoding((unsigned int)-1),
     formatChange(false), encodingChange(false),
@@ -82,27 +82,11 @@ CConn::CConn(const char* vncServerName, network::Socket* socket=NULL)
   cp.compressLevel = -1;
   cp.qualityLevel = -1;
 
-  if(sock == NULL) {
-    try {
-      getHostAndPort(vncServerName, &serverHost, &serverPort);
-
-      sock = new network::TcpSocket(serverHost, serverPort);
-      vlog.info(_("connected to host %s port %d"), serverHost, serverPort);
-    } catch (rdr::Exception& e) {
-      vlog.error("%s", e.str());
-      if (alertOnFatalError)
-        fl_alert("%s", e.str());
-      exit_x11clone();
-      return;
-    }
-  }
-
   Fl::add_fd(sock->getFd(), FL_READ | FL_EXCEPT, socketEvent, this);
 
   // See callback below
   sock->inStream().setBlockCallback(this);
 
-  setServerName(serverHost);
   setStreams(&sock->inStream(), &sock->outStream());
 
   initialiseProtocol();
@@ -118,9 +102,9 @@ CConn::~CConn()
   if (desktop)
     delete desktop;
 
-  delete [] serverHost;
   if (sock)
     Fl::remove_fd(sock->getFd());
+
   delete sock;
 }
 
@@ -148,11 +132,6 @@ const char *CConn::connectionInfo()
 
   snprintf(scratch, sizeof(scratch),
            _("Desktop name: %.80s"), cp.name());
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  snprintf(scratch, sizeof(scratch),
-           _("Host: %.80s port: %d"), serverHost, serverPort);
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 

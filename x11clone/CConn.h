@@ -33,7 +33,7 @@ class CConn : public rfb::CConnection,
               public rdr::FdInStreamBlockCallback
 {
 public:
-  CConn(const char* vncServerName, network::Socket* sock);
+  CConn(network::Socket* sock);
   ~CConn();
 
   void refreshFramebuffer();
@@ -88,8 +88,6 @@ private:
   static void handleUpdateTimeout(void *data);
 
 private:
-  char* serverHost;
-  int serverPort;
   network::Socket* sock;
 
   DesktopWindow *desktop;

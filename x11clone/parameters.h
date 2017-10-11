@@ -46,4 +46,10 @@ extern rfb::StringParameter menuKey;
 extern rfb::BoolParameter fullscreenSystemKeys;
 extern rfb::BoolParameter alertOnFatalError;
 
+extern rfb::StringParameter cloneDisplay;
+extern rfb::BoolParameter useShm;
+
+extern rfb::IntParameter pollingCycle;
+extern rfb::IntParameter maxProcessorUsage;
+
 #endif

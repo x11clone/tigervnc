@@ -1,6 +1,7 @@
 include_directories(${FLTK_INCLUDE_DIR})
 include_directories(${GETTEXT_INCLUDE_DIR})
 
+include_directories(${CMAKE_SOURCE_DIR}/unix)
 include_directories(${CMAKE_SOURCE_DIR}/common)
 set(X11CLONE_SOURCES
   menukey.cxx
@@ -14,6 +15,15 @@ set(X11CLONE_SOURCES
   Viewport.cxx
   parameters.cxx
   keysym2ucs.c
+  ../unix/x0vncserver/Geometry.cxx
+  ../unix/x0vncserver/XDesktop.cxx
+  ../unix/x0vncserver/Image.cxx
+  ../unix/x0vncserver/XPixelBuffer.cxx
+  ../unix/x0vncserver/PollingManager.cxx
+  ../unix/x0vncserver/PollingScheduler.cxx
+  ../unix/x0vncserver/TimeMillis.cxx
+  ../unix/x0vncserver/qnum_to_xorgevdev.c
+  ../unix/x0vncserver/qnum_to_xorgkbd.c
   x11clone.cxx)
 
 if(WIN32)
@@ -48,7 +58,28 @@ else()
   add_executable(x11clone ${X11CLONE_SOURCES})
 endif()
 
-target_link_libraries(x11clone rfb network rdr os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
+target_link_libraries(x11clone tx rfb network rdr os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
+
+if(X11_FOUND AND X11_XTest_LIB)
+  add_definitions(-DHAVE_XTEST)
+  target_link_libraries(x11clone ${X11_XTest_LIB})
+else()
+  message(WARNING "No XTest extension.  x11clone will be view-only.")
+endif()
+
+if(X11_FOUND AND X11_Xdamage_LIB)
+  add_definitions(-DHAVE_XDAMAGE)
+  target_link_libraries(x11clone ${X11_Xdamage_LIB})
+else()
+  message(WARNING "No DAMAGE extension.  x11clone will have to use the slower polling method.")
+endif()
+
+if(X11_FOUND AND X11_Xfixes_LIB)
+  add_definitions(-DHAVE_XFIXES)
+  target_link_libraries(x11clone ${X11_Xfixes_LIB})
+else()
+  message(WARNING "No XFIXES extension.  x11clone will not be able to show cursors.")
+endif()
 
 if(WIN32)
   target_link_libraries(x11clone msimg32)

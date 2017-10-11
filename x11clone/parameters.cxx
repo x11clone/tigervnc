@@ -106,3 +106,15 @@ BoolParameter fullscreenSystemKeys("FullscreenSystemKeys",
                                    "to the server when in full screen mode.",
                                    true);
 
+StringParameter cloneDisplay("cloneDisplay", "The X display to clone", "");
+BoolParameter useShm("UseSHM", "Use MIT-SHM extension if available", true);
+IntParameter pollingCycle("PollingCycle", "Milliseconds per one polling "
+                          "cycle; actual interval may be dynamically "
+                          "adjusted to satisfy MaxProcessorUsage setting", 30);
+IntParameter maxProcessorUsage("MaxProcessorUsage", "Maximum percentage of "
+                               "CPU time to be consumed", 35);
+BoolParameter rawKeyboard("RawKeyboard",
+                          "Send keyboard events straight through and "
+                          "avoid mapping them to the current keyboard "
+                          "layout", false);
+

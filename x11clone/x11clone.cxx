@@ -33,6 +33,11 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
+#include <x0vncserver/Geometry.h>
+#include <x0vncserver/PollingScheduler.h>
+#include <x0vncserver/XDesktop.h>
+#include <tx/TXWindow.h>
+
 #ifdef WIN32
 #include <os/winerrno.h>
 #include <direct.h>
@@ -46,6 +51,7 @@
 
 #include <rfb/Logger_stdio.h>
 #include <rfb/SecurityClient.h>
+#include <rfb/SecurityServer.h>
 #include <rfb/Security.h>
 #ifdef HAVE_GNUTLS
 #include <rfb/CSecurityTLS.h>
@@ -53,7 +59,8 @@
 #include <rfb/LogWriter.h>
 #include <rfb/Timer.h>
 #include <rfb/Exception.h>
-#include <network/TcpSocket.h>
+#include <rfb/VNCSConnectionST.h>
+#include <network/UnixSocket.h>
 #include <os/os.h>
 
 #include <FL/Fl.H>
@@ -82,12 +89,17 @@ using namespace network;
 using namespace rfb;
 using namespace std;
 
-char vncServerName[VNCSERVERNAMELEN] = { '\0' };
+static Display* cloneDpy = NULL;
 
 static const char *argv0 = NULL;
 
 static bool exitMainloop = false;
 static const char *exitError = NULL;
+
+XDesktop *desktop;
+VNCServerST *server;
+VNCSConnectionST* sconnection;
+PollingScheduler *sched;
 
 static const char *about_text()
 {
@@ -128,18 +140,66 @@ void about_x11clone()
   fl_message("%s", about_text());
 }
 
+void cloneDpyEvent(FL_SOCKET fd, void *data)
+{
+  Display *dpy = (Display*)data;
+
+  TXWindow::handleXEvents(dpy);
+}
+
+void serverReadEvent(FL_SOCKET fd, void *data)
+{
+  VNCSConnectionST* sconnection = (VNCSConnectionST*)data;
+  //fprintf(stderr, "serverReadEvent\n");
+  sconnection->processMessages();
+}
+
+void serverWriteEvent(FL_SOCKET fd, void *data)
+{
+  VNCSConnectionST* sconnection = (VNCSConnectionST*)data;
+  //fprintf(stderr, "serverWriteEvent\n");
+  sconnection->flushSocket();
+}
+
 void run_mainloop()
 {
-  int next_timer;
+  int next_timer = 0;
 
-  next_timer = Timer::checkTimeouts();
+  if (sconnection->getSock()->outStream().bufferUsage() > 0) {
+    Fl::add_fd(sconnection->getSock()->getFd(), FL_WRITE, serverWriteEvent, sconnection);
+  } else {
+    Fl::remove_fd(sconnection->getSock()->getFd(), FL_WRITE);
+  }
+  //fprintf(stderr, "run_mainloop: server-buffer=%d\n",
+  //	  sconnection->getSock()->outStream().bufferUsage());
+
+  if (sched->isRunning()) {
+    next_timer = sched->millisRemaining();
+    if (next_timer > 500) {
+      next_timer = 500;
+    }
+  }
+
+  //fprintf(stderr, "next_timer:%d\n", next_timer);
+
+  soonestTimeout(&next_timer, server->checkTimeouts());
+
   if (next_timer == 0)
     next_timer = INT_MAX;
+
+  sched->sleepStarted();
 
   if (Fl::wait((double)next_timer / 1000.0) < 0.0) {
     vlog.error(_("Internal FLTK error. Exiting."));
     exit(-1);
   }
+
+  sched->sleepFinished();
+
+  if (desktop->isRunning() && sched->goodTimeToPoll()) {
+    sched->newPass();
+    desktop->poll();
+ }
 }
 
 #ifdef __APPLE__
@@ -363,6 +423,7 @@ int main(int argc, char** argv)
   textdomain(PACKAGE_NAME);
 
   rfb::SecurityClient::secTypes.setParam("None");
+  rfb::SecurityServer::secTypes.setParam("None");
 
   // Write about text to console, still using normal locale codeset
   fprintf(stderr,"\n%s\n", about_text());
@@ -410,22 +471,58 @@ int main(int argc, char** argv)
         usage(argv[0]);
       }
 
-      strncpy(vncServerName, argv[i], VNCSERVERNAMELEN);
-      vncServerName[VNCSERVERNAMELEN - 1] = '\0';
     }
 
+  int pairfds[2];
+  if (socketpair(AF_UNIX, SOCK_STREAM, 0, pairfds) < 0) {
+    vlog.error(_("socketpair failed: %s"), strerror(errno));
+    return 1;
+  }
+
+  /* RFB server - connect to cloned display */
+  CharArray dpyStr(cloneDisplay.getData());
+  if (!(cloneDpy = XOpenDisplay(dpyStr.buf[0] ? dpyStr.buf : 0))) {
+    // FIXME: Why not vlog.error(...)?
+    fprintf(stderr,"%s: unable to open display \"%s\"\r\n",
+           "vncviewer", XDisplayName(dpyStr.buf));
+    return 1;
+  }
+  TXWindow::init(cloneDpy, "x11clone");
+  Geometry geo(DisplayWidth(cloneDpy, DefaultScreen(cloneDpy)),
+	       DisplayHeight(cloneDpy, DefaultScreen(cloneDpy)));
+  if (geo.getRect().is_empty()) {
+    vlog.error("Exiting with error");
+    return 1;
+  }
+  try {
+    desktop = new XDesktop(cloneDpy, &geo);
+    server = new VNCServerST(XDisplayName(dpyStr.buf), desktop);
+  } catch (rdr::Exception &e) {
+    vlog.error("%s", e.str());
+    return 1;
+  }
+
+  UnixSocket serversocket(pairfds[1], true, 33177600);
+  serversocket.outStream().setBlocking(false);
+  server->addSocket(&serversocket);
+
+  sconnection = (VNCSConnectionST*)server->getSConnection(&serversocket);
+
+  Fl::add_fd(ConnectionNumber(cloneDpy), FL_READ, cloneDpyEvent, cloneDpy);
+  Fl::add_fd(serversocket.getFd(), FL_READ, serverReadEvent, sconnection);
+  TXWindow::handleXEvents(cloneDpy);
+
+  sched = new PollingScheduler((int)pollingCycle, (int)maxProcessorUsage);
+
+  /* RFB client */
   CSecurity::upg = &dlg;
 #ifdef HAVE_GNUTLS
   CSecurityTLS::msg = &dlg;
 #endif
 
-  if (vncServerName[0] == '\0') {
-    ServerDialog::run("", vncServerName);
-    if (vncServerName[0] == '\0')
-      return 1;
-  }
-
-  CConn *cc = new CConn(vncServerName, NULL);
+  UnixSocket *clientsocket = new UnixSocket(pairfds[0]);
+  CConn *cc = new CConn(clientsocket);
+  clientsocket->outStream().setBlocking(false);
 
   while (!exitMainloop)
     run_mainloop();
