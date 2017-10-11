@@ -144,6 +144,7 @@ void cloneDpyEvent(FL_SOCKET fd, void *data)
 {
   Display *dpy = (Display*)data;
 
+  //fprintf(stderr, "cloneDpyEvent\n");
   TXWindow::handleXEvents(dpy);
 }
 
@@ -199,7 +200,7 @@ void run_mainloop()
   if (desktop->isRunning() && sched->goodTimeToPoll()) {
     sched->newPass();
     desktop->poll();
- }
+  }
 }
 
 #ifdef __APPLE__
@@ -512,6 +513,9 @@ int main(int argc, char** argv)
   Fl::add_fd(serversocket.getFd(), FL_READ, serverReadEvent, sconnection);
   TXWindow::handleXEvents(cloneDpy);
 
+  //fprintf(stderr, "FDs: cloneDpy=%d, server=%d, client=%d\n",
+  //ConnectionNumber(cloneDpy), pairfds[1], pairfds[0]);
+
   sched = new PollingScheduler((int)pollingCycle, (int)maxProcessorUsage);
 
   /* RFB client */
@@ -528,6 +532,10 @@ int main(int argc, char** argv)
     run_mainloop();
 
   delete cc;
+
+  delete sched;
+  delete server;
+  delete desktop;
 
   if (exitError != NULL && alertOnFatalError)
     fl_alert("%s", exitError);
