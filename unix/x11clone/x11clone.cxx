@@ -164,6 +164,10 @@ void serverWriteEvent(FL_SOCKET fd, void *data)
 
 void run_mainloop()
 {
+  // The cloneDpy fd is only selected for read, so flush anything in
+  // the output buffer first
+  XFlush(cloneDpy);
+
   int next_timer = 0;
 
   if (sconnection->getSock()->outStream().bufferUsage() > 0) {
