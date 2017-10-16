@@ -77,7 +77,7 @@ using namespace network;
 using namespace rfb;
 using namespace std;
 
-static Display* cloneDpy = NULL;
+static Display* parentDpy = NULL;
 
 char serverName[SERVERNAMELEN] = { '\0' };
 
@@ -130,11 +130,11 @@ void about_x11clone()
   fl_message("%s", about_text());
 }
 
-void cloneDpyEvent(FL_SOCKET fd, void *data)
+void parentDpyEvent(FL_SOCKET fd, void *data)
 {
   Display *dpy = (Display*)data;
 
-  //fprintf(stderr, "cloneDpyEvent\n");
+  //fprintf(stderr, "parentDpyEvent\n");
   TXWindow::handleXEvents(dpy);
 }
 
@@ -154,9 +154,9 @@ void serverWriteEvent(FL_SOCKET fd, void *data)
 
 void run_mainloop()
 {
-  // The cloneDpy fd is only selected for read, so flush anything in
+  // The parentDpy fd is only selected for read, so flush anything in
   // the output buffer first
-  XFlush(cloneDpy);
+  XFlush(parentDpy);
 
   int next_timer = 0;
 
@@ -355,7 +355,7 @@ int main(int argc, char** argv)
 
     }
 
-  const char *s = cloneDisplay.getData();
+  const char *s = parentDisplay.getData();
   strncpy(serverName, s, SERVERNAMELEN);
   serverName[SERVERNAMELEN - 1] = '\0';
   delete s;
@@ -366,22 +366,22 @@ int main(int argc, char** argv)
       return 1;
   }
 
-  /* RFB server - connect to cloned display */
-  if (!(cloneDpy = XOpenDisplay(serverName))) {
+  /* RFB server - connect to parent display */
+  if (!(parentDpy = XOpenDisplay(serverName))) {
     // FIXME: Why not vlog.error(...)?
     fprintf(stderr,"%s: unable to open display \"%s\"\r\n",
 	    "x11clone", serverName);
     return 1;
   }
-  TXWindow::init(cloneDpy, "x11clone");
-  Geometry geo(DisplayWidth(cloneDpy, DefaultScreen(cloneDpy)),
-	       DisplayHeight(cloneDpy, DefaultScreen(cloneDpy)));
+  TXWindow::init(parentDpy, "x11clone");
+  Geometry geo(DisplayWidth(parentDpy, DefaultScreen(parentDpy)),
+	       DisplayHeight(parentDpy, DefaultScreen(parentDpy)));
   if (geo.getRect().is_empty()) {
     vlog.error("Exiting with error");
     return 1;
   }
   try {
-    desktop = new XDesktop(cloneDpy, &geo);
+    desktop = new XDesktop(parentDpy, &geo);
     server = new VNCServerST(serverName, desktop);
   } catch (rdr::Exception &e) {
     vlog.error("%s", e.str());
@@ -400,12 +400,12 @@ int main(int argc, char** argv)
 
   sconnection = (VNCSConnectionST*)server->getSConnection(&serversocket);
 
-  Fl::add_fd(ConnectionNumber(cloneDpy), FL_READ, cloneDpyEvent, cloneDpy);
+  Fl::add_fd(ConnectionNumber(parentDpy), FL_READ, parentDpyEvent, parentDpy);
   Fl::add_fd(serversocket.getFd(), FL_READ, serverReadEvent, sconnection);
-  TXWindow::handleXEvents(cloneDpy);
+  TXWindow::handleXEvents(parentDpy);
 
-  //fprintf(stderr, "FDs: cloneDpy=%d, server=%d, client=%d\n",
-  //ConnectionNumber(cloneDpy), pairfds[1], pairfds[0]);
+  //fprintf(stderr, "FDs: parentDpy=%d, server=%d, client=%d\n",
+  //ConnectionNumber(parentDpy), pairfds[1], pairfds[0]);
 
   sched = new PollingScheduler((int)pollingCycle, (int)maxProcessorUsage);
 
