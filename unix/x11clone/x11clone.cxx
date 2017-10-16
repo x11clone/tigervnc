@@ -91,6 +91,8 @@ using namespace std;
 
 static Display* cloneDpy = NULL;
 
+char serverName[SERVERNAMELEN] = { '\0' };
+
 static const char *argv0 = NULL;
 
 static bool exitMainloop = false;
@@ -478,18 +480,22 @@ int main(int argc, char** argv)
 
     }
 
-  int pairfds[2];
-  if (socketpair(AF_UNIX, SOCK_STREAM, 0, pairfds) < 0) {
-    vlog.error(_("socketpair failed: %s"), strerror(errno));
-    return 1;
+  const char *s = cloneDisplay.getData();
+  strncpy(serverName, s, SERVERNAMELEN);
+  serverName[SERVERNAMELEN - 1] = '\0';
+  delete s;
+
+  if (serverName[0] == '\0') {
+    ServerDialog::run(":0", serverName);
+    if (serverName[0] == '\0')
+      return 1;
   }
 
   /* RFB server - connect to cloned display */
-  CharArray dpyStr(cloneDisplay.getData());
-  if (!(cloneDpy = XOpenDisplay(dpyStr.buf[0] ? dpyStr.buf : 0))) {
+  if (!(cloneDpy = XOpenDisplay(serverName))) {
     // FIXME: Why not vlog.error(...)?
     fprintf(stderr,"%s: unable to open display \"%s\"\r\n",
-           "vncviewer", XDisplayName(dpyStr.buf));
+	    "x11clone", serverName);
     return 1;
   }
   TXWindow::init(cloneDpy, "x11clone");
@@ -501,9 +507,15 @@ int main(int argc, char** argv)
   }
   try {
     desktop = new XDesktop(cloneDpy, &geo);
-    server = new VNCServerST(XDisplayName(dpyStr.buf), desktop);
+    server = new VNCServerST(serverName, desktop);
   } catch (rdr::Exception &e) {
     vlog.error("%s", e.str());
+    return 1;
+  }
+
+  int pairfds[2];
+  if (socketpair(AF_UNIX, SOCK_STREAM, 0, pairfds) < 0) {
+    vlog.error(_("socketpair failed: %s"), strerror(errno));
     return 1;
   }
 

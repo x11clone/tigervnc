@@ -111,8 +111,8 @@ void ServerDialog::run(const char* servername, char *newservername)
     return;
   }
 
-  strncpy(newservername, dialog.serverName->value(), VNCSERVERNAMELEN);
-  newservername[VNCSERVERNAMELEN - 1] = '\0';
+  strncpy(newservername, dialog.serverName->value(), SERVERNAMELEN);
+  newservername[SERVERNAMELEN - 1] = '\0';
 }
 
 void ServerDialog::handleOptions(Fl_Widget *widget, void *data)

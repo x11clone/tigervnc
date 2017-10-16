@@ -19,7 +19,7 @@
 #ifndef __X11CLONE_H__
 #define __X11CLONE_H__
 
-#define VNCSERVERNAMELEN 64
+#define SERVERNAMELEN 255
 
 void exit_x11clone(const char *error = NULL);
 bool should_exit();
