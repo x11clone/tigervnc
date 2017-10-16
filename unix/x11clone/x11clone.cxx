@@ -209,35 +209,6 @@ void run_mainloop()
   }
 }
 
-#ifdef __APPLE__
-static void about_callback(Fl_Widget *widget, void *data)
-{
-  about_x11clone();
-}
-
-static void new_connection_cb(Fl_Widget *widget, void *data)
-{
-  const char *argv[2];
-  pid_t pid;
-
-  pid = fork();
-  if (pid == -1) {
-    vlog.error(_("Error starting new x11clone: %s"), strerror(errno));
-    return;
-  }
-
-  if (pid != 0)
-    return;
-
-  argv[0] = argv0;
-  argv[1] = NULL;
-
-  execvp(argv[0], (char * const *)argv);
-
-  vlog.error(_("Error starting new x11clone: %s"), strerror(errno));
-  _exit(1);
-}
-#endif
 
 static void CleanupSignalHandler(int sig)
 {
@@ -252,15 +223,10 @@ static void init_fltk()
   // Basic text size (10pt @ 96 dpi => 13px)
   FL_NORMAL_SIZE = 13;
 
-#ifndef __APPLE__
   // Select a FLTK scheme and background color that looks somewhat
   // close to modern Linux and Windows.
   Fl::scheme("gtk+");
   Fl::background(220, 220, 220);
-#else
-  // On Mac OS X there is another scheme that fits better though.
-  Fl::scheme("plastic");
-#endif
 
   // Proper Gnome Shell integration requires that we set a sensible
   // WM_CLASS for the window.
@@ -280,7 +246,7 @@ static void init_fltk()
                         LR_DEFAULTCOLOR | LR_SHARED);
 
   Fl_Window::default_icons(lg, sm);
-#elif ! defined(__APPLE__)
+#else
   const int icon_sizes[] = {48, 32, 24, 16};
 
   Fl_PNG_Image *icons[4];
@@ -349,37 +315,6 @@ static void init_fltk()
   fl_cancel = _("Cancel");
   fl_close  = _("Close");
 
-#ifdef __APPLE__
-  /* Needs trailing space */
-  static char fltk_about[16];
-  snprintf(fltk_about, sizeof(fltk_about), "%s ", _("About"));
-  Fl_Mac_App_Menu::about = fltk_about;
-  static char fltk_hide[16];
-  snprintf(fltk_hide, sizeof(fltk_hide), "%s ", _("Hide"));
-  Fl_Mac_App_Menu::hide = fltk_hide;
-  static char fltk_quit[16];
-  snprintf(fltk_quit, sizeof(fltk_quit), "%s ", _("Quit"));
-  Fl_Mac_App_Menu::quit = fltk_quit;
-
-  Fl_Mac_App_Menu::print = ""; // Don't want the print item
-  Fl_Mac_App_Menu::services = _("Services");
-  Fl_Mac_App_Menu::hide_others = _("Hide Others");
-  Fl_Mac_App_Menu::show = _("Show All");
-
-  fl_mac_set_about(about_callback, NULL);
-
-  Fl_Sys_Menu_Bar *menubar;
-  char buffer[1024];
-  menubar = new Fl_Sys_Menu_Bar(0, 0, 500, 25);
-  // Fl_Sys_Menu_Bar overrides methods without them being virtual,
-  // which means we cannot use our generic Fl_Menu_ helpers.
-  if (fltk_menu_escape(p_("SysMenu|", "&File"),
-                       buffer, sizeof(buffer)) < sizeof(buffer))
-      menubar->add(buffer, 0, 0, 0, FL_SUBMENU);
-  if (fltk_menu_escape(p_("SysMenu|File|", "&New Connection"),
-                       buffer, sizeof(buffer)) < sizeof(buffer))
-      menubar->insert(1, buffer, FL_COMMAND | 'n', new_connection_cb);
-#endif
 }
 
 

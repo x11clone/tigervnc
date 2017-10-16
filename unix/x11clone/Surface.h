@@ -21,9 +21,6 @@
 
 #if defined(WIN32)
 #include <windows.h>
-#elif defined(__APPLE__)
-// Apple headers conflict with FLTK, so redefine types here
-typedef struct CGImage* CGImageRef;
 #else
 #include <X11/extensions/Xrender.h>
 #endif
@@ -58,8 +55,6 @@ protected:
 #if defined(WIN32)
   RGBQUAD* data;
   HBITMAP bitmap;
-#elif defined(__APPLE__)
-  unsigned char* data;
 #else
   Pixmap pixmap;
   Picture picture;

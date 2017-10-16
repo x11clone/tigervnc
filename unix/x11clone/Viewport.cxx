@@ -85,11 +85,6 @@ extern const unsigned int code_map_xkb_to_qnum_len;
 static int code_map_keycode_to_qnum[256];
 #endif
 
-#ifdef __APPLE__
-#include "cocoa.h"
-extern const unsigned short code_map_osx_to_qnum[];
-extern const unsigned int code_map_osx_to_qnum_len;
-#endif
 
 #ifdef WIN32
 #include "win32.h"
@@ -333,23 +328,6 @@ void Viewport::setLEDState(unsigned int state)
   ret = SendInput(count, input, sizeof(*input));
   if (ret < count)
     vlog.error(_("Failed to update keyboard LED state: %lu"), GetLastError());
-#elif defined(__APPLE__)
-  int ret;
-
-  ret = cocoa_set_caps_lock_state(state & ledCapsLock);
-  if (ret != 0) {
-    vlog.error(_("Failed to update keyboard LED state: %d"), ret);
-    return;
-  }
-
-  ret = cocoa_set_num_lock_state(state & ledNumLock);
-  if (ret != 0) {
-    vlog.error(_("Failed to update keyboard LED state: %d"), ret);
-    return;
-  }
-
-  // No support for Scroll Lock //
-
 #else
   unsigned int affect, values;
   unsigned int mask;
@@ -395,29 +373,6 @@ void Viewport::pushLEDState()
     state |= ledNumLock;
   if (GetKeyState(VK_SCROLL) & 0x1)
     state |= ledScrollLock;
-#elif defined(__APPLE__)
-  int ret;
-  bool on;
-
-  ret = cocoa_get_caps_lock_state(&on);
-  if (ret != 0) {
-    vlog.error(_("Failed to get keyboard LED state: %d"), ret);
-    return;
-  }
-  if (on)
-    state |= ledCapsLock;
-
-  ret = cocoa_get_num_lock_state(&on);
-  if (ret != 0) {
-    vlog.error(_("Failed to get keyboard LED state: %d"), ret);
-    return;
-  }
-  if (on)
-    state |= ledNumLock;
-
-  // No support for Scroll Lock //
-  state |= (cc->cp.ledState() & ledScrollLock);
-
 #else
   unsigned int mask;
 
@@ -718,27 +673,6 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
     return;
   }
 
-#ifdef __APPLE__
-  // Alt on OS X behaves more like AltGr on other systems, and to get
-  // sane behaviour we should translate things in that manner for the
-  // remote VNC server. However that means we lose the ability to use
-  // Alt as a shortcut modifier. Do what RealVNC does and hijack the
-  // left command key as an Alt replacement.
-  switch (keySym) {
-  case XK_Super_L:
-    keySym = XK_Alt_L;
-    break;
-  case XK_Super_R:
-    keySym = XK_Super_L;
-    break;
-  case XK_Alt_L:
-    keySym = XK_Mode_switch;
-    break;
-  case XK_Alt_R:
-    keySym = XK_ISO_Level3_Shift;
-    break;
-  }
-#endif
 
 #ifdef WIN32
   // Ugly hack alert!
@@ -938,37 +872,6 @@ int Viewport::handleSystemEvent(void *event, void *data)
       keyCode = 0x54;
 
     self->handleKeyRelease(keyCode);
-
-    return 1;
-  }
-#elif defined(__APPLE__)
-  if (cocoa_is_keyboard_event(event)) {
-    int keyCode;
-
-    keyCode = cocoa_event_keycode(event);
-    if ((unsigned)keyCode >= code_map_osx_to_qnum_len)
-      keyCode = 0;
-    else
-      keyCode = code_map_osx_to_qnum[keyCode];
-
-    if (cocoa_is_key_press(event)) {
-      rdr::U32 keySym;
-
-      keySym = cocoa_event_keysym(event);
-      if (keySym == NoSymbol) {
-        vlog.error(_("No symbol for key code 0x%02x (in the current state)"),
-                   (int)keyCode);
-      }
-
-      self->handleKeyPress(keyCode, keySym);
-
-      // We don't get any release events for CapsLock, so we have to
-      // send the release right away.
-      if (keySym == XK_Caps_Lock)
-        self->handleKeyRelease(keyCode);
-    } else {
-      self->handleKeyRelease(keyCode);
-    }
 
     return 1;
   }

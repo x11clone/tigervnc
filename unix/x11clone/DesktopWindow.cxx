@@ -48,9 +48,6 @@
 #include "win32.h"
 #endif
 
-#ifdef __APPLE__
-#include "cocoa.h"
-#endif
 
 #define EDGE_SCROLL_SIZE 32
 #define EDGE_SCROLL_SPEED 20
@@ -124,14 +121,6 @@ DesktopWindow::DesktopWindow(int w, int h, const char *name,
     }
   }
 
-#ifdef __APPLE__
-  // On OS X we can do the maximize thing properly before the
-  // window is showned. Other platforms handled further down...
-  if (maximize) {
-    int dummy;
-    Fl::screen_work_area(dummy, dummy, w, h, geom_x, geom_y);
-  }
-#endif
 
   if (force_position()) {
     resize(geom_x, geom_y, w, h);
@@ -160,11 +149,9 @@ DesktopWindow::DesktopWindow(int w, int h, const char *name,
   // Unfortunately, current FLTK does not allow us to set the
   // maximized property on Windows and X11 before showing the window.
   // See STR #2083 and STR #2178
-#ifndef __APPLE__
   if (maximize) {
     maximizeWindow();
   }
-#endif
 
   // Adjust layout now that we're visible and know our final size
   repositionWidgets();
@@ -292,7 +279,6 @@ void DesktopWindow::draw()
 
   // X11 needs an off screen buffer for compositing to avoid flicker,
   // and alpha blending doesn't work for windows on Win32
-#if !defined(__APPLE__)
 
   // Adjust offscreen surface dimensions
   if ((offscreen == NULL) ||
@@ -301,7 +287,6 @@ void DesktopWindow::draw()
     offscreen = new Surface(w(), h());
   }
 
-#endif
 
   // Active area inside scrollbars
   W = w() - (vscroll->visible() ? vscroll->w() : 0);
@@ -779,14 +764,6 @@ void DesktopWindow::grabKeyboard()
     vlog.error(_("Failure grabbing keyboard"));
     return;
   }
-#elif defined(__APPLE__)
-  int ret;
-  
-  ret = cocoa_capture_display(this, fullScreenAllMonitors);
-  if (ret != 0) {
-    vlog.error(_("Failure grabbing keyboard"));
-    return;
-  }
 #else
   int ret;
 
@@ -822,8 +799,6 @@ void DesktopWindow::ungrabKeyboard()
 
 #if defined(WIN32)
   win32_disable_lowlevel_keyboard(fl_xid(this));
-#elif defined(__APPLE__)
-  cocoa_release_display(this);
 #else
   // FLTK has a grab so lets not mess with it
   if (Fl::grab())
@@ -898,16 +873,6 @@ void DesktopWindow::maximizeWindow()
     SetWindowLongPtr(fl_xid(this), GWL_STYLE, wi.dwStyle | WS_MAXIMIZE);
   } else
     ShowWindow(fl_xid(this), SW_MAXIMIZE);
-#elif defined(__APPLE__)
-  // OS X is somewhat strange and does not really have a concept of a
-  // maximized window, so we can simply resize the window to the workarea.
-  // Note that we shouldn't do this whilst in full screen as that will
-  // incorrectly adjust things.
-  if (fullscreen_active())
-    return;
-  int X, Y, W, H;
-  Fl::screen_work_area(X, Y, W, H, this->x(), this->y());
-  size(W, H);
 #else
   // X11
   fl_open_display();
