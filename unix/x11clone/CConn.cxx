@@ -79,9 +79,6 @@ CConn::CConn(network::Socket* socket)
 
   cp.supportsLEDState = true;
 
-  cp.compressLevel = -1;
-  cp.qualityLevel = -1;
-
   Fl::add_fd(sock->getFd(), FL_READ | FL_EXCEPT, socketEvent, this);
 
   // See callback below
@@ -497,11 +494,6 @@ void CConn::checkEncodings()
     encodings[nEncodings++] = encodingCopyRect;
     encodings[nEncodings++] = encodingRRE;
 
-    if (cp.compressLevel >= 0 && cp.compressLevel <= 9)
-	encodings[nEncodings++] = pseudoEncodingCompressLevel0 + cp.compressLevel;
-    if (cp.qualityLevel >= 0 && cp.qualityLevel <= 9)
-	encodings[nEncodings++] = pseudoEncodingQualityLevel0 + cp.qualityLevel;
-
     writer()->writeSetEncodings(nEncodings, encodings);
 
     encodingChange = false;
@@ -561,9 +553,6 @@ void CConn::handleOptions(void *data)
   CConn *self = (CConn*)data;
 
   self->cp.supportsLocalCursor = true;
-
-  self->cp.compressLevel = -1;
-  self->cp.qualityLevel = -1;
 
   // Format changes refreshes the entire screen though and are therefore
   // very costly. It's probably worth the effort to see if it is necessary

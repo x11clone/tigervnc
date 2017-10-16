@@ -61,7 +61,6 @@ OptionsDialog::OptionsDialog()
 
     tabs->client_area(tx, ty, tw, th, TABS_HEIGHT);
 
-    createCompressionPage(tx, ty, tw, th);
     createInputPage(tx, ty, tw, th);
     createScreenPage(tx, ty, tw, th);
     createMiscPage(tx, ty, tw, th);
@@ -221,36 +220,6 @@ void OptionsDialog::storeOptions(void)
     iter->first(iter->second);
 }
 
-
-void OptionsDialog::createCompressionPage(int tx, int ty, int tw, int th)
-{
-  Fl_Group *group = new Fl_Group(tx, ty, tw, th, _("Compression"));
-
-  int orig_tx, orig_ty;
-  int half_width, full_width;
-
-  tx += OUTER_MARGIN;
-  ty += OUTER_MARGIN;
-
-  full_width = tw - OUTER_MARGIN * 2;
-  half_width = (full_width - INNER_MARGIN) / 2;
-
-  ty += CHECK_HEIGHT + INNER_MARGIN;
-
-  /* Two columns */
-  orig_tx = tx;
-  orig_ty = ty;
-
-  /* Second column */
-  tx = orig_tx + half_width + INNER_MARGIN;
-  ty = orig_ty;
-
-  /* Back to normal */
-  tx = orig_tx;
-  ty += INNER_MARGIN;
-
-  group->end();
-}
 
 void OptionsDialog::createInputPage(int tx, int ty, int tw, int th)
 {

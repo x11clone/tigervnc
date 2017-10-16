@@ -50,12 +50,9 @@ protected:
   void loadOptions(void);
   void storeOptions(void);
 
-  void createCompressionPage(int tx, int ty, int tw, int th);
   void createInputPage(int tx, int ty, int tw, int th);
   void createScreenPage(int tx, int ty, int tw, int th);
   void createMiscPage(int tx, int ty, int tw, int th);
-
-  static void handleCompression(Fl_Widget *widget, void *data);
 
   static void handleDesktopSize(Fl_Widget *widget, void *data);
 
