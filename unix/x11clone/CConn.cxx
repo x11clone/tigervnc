@@ -64,7 +64,7 @@ static rfb::LogWriter vlog("CConn");
 CConn::CConn(network::Socket* socket)
   : desktop(NULL),
     frameCount(0), pixelCount(0), pendingPFChange(false),
-    currentEncoding(encodingRaw), lastServerEncoding((unsigned int)-1),
+    lastServerEncoding((unsigned int)-1),
     formatChange(false), encodingChange(false),
     firstUpdate(true), pendingUpdate(false), continuousUpdates(false),
     forceNonincremental(true), supportsSyncFence(false)
@@ -152,11 +152,6 @@ const char *CConn::connectionInfo()
   serverPF.print(pfStr, 100);
   snprintf(scratch, sizeof(scratch),
            _("(server default %s)"), pfStr);
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  snprintf(scratch, sizeof(scratch),
-           _("Requested encoding: %s"), encodingName(encodingRaw));
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 
@@ -474,8 +469,41 @@ void CConn::resizeFramebuffer()
 void CConn::checkEncodings()
 {
   if (encodingChange && writer()) {
-    vlog.info(_("Using %s encoding"),encodingName(currentEncoding));
-    writer()->writeSetEncodings(currentEncoding, true);
+    vlog.info(_("Using %s encoding"),encodingName(encodingRaw));
+
+    int nEncodings = 0;
+    rdr::U32 encodings[encodingMax+3];
+
+    if (cp.supportsLocalCursor) {
+	encodings[nEncodings++] = pseudoEncodingCursorWithAlpha;
+	encodings[nEncodings++] = pseudoEncodingCursor;
+	encodings[nEncodings++] = pseudoEncodingXCursor;
+    }
+    if (cp.supportsDesktopResize)
+	encodings[nEncodings++] = pseudoEncodingDesktopSize;
+    if (cp.supportsExtendedDesktopSize)
+	encodings[nEncodings++] = pseudoEncodingExtendedDesktopSize;
+    if (cp.supportsDesktopRename)
+	encodings[nEncodings++] = pseudoEncodingDesktopName;
+    if (cp.supportsLEDState)
+	encodings[nEncodings++] = pseudoEncodingLEDState;
+
+    encodings[nEncodings++] = pseudoEncodingLastRect;
+    encodings[nEncodings++] = pseudoEncodingContinuousUpdates;
+    encodings[nEncodings++] = pseudoEncodingFence;
+    encodings[nEncodings++] = pseudoEncodingQEMUKeyEvent;
+
+    encodings[nEncodings++] = encodingRaw;
+    encodings[nEncodings++] = encodingCopyRect;
+    encodings[nEncodings++] = encodingRRE;
+
+    if (cp.compressLevel >= 0 && cp.compressLevel <= 9)
+	encodings[nEncodings++] = pseudoEncodingCompressLevel0 + cp.compressLevel;
+    if (cp.qualityLevel >= 0 && cp.qualityLevel <= 9)
+	encodings[nEncodings++] = pseudoEncodingQualityLevel0 + cp.qualityLevel;
+
+    writer()->writeSetEncodings(nEncodings, encodings);
+
     encodingChange = false;
   }
 }

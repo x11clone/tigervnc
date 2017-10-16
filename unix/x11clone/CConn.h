@@ -101,7 +101,7 @@ private:
   bool pendingPFChange;
   rfb::PixelFormat pendingPF;
 
-  int currentEncoding, lastServerEncoding;
+  int lastServerEncoding;
 
   bool formatChange;
   bool encodingChange;
