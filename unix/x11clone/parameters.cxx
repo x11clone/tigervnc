@@ -26,11 +26,6 @@
 #include <rfb/CSecurityTLS.h>
 #endif
 
-#ifdef _WIN32
-#include <windows.h>
-#include <tchar.h>
-#endif
-
 #include "parameters.h"
 
 #include <os/os.h>
@@ -91,12 +86,10 @@ BoolParameter setPrimary("SetPrimary",
                          "clipboard selection", true);
 BoolParameter sendClipboard("SendClipboard",
                             "Send clipboard changes to the server", true);
-#if !defined(WIN32) && !defined(__APPLE__)
 BoolParameter sendPrimary("SendPrimary",
                           "Send the primary selection to the "
                           "server as well as the clipboard selection",
                           true);
-#endif
 
 StringParameter menuKey("MenuKey", "The key which brings up the popup menu",
                         "F8");

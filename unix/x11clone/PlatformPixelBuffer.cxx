@@ -18,10 +18,8 @@
 
 #include <assert.h>
 
-#if !defined(WIN32) && !defined(__APPLE__)
 #include <sys/ipc.h>
 #include <sys/shm.h>
-#endif
 
 #include <FL/Fl.H>
 #include <FL/x.H>
@@ -38,11 +36,8 @@ PlatformPixelBuffer::PlatformPixelBuffer(int width, int height) :
                                        255, 255, 255, 16, 8, 0),
                        width, height, 0, stride),
   Surface(width, height)
-#if !defined(WIN32) && !defined(__APPLE__)
   , shminfo(NULL), xim(NULL)
-#endif
 {
-#if !defined(WIN32) && !defined(__APPLE__)
   if (!setupShm()) {
     xim = XCreateImage(fl_display, CopyFromParent, 32,
                        ZPixmap, 0, 0, width, height, 32, 0);
@@ -58,15 +53,10 @@ PlatformPixelBuffer::PlatformPixelBuffer(int width, int height) :
 
   data = (rdr::U8*)xim->data;
   stride = xim->bytes_per_line / (getPF().bpp/8);
-#else
-  FullFramePixelBuffer::data = (rdr::U8*)Surface::data;
-  stride = width;
-#endif
 }
 
 PlatformPixelBuffer::~PlatformPixelBuffer()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
   if (shminfo) {
     vlog.debug("Freeing shared memory XImage");
     XShmDetach(fl_display, shminfo);
@@ -80,7 +70,6 @@ PlatformPixelBuffer::~PlatformPixelBuffer()
   if (xim)
     XDestroyImage(xim);
   xim = NULL;
-#endif
 }
 
 void PlatformPixelBuffer::commitBufferRW(const rfb::Rect& r)
@@ -100,7 +89,6 @@ rfb::Rect PlatformPixelBuffer::getDamage(void)
   damage.clear();
   mutex.unlock();
 
-#if !defined(WIN32) && !defined(__APPLE__)
   GC gc;
 
   gc = XCreateGC(fl_display, pixmap, 0, NULL);
@@ -116,12 +104,10 @@ rfb::Rect PlatformPixelBuffer::getDamage(void)
               r.tl.x, r.tl.y, r.tl.x, r.tl.y, r.width(), r.height());
   }
   XFreeGC(fl_display, gc);
-#endif
 
   return r;
 }
 
-#if !defined(WIN32) && !defined(__APPLE__)
 
 static bool caughtError;
 
@@ -200,4 +186,3 @@ free_shminfo:
   return 0;
 }
 
-#endif

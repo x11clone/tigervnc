@@ -23,9 +23,7 @@
 #endif
 
 #include <assert.h>
-#ifndef _WIN32
 #include <unistd.h>
-#endif
 
 #include <rfb/CMsgWriter.h>
 #include <rfb/CSecurity.h>
@@ -50,9 +48,6 @@
 #include "parameters.h"
 #include "x11clone.h"
 
-#ifdef WIN32
-#include "win32.h"
-#endif
 
 using namespace rdr;
 using namespace rfb;

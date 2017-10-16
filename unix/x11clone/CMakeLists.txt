@@ -26,33 +26,10 @@ set(X11CLONE_SOURCES
   ../x0vncserver/qnum_to_xorgkbd.c
   x11clone.cxx)
 
-if(WIN32)
-  # Since x11clone.rc is generated, local includes will be looking
-  # in the wrong directory. We need to help it out.
-  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-  configure_file(x11clone.rc.in x11clone.rc)
-  set(X11CLONE_SOURCES
-    ${X11CLONE_SOURCES}
-    ${CMAKE_CURRENT_BINARY_DIR}/x11clone.rc)
-endif()
+set(X11CLONE_SOURCES ${X11CLONE_SOURCES} xkb_to_qnum.c)
+set(X11CLONE_SOURCES ${X11CLONE_SOURCES} Surface_X11.cxx)
 
-if(WIN32)
-  set(X11CLONE_SOURCES ${X11CLONE_SOURCES} win32.c)
-else()
-  set(X11CLONE_SOURCES ${X11CLONE_SOURCES} xkb_to_qnum.c)
-endif()
-
-if(WIN32)
-  set(X11CLONE_SOURCES ${X11CLONE_SOURCES} Surface_Win32.cxx)
-else()
-  set(X11CLONE_SOURCES ${X11CLONE_SOURCES} Surface_X11.cxx)
-endif()
-
-if(WIN32 AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-  add_executable(x11clone WIN32 ${X11CLONE_SOURCES})
-else()
-  add_executable(x11clone ${X11CLONE_SOURCES})
-endif()
+add_executable(x11clone ${X11CLONE_SOURCES})
 
 target_link_libraries(x11clone tx rfb network rdr os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
 
@@ -75,10 +52,6 @@ if(X11_FOUND AND X11_Xfixes_LIB)
   target_link_libraries(x11clone ${X11_Xfixes_LIB})
 else()
   message(WARNING "No XFIXES extension.  x11clone will not be able to show cursors.")
-endif()
-
-if(WIN32)
-  target_link_libraries(x11clone msimg32)
 endif()
 
 install(TARGETS x11clone DESTINATION ${BIN_DIR})

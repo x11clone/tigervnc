@@ -38,16 +38,8 @@
 #include <x0vncserver/XDesktop.h>
 #include <tx/TXWindow.h>
 
-#ifdef WIN32
-#include <os/winerrno.h>
-#include <direct.h>
-#define mkdir(path, mode) _mkdir(path)
-#endif
-
-#if !defined(WIN32) && !defined(__APPLE__)
 #include <X11/Xlib.h>
 #include <X11/XKBlib.h>
-#endif
 
 #include <rfb/Logger_stdio.h>
 #include <rfb/SecurityClient.h>
@@ -78,10 +70,6 @@
 #include "x11clone.h"
 #include "fltk_layout.h"
 
-#ifdef WIN32
-#include "resource.h"
-#include "win32.h"
-#endif
 
 rfb::LogWriter vlog("main");
 
@@ -233,20 +221,6 @@ static void init_fltk()
   Fl_Window::default_xclass("x11clone");
 
   // Set the default icon for all windows.
-#ifdef WIN32
-  HICON lg, sm;
-
-  lg = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON),
-                        IMAGE_ICON, GetSystemMetrics(SM_CXICON),
-                        GetSystemMetrics(SM_CYICON),
-                        LR_DEFAULTCOLOR | LR_SHARED);
-  sm = (HICON)LoadImage(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON),
-                        IMAGE_ICON, GetSystemMetrics(SM_CXSMICON),
-                        GetSystemMetrics(SM_CYSMICON),
-                        LR_DEFAULTCOLOR | LR_SHARED);
-
-  Fl_Window::default_icons(lg, sm);
-#else
   const int icon_sizes[] = {48, 32, 24, 16};
 
   Fl_PNG_Image *icons[4];
@@ -262,14 +236,8 @@ static void init_fltk()
       sprintf(icon_path, "%s/icons/hicolor/%dx%d/apps/tigervnc.png",
               DATA_DIR, icon_sizes[i], icon_sizes[i]);
 
-#ifndef WIN32
       struct stat st;
       if (stat(icon_path, &st) != 0)
-#else
-      struct _stat st;
-      if (_stat(icon_path, &st) != 0)
-          return(false);
-#endif
         exists = false;
       else
         exists = true;
@@ -291,7 +259,6 @@ static void init_fltk()
 
   for (int i = 0;i < count;i++)
       delete icons[i];
-#endif
 
   // This makes the "icon" in dialogs rounded, which fits better
   // with the above schemes.
@@ -303,10 +270,6 @@ static void init_fltk()
   // Avoid empty titles for popups
   fl_message_title_default(_("x11clone"));
 
-#ifdef WIN32
-  // Most "normal" Windows apps use this font for UI elements.
-  Fl::set_font(FL_HELVETICA, "Tahoma");
-#endif
 
   // FLTK exposes these so that we can translate them.
   fl_no     = _("No");
@@ -320,19 +283,6 @@ static void init_fltk()
 
 static void usage(const char *programName)
 {
-#ifdef WIN32
-  // If we don't have a console then we need to create one for output
-  if (GetConsoleWindow() == NULL) {
-    HANDLE handle;
-    int fd;
-
-    AllocConsole();
-
-    handle = GetStdHandle(STD_ERROR_HANDLE);
-    fd = _open_osfhandle((intptr_t)handle, O_TEXT);
-    *stderr = *fdopen(fd, "w");
-  }
-#endif
 
   fprintf(stderr,
           "\nusage: %s [parameters] [host:displayNum] [parameters]\n",
@@ -346,10 +296,6 @@ static void usage(const char *programName)
           "Parameter names are case-insensitive.  The parameters are:\n\n");
   Configuration::listParams(79, 14);
 
-#ifdef WIN32
-  // Just wait for the user to kill the console window
-  Sleep(INFINITE);
-#endif
 
   exit(1);
 }
@@ -377,11 +323,7 @@ int main(int argc, char** argv)
   bind_textdomain_codeset("libc", "UTF-8");
 
   rfb::initStdIOLoggers();
-#ifdef WIN32
-  rfb::initFileLogger("C:\\temp\\x11clone.log");
-#else
   rfb::initFileLogger("/tmp/x11clone.log");
-#endif
   rfb::LogWriter::setLogParams("*:stderr:30");
 
 #ifdef SIGHUP
@@ -392,10 +334,8 @@ int main(int argc, char** argv)
 
   init_fltk();
 
-#if !defined(WIN32) && !defined(__APPLE__)
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
-#endif
 
   int i = 1;
   if (!Fl::args(argc, argv, i) || i < argc)

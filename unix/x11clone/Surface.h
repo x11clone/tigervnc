@@ -19,11 +19,7 @@
 #ifndef __SURFACE_H__
 #define __SURFACE_H__
 
-#if defined(WIN32)
-#include <windows.h>
-#else
 #include <X11/extensions/Xrender.h>
-#endif
 
 class Fl_RGB_Image;
 
@@ -52,14 +48,9 @@ protected:
 protected:
   int w, h;
 
-#if defined(WIN32)
-  RGBQUAD* data;
-  HBITMAP bitmap;
-#else
   Pixmap pixmap;
   Picture picture;
   XRenderPictFormat* visFormat;
-#endif
 };
 
 #endif

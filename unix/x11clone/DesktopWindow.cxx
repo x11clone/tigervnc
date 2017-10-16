@@ -44,9 +44,6 @@
 #include <FL/fl_draw.H>
 #include <FL/x.H>
 
-#ifdef WIN32
-#include "win32.h"
-#endif
 
 
 #define EDGE_SCROLL_SIZE 32
@@ -132,11 +129,7 @@ DesktopWindow::DesktopWindow(int w, int h, const char *name,
     // Hack: Window managers seem to be rather crappy at respecting
     // fullscreen hints on initial windows. So on X11 we'll have to
     // wait until after we've been mapped.
-#if defined(WIN32) || defined(__APPLE__)
-    fullscreen_on();
-#else
     delayedFullscreen = true;
-#endif
   }
 
   show();
@@ -391,7 +384,6 @@ void DesktopWindow::resize(int x, int y, int w, int h)
 {
   bool resizing;
 
-#if ! (defined(WIN32) || defined(__APPLE__))
   // X11 window managers will treat a resize to cover the entire
   // monitor as a request to go full screen. Make sure we avoid this.
   if (!fullscreen_active()) {
@@ -435,7 +427,6 @@ void DesktopWindow::resize(int x, int y, int w, int h)
       }
     }
   }
-#endif
 
   if ((this->w() != w) || (this->h() != h))
     resizing = true;
@@ -501,11 +492,9 @@ void DesktopWindow::setOverlay(const char* text, ...)
   textbuf[sizeof(textbuf)-1] = '\0';
   va_end(ap);
 
-#if !defined(WIN32) && !defined(__APPLE__)
   // FLTK < 1.3.5 crashes if fl_gc is unset
   if (!fl_gc)
     fl_gc = XDefaultGC(fl_display, 0);
-#endif
 
   fl_font(FL_HELVETICA, FL_NORMAL_SIZE * 2);
   w = 0;
@@ -756,15 +745,6 @@ void DesktopWindow::grabKeyboard()
 
   // FIXME: Push this stuff into FLTK.
 
-#if defined(WIN32)
-  int ret;
-  
-  ret = win32_enable_lowlevel_keyboard(fl_xid(this));
-  if (ret != 0) {
-    vlog.error(_("Failure grabbing keyboard"));
-    return;
-  }
-#else
   int ret;
 
   ret = XGrabKeyboard(fl_display, fl_xid(this), True,
@@ -780,7 +760,6 @@ void DesktopWindow::grabKeyboard()
     }
     return;
   }
-#endif
 
   keyboardGrabbed = true;
 
@@ -797,21 +776,16 @@ void DesktopWindow::ungrabKeyboard()
 
   ungrabPointer();
 
-#if defined(WIN32)
-  win32_disable_lowlevel_keyboard(fl_xid(this));
-#else
   // FLTK has a grab so lets not mess with it
   if (Fl::grab())
     return;
 
   XUngrabKeyboard(fl_display, CurrentTime);
-#endif
 }
 
 
 void DesktopWindow::grabPointer()
 {
-#if !defined(WIN32) && !defined(__APPLE__)
   int ret;
 
   // We also need to grab the pointer as some WMs like to grab buttons
@@ -829,7 +803,6 @@ void DesktopWindow::grabPointer()
     vlog.error(_("Failure grabbing mouse"));
     return;
   }
-#endif
 
   mouseGrabbed = true;
 }
@@ -838,9 +811,7 @@ void DesktopWindow::grabPointer()
 void DesktopWindow::ungrabPointer()
 {
   mouseGrabbed = false;
-#if !defined(WIN32) && !defined(__APPLE__)
   XUngrabPointer(fl_display, fl_event_time);
-#endif
 }
 
 
@@ -862,18 +833,6 @@ void DesktopWindow::handleGrab(void *data)
 #define _NET_WM_STATE_ADD           1  /* add/set property */
 void DesktopWindow::maximizeWindow()
 {
-#if defined(WIN32)
-  // We cannot use ShowWindow() in full screen mode as it will
-  // resize things implicitly. Fortunately modifying the style
-  // directly results in a maximized state once we leave full screen.
-  if (fullscreen_active()) {
-    WINDOWINFO wi;
-    wi.cbSize = sizeof(WINDOWINFO);
-    GetWindowInfo(fl_xid(this), &wi);
-    SetWindowLongPtr(fl_xid(this), GWL_STYLE, wi.dwStyle | WS_MAXIMIZE);
-  } else
-    ShowWindow(fl_xid(this), SW_MAXIMIZE);
-#else
   // X11
   fl_open_display();
   Atom net_wm_state = XInternAtom (fl_display, "_NET_WM_STATE", 0);
@@ -891,7 +850,6 @@ void DesktopWindow::maximizeWindow()
   e.xclient.data.l[3] = 0;
   e.xclient.data.l[4] = 0;
   XSendEvent(fl_display, RootWindow(fl_display, fl_screen), 0, SubstructureNotifyMask | SubstructureRedirectMask, &e);
-#endif
 }
 
 
@@ -1286,11 +1244,9 @@ void DesktopWindow::handleStatsTimeout(void *data)
   self->statsLastPixels = pixels;
   self->statsLastPosition = pos;
 
-#if !defined(WIN32) && !defined(__APPLE__)
   // FLTK < 1.3.5 crashes if fl_gc is unset
   if (!fl_gc)
     fl_gc = XDefaultGC(fl_display, 0);
-#endif
 
   surface = new Fl_Image_Surface(statsWidth, statsHeight);
   surface->set_current();

@@ -67,13 +67,9 @@ protected:
   /* Input */
   Fl_Check_Button *viewOnlyCheckbox;
   Fl_Check_Button *acceptClipboardCheckbox;
-#if !defined(WIN32) && !defined(__APPLE__)
   Fl_Check_Button *setPrimaryCheckbox;
-#endif
   Fl_Check_Button *sendClipboardCheckbox;
-#if !defined(WIN32) && !defined(__APPLE__)
   Fl_Check_Button *sendPrimaryCheckbox;
-#endif
   Fl_Check_Button *systemKeysCheckbox;
   Fl_Choice *menuKeyChoice;
 

@@ -42,9 +42,7 @@
 #include <rfb/XF86keysym.h>
 #endif
 
-#if ! (defined(WIN32) || defined(__APPLE__))
 #include <X11/XKBlib.h>
-#endif
 
 #ifndef NoSymbol
 #define NoSymbol 0
@@ -74,7 +72,6 @@
 #include <FL/Fl_Menu.H>
 #include <FL/Fl_Menu_Button.H>
 
-#if !defined(WIN32) && !defined(__APPLE__)
 #include <X11/XKBlib.h>
 extern const struct _code_map_xkb_to_qnum {
   const char * from;
@@ -83,13 +80,6 @@ extern const struct _code_map_xkb_to_qnum {
 extern const unsigned int code_map_xkb_to_qnum_len;
 
 static int code_map_keycode_to_qnum[256];
-#endif
-
-
-#ifdef WIN32
-#include "win32.h"
-#endif
-
 
 using namespace rfb;
 using namespace rdr;
@@ -103,16 +93,12 @@ enum { ID_EXIT, ID_FULLSCREEN, ID_MINIMIZE, ID_RESIZE,
        ID_REFRESH, ID_OPTIONS, ID_INFO, ID_ABOUT, ID_DISMISS };
 
 // Used to detect fake input (0xaa is not a real key)
-#ifdef WIN32
-static const WORD SCAN_FAKE = 0xaa;
-#endif
 
 Viewport::Viewport(int w, int h, const rfb::PixelFormat& serverPF, CConn* cc_)
   : Fl_Widget(0, 0, w, h), cc(cc_), frameBuffer(NULL),
     lastPointerPos(0, 0), lastButtonMask(0),
     menuCtrlKey(false), menuAltKey(false), cursor(NULL)
 {
-#if !defined(WIN32) && !defined(__APPLE__)
   XkbDescPtr xkb;
   Status status;
 
@@ -149,7 +135,6 @@ Viewport::Viewport(int w, int h, const rfb::PixelFormat& serverPF, CConn* cc_)
   }
 
   XkbFreeKeyboard(xkb, 0, True);
-#endif
 
   Fl::add_clipboard_notify(handleClipboardChange, this);
 
@@ -287,48 +272,6 @@ void Viewport::setLEDState(unsigned int state)
   if (focus != this)
     return;
 
-#if defined(WIN32)
-  INPUT input[6];
-  UINT count;
-  UINT ret;
-
-  memset(input, 0, sizeof(input));
-  count = 0;
-
-  if (!!(state & ledCapsLock) != !!(GetKeyState(VK_CAPITAL) & 0x1)) {
-    input[count].type = input[count+1].type = INPUT_KEYBOARD;
-    input[count].ki.wVk = input[count+1].ki.wVk = VK_CAPITAL;
-    input[count].ki.wScan = input[count+1].ki.wScan = SCAN_FAKE;
-    input[count].ki.dwFlags = 0;
-    input[count+1].ki.dwFlags = KEYEVENTF_KEYUP;
-    count += 2;
-  }
-
-  if (!!(state & ledNumLock) != !!(GetKeyState(VK_NUMLOCK) & 0x1)) {
-    input[count].type = input[count+1].type = INPUT_KEYBOARD;
-    input[count].ki.wVk = input[count+1].ki.wVk = VK_NUMLOCK;
-    input[count].ki.wScan = input[count+1].ki.wScan = SCAN_FAKE;
-    input[count].ki.dwFlags = KEYEVENTF_EXTENDEDKEY;
-    input[count+1].ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY;
-    count += 2;
-  }
-
-  if (!!(state & ledScrollLock) != !!(GetKeyState(VK_SCROLL) & 0x1)) {
-    input[count].type = input[count+1].type = INPUT_KEYBOARD;
-    input[count].ki.wVk = input[count+1].ki.wVk = VK_SCROLL;
-    input[count].ki.wScan = input[count+1].ki.wScan = SCAN_FAKE;
-    input[count].ki.dwFlags = 0;
-    input[count+1].ki.dwFlags = KEYEVENTF_KEYUP;
-    count += 2;
-  }
-
-  if (count == 0)
-    return;
-
-  ret = SendInput(count, input, sizeof(*input));
-  if (ret < count)
-    vlog.error(_("Failed to update keyboard LED state: %lu"), GetLastError());
-#else
   unsigned int affect, values;
   unsigned int mask;
 
@@ -353,7 +296,6 @@ void Viewport::setLEDState(unsigned int state)
   ret = XkbLockModifiers(fl_display, XkbUseCoreKbd, affect, values);
   if (!ret)
     vlog.error(_("Failed to update keyboard LED state"));
-#endif
 }
 
 void Viewport::pushLEDState()
@@ -366,14 +308,6 @@ void Viewport::pushLEDState()
 
   state = 0;
 
-#if defined(WIN32)
-  if (GetKeyState(VK_CAPITAL) & 0x1)
-    state |= ledCapsLock;
-  if (GetKeyState(VK_NUMLOCK) & 0x1)
-    state |= ledNumLock;
-  if (GetKeyState(VK_SCROLL) & 0x1)
-    state |= ledScrollLock;
-#else
   unsigned int mask;
 
   Status status;
@@ -395,7 +329,6 @@ void Viewport::pushLEDState()
   mask = getModifierMask(XK_Scroll_Lock);
   if (xkbState.locked_mods & mask)
     state |= ledScrollLock;
-#endif
 
   if ((state & ledCapsLock) != (cc->cp.ledState() & ledCapsLock)) {
     vlog.debug("Inserting fake CapsLock to get in sync with server");
@@ -550,7 +483,6 @@ int Viewport::handle(int event)
 }
 
 
-#if ! (defined(WIN32) || defined(__APPLE__))
 unsigned int Viewport::getModifierMask(unsigned int keysym)
 {
   XkbDescPtr xkb;
@@ -595,7 +527,6 @@ out:
 
   return mask;
 }
-#endif
 
 
 void Viewport::handleClipboardChange(int source, void *data)
@@ -607,10 +538,8 @@ void Viewport::handleClipboardChange(int source, void *data)
   if (!sendClipboard)
     return;
 
-#if !defined(WIN32) && !defined(__APPLE__)
   if (!sendPrimary && (source == 0))
     return;
-#endif
 
   Fl::paste(*self, source);
 }
@@ -674,25 +603,6 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
   }
 
 
-#ifdef WIN32
-  // Ugly hack alert!
-  //
-  // Windows doesn't have a proper AltGr, but handles it using fake
-  // Ctrl+Alt. Unfortunately X11 doesn't generally like the combination
-  // Ctrl+Alt+AltGr, which we usually end up with when Xvnc tries to
-  // get everything in the correct state. Cheat and temporarily release
-  // Ctrl and Alt when we send some other symbol.
-  if (downKeySym.count(0x1d) && downKeySym.count(0xb8)) {
-    vlog.debug("Faking release of AltGr (Ctrl_L+Alt_R)");
-    try {
-      cc->writer()->keyEvent(downKeySym[0x1d], 0x1d, false);
-      cc->writer()->keyEvent(downKeySym[0xb8], 0xb8, false);
-    } catch (rdr::Exception& e) {
-      vlog.error("%s", e.str());
-      exit_x11clone(e.str());
-    }
-  }
-#endif
 
   // Because of the way keyboards work, we cannot expect to have the same
   // symbol on release as when pressed. This breaks the VNC protocol however,
@@ -700,12 +610,8 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
   // and send the same on release.
   downKeySym[keyCode] = keySym;
 
-#if defined(WIN32) || defined(__APPLE__)
-  vlog.debug("Key pressed: 0x%04x => 0x%04x", keyCode, keySym);
-#else
   vlog.debug("Key pressed: 0x%04x => XK_%s (0x%04x)",
              keyCode, XKeysymToString(keySym), keySym);
-#endif
 
   try {
     // Fake keycode?
@@ -718,19 +624,6 @@ void Viewport::handleKeyPress(int keyCode, rdr::U32 keySym)
     exit_x11clone(e.str());
   }
 
-#ifdef WIN32
-  // Ugly hack continued...
-  if (downKeySym.count(0x1d) && downKeySym.count(0xb8)) {
-    vlog.debug("Restoring AltGr state");
-    try {
-      cc->writer()->keyEvent(downKeySym[0x1d], 0x1d, true);
-      cc->writer()->keyEvent(downKeySym[0xb8], 0xb8, true);
-    } catch (rdr::Exception& e) {
-      vlog.error("%s", e.str());
-      exit_x11clone(e.str());
-    }
-  }
-#endif
 }
 
 
@@ -749,12 +642,8 @@ void Viewport::handleKeyRelease(int keyCode)
     return;
   }
 
-#if defined(WIN32) || defined(__APPLE__)
-  vlog.debug("Key released: 0x%04x => 0x%04x", keyCode, iter->second);
-#else
   vlog.debug("Key released: 0x%04x => XK_%s (0x%04x)",
              keyCode, XKeysymToString(iter->second), iter->second);
-#endif
 
   try {
     if (keyCode > 0xff)
@@ -788,94 +677,6 @@ int Viewport::handleSystemEvent(void *event, void *data)
 
   assert(event);
 
-#if defined(WIN32)
-  MSG *msg = (MSG*)event;
-
-  if ((msg->message == WM_KEYDOWN) || (msg->message == WM_SYSKEYDOWN)) {
-    UINT vKey;
-    bool isExtended;
-    int keyCode;
-    rdr::U32 keySym;
-
-    vKey = msg->wParam;
-    isExtended = (msg->lParam & (1 << 24)) != 0;
-
-    keyCode = ((msg->lParam >> 16) & 0xff);
-
-    if (keyCode == SCAN_FAKE) {
-      vlog.debug("Ignoring fake key press (virtual key 0x%02x)", vKey);
-      return 1;
-    }
-
-    // Windows sets the scan code to 0x00 for multimedia keys, so we
-    // have to do a reverse lookup based on the vKey.
-    if (keyCode == 0x00) {
-      keyCode = MapVirtualKey(vKey, MAPVK_VK_TO_VSC);
-      if (keyCode == 0x00) {
-        if (isExtended)
-          vlog.error(_("No scan code for extended virtual key 0x%02x"), (int)vKey);
-        else
-          vlog.error(_("No scan code for virtual key 0x%02x"), (int)vKey);
-        return 1;
-      }
-    }
-
-    if (keyCode & ~0x7f) {
-      vlog.error(_("Invalid scan code 0x%02x"), (int)keyCode);
-      return 1;
-    }
-
-    if (isExtended)
-      keyCode |= 0x80;
-
-    // VK_SNAPSHOT sends different scan codes depending on the state of
-    // Alt. This means that we can get different scan codes on press and
-    // release. Force it to be something standard.
-    if (vKey == VK_SNAPSHOT)
-      keyCode = 0x54;
-
-    keySym = win32_vkey_to_keysym(vKey, isExtended);
-    if (keySym == NoSymbol) {
-      if (isExtended)
-        vlog.error(_("No symbol for extended virtual key 0x%02x"), (int)vKey);
-      else
-        vlog.error(_("No symbol for virtual key 0x%02x"), (int)vKey);
-    }
-
-    // Fortunately RFB and Windows use the same scan code set,
-    // so there is no conversion needed
-    // (as long as we encode the extended keys with the high bit)
-
-    self->handleKeyPress(keyCode, keySym);
-
-    return 1;
-  } else if ((msg->message == WM_KEYUP) || (msg->message == WM_SYSKEYUP)) {
-    UINT vKey;
-    bool isExtended;
-    int keyCode;
-
-    vKey = msg->wParam;
-    isExtended = (msg->lParam & (1 << 24)) != 0;
-
-    keyCode = ((msg->lParam >> 16) & 0xff);
-
-    if (keyCode == SCAN_FAKE) {
-      vlog.debug("Ignoring fake key release (virtual key 0x%02x)", vKey);
-      return 1;
-    }
-
-    if (keyCode == 0x00)
-      keyCode = MapVirtualKey(vKey, MAPVK_VK_TO_VSC);
-    if (isExtended)
-      keyCode |= 0x80;
-    if (vKey == VK_SNAPSHOT)
-      keyCode = 0x54;
-
-    self->handleKeyRelease(keyCode);
-
-    return 1;
-  }
-#else
   XEvent *xevent = (XEvent*)event;
 
   if (xevent->type == KeyPress) {
@@ -922,7 +723,6 @@ int Viewport::handleSystemEvent(void *event, void *data)
     self->handleKeyRelease(keycode);
     return 1;
   }
-#endif
 
   return 0;
 }
