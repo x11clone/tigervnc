@@ -88,7 +88,7 @@ BoolParameter sendClipboard("SendClipboard",
                             "Send clipboard changes to parent display", true);
 BoolParameter sendPrimary("SendPrimary",
                           "Send the primary selection to the "
-                          "arent display as well as the clipboard selection",
+                          "parent display as well as the clipboard selection",
                           true);
 
 StringParameter menuKey("MenuKey", "The key which brings up the popup menu",
