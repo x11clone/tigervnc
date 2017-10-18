@@ -332,7 +332,7 @@ int main(int argc, char** argv)
 
   rfb::initStdIOLoggers();
   rfb::initFileLogger("/tmp/x11clone.log");
-  rfb::LogWriter::setLogParams("*:stderr:30");
+  logParams.setDefault("*:stderr:20,XDesktop:stderr:30,CConn:stderr:30");
 
 #ifdef SIGHUP
   signal(SIGHUP, CleanupSignalHandler);
