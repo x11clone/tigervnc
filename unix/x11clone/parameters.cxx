@@ -66,12 +66,12 @@ BoolParameter fullScreenAllMonitors("FullScreenAllMonitors",
 StringParameter desktopSize("DesktopSize",
                             "Reconfigure desktop size on parent display on "
                             "connect (if possible)", "");
-StringParameter geometry("geometry",
-                         "Specify size and position of window", "");
+StringParameter cloneGeometry("CloneGeometry",
+                         "Specify size and position of clone window", "");
 
 BoolParameter remoteResize("ParentResize",
                            "Dynamically resize the parent display as "
-                           "the size of the viewer window changes.", true);
+                           "the size of the clone window changes.", true);
 
 BoolParameter viewOnly("ViewOnly",
                        "Don't send any mouse or keyboard events to parent display",

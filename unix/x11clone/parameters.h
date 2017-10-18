@@ -29,7 +29,7 @@ extern rfb::BoolParameter maximize;
 extern rfb::BoolParameter fullScreen;
 extern rfb::BoolParameter fullScreenAllMonitors;
 extern rfb::StringParameter desktopSize;
-extern rfb::StringParameter geometry;
+extern rfb::StringParameter cloneGeometry;
 extern rfb::BoolParameter remoteResize;
 
 extern rfb::BoolParameter viewOnly;

@@ -356,9 +356,7 @@ int main(int argc, char** argv)
   setRemoveParam("NeverShared", NULL);
   setRemoveParam("AlwaysShared", NULL);
   setRemoveParam("Protocol3.3", NULL);
-  // FIXME: bad description: FrameRate
   setRemoveParam("compareFB", "0");
-  // FIXME: bad description: ClientWaitTimeMillis
   setRemoveParam("ClientWaitTimeMillis", NULL);
   setRemoveParam("MaxConnectionTime", NULL);
   setRemoveParam("MaxDisconnectionTime", NULL);
@@ -367,10 +365,25 @@ int main(int argc, char** argv)
   setRemoveParam("BlacklistTimeout", NULL);
   setRemoveParam("BlacklistThreshold", NULL);
   setRemoveParam("PlainUsers", NULL);
-  // FIXME: bad description: Geometry
-  // FIXME: Collision: geometry
   setRemoveParam("DotWhenNoCursor", "1");
   setRemoveParam("PointerEventInterval", NULL);
+
+  // New description for "FrameRate"
+  if (VoidParameter *p = Configuration::getParam("FrameRate")) {
+      setRemoveParam("FrameRate", NULL);
+      new AliasParameter("FrameRate",
+			 "The maximum number of updates per second", p);
+  }
+  // New name and description for server side "Geometry"
+  if (VoidParameter *p = Configuration::getParam("Geometry")) {
+      setRemoveParam("Geometry", NULL);
+      new AliasParameter("ParentGeometry",
+			 "Parent screen area to show. "
+			 "Format is <width>x<height>+<offset_x>+<offset_y>, "
+			 "more information in man X, section GEOMETRY SPECIFICATIONS. "
+			 "If the argument is empty, the entire screen shown.",
+			 p);
+  }
 
   int i = 1;
   if (!Fl::args(argc, argv, i) || i < argc)
