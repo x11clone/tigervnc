@@ -300,6 +300,14 @@ static void usage(const char *programName)
   exit(1);
 }
 
+static void setRemoveParam(const char* param, const char* value)
+{
+    if (value) {
+	Configuration::setParam(param, value);
+    }
+    Configuration::removeParam(param);
+}
+
 int main(int argc, char** argv)
 {
   UserDialog dlg;
@@ -336,6 +344,33 @@ int main(int argc, char** argv)
 
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
+
+  setRemoveParam("ZlibLevel", NULL);
+  setRemoveParam("QueryConnect", NULL);
+  setRemoveParam("AcceptSetDesktopSize", NULL);
+  setRemoveParam("SendCutText", NULL);
+  setRemoveParam("AcceptCutText", NULL);
+  setRemoveParam("AcceptPointerEvents", NULL);
+  setRemoveParam("AcceptKeyEvents", NULL);
+  setRemoveParam("DisconnectClients", NULL);
+  setRemoveParam("NeverShared", NULL);
+  setRemoveParam("AlwaysShared", NULL);
+  setRemoveParam("Protocol3.3", NULL);
+  // FIXME: bad description: FrameRate
+  setRemoveParam("compareFB", "0");
+  // FIXME: bad description: ClientWaitTimeMillis
+  setRemoveParam("ClientWaitTimeMillis", NULL);
+  setRemoveParam("MaxConnectionTime", NULL);
+  setRemoveParam("MaxDisconnectionTime", NULL);
+  setRemoveParam("IdleTimeout", NULL);
+  setRemoveParam("ImprovedHextile", NULL);
+  setRemoveParam("BlacklistTimeout", NULL);
+  setRemoveParam("BlacklistThreshold", NULL);
+  setRemoveParam("PlainUsers", NULL);
+  // FIXME: bad description: Geometry
+  // FIXME: Collision: geometry
+  setRemoveParam("DotWhenNoCursor", "1");
+  setRemoveParam("PointerEventInterval", NULL);
 
   int i = 1;
   if (!Fl::args(argc, argv, i) || i < argc)
