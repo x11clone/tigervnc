@@ -71,7 +71,7 @@ StringParameter geometry("geometry",
 
 BoolParameter remoteResize("ParentResize",
                            "Dynamically resize the parent display as "
-                           "the size of the local client window changes.", true);
+                           "the size of the viewer window changes.", true);
 
 BoolParameter viewOnly("ViewOnly",
                        "Don't send any mouse or keyboard events to parent display",
