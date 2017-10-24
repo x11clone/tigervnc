@@ -1,6 +1,7 @@
 /* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
  * Copyright 2011 Pierre Ossman <ossman@cendio.se> for Cendio AB
  * Copyright (C) 2011 D. R. Commander.  All Rights Reserved.
+ * Copyright 2017 Peter Astrand <astrand@cendio.se> for Cendio AB
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,6 +102,7 @@ static const char *about_text()
   snprintf(buffer, sizeof(buffer),
            _("x11clone %d-bit v%s\n"
              "Built on: %s\n"
+             "Copyright 2017 Peter Astrand for Cendio AB\n"
              "Copyright (C) 1999-%d TigerVNC Team and many others (see README.rst)\n"
              "See http://www.tigervnc.org for information on TigerVNC."),
            (int)sizeof(size_t)*8, PACKAGE_VERSION,
