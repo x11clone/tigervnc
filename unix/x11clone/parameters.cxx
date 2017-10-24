@@ -108,5 +108,5 @@ IntParameter maxProcessorUsage("MaxProcessorUsage", "Maximum percentage of "
 BoolParameter rawKeyboard("RawKeyboard",
                           "Send keyboard events straight through and "
                           "avoid mapping them to the current keyboard "
-                          "layout", false);
+                          "layout", true);
 
