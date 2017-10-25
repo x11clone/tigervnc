@@ -60,7 +60,7 @@
 #include "vncviewer/i18n.h"
 #include "vncviewer/fltk_layout.h"
 #include "parameters.h"
-#include "menukey.h"
+#include "../../vncviewer/menukey.h"
 #include "x11clone.h"
 
 #include "PlatformPixelBuffer.h"

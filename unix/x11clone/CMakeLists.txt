@@ -4,7 +4,7 @@ include_directories(${GETTEXT_INCLUDE_DIR})
 include_directories(${CMAKE_SOURCE_DIR}/unix)
 include_directories(${CMAKE_SOURCE_DIR}/common)
 set(X11CLONE_SOURCES
-  menukey.cxx
+  ../../vncviewer/menukey.cxx
   CConn.cxx
   DesktopWindow.cxx
   UserDialog.cxx

@@ -29,7 +29,7 @@
 #include "OptionsDialog.h"
 #include "vncviewer/fltk_layout.h"
 #include "vncviewer/i18n.h"
-#include "menukey.h"
+#include "../../vncviewer/menukey.h"
 #include "parameters.h"
 
 #include <FL/Fl_Tabs.H>
