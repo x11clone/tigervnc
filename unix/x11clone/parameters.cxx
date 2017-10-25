@@ -22,6 +22,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_GNUTLS
+#include <rfb/CSecurityTLS.h>
+#endif
+
 #include "parameters.h"
 
 #include <os/os.h>
