@@ -63,7 +63,7 @@
 #include <FL/fl_ask.H>
 #include <FL/x.H>
 
-#include "i18n.h"
+#include "vncviewer/i18n.h"
 #include "parameters.h"
 #include "CConn.h"
 #include "ServerDialog.h"

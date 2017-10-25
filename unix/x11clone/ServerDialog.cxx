@@ -33,7 +33,7 @@
 #include "ServerDialog.h"
 #include "OptionsDialog.h"
 #include "vncviewer/fltk_layout.h"
-#include "i18n.h"
+#include "vncviewer/i18n.h"
 #include "x11clone.h"
 #include "parameters.h"
 #include "rfb/Exception.h"

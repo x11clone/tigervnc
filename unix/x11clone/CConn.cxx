@@ -45,7 +45,7 @@
 #include "OptionsDialog.h"
 #include "DesktopWindow.h"
 #include "PlatformPixelBuffer.h"
-#include "i18n.h"
+#include "vncviewer/i18n.h"
 #include "parameters.h"
 #include "x11clone.h"
 

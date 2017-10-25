@@ -40,7 +40,7 @@
 #include <limits.h>
 #include <errno.h>
 
-#include "i18n.h"
+#include "vncviewer/i18n.h"
 
 using namespace rfb;
 

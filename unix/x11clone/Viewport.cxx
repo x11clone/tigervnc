@@ -57,7 +57,7 @@
 #include "CConn.h"
 #include "OptionsDialog.h"
 #include "DesktopWindow.h"
-#include "i18n.h"
+#include "vncviewer/i18n.h"
 #include "vncviewer/fltk_layout.h"
 #include "parameters.h"
 #include "keysym2ucs.h"
