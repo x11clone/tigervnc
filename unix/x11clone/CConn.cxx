@@ -116,7 +116,6 @@ const char *CConn::connectionInfo()
   static char infoText[1024] = "";
 
   char scratch[100];
-  char pfStr[100];
 
   // Crude way of avoiding constant overflow checks
   assert((sizeof(scratch) + 1) * 10 < sizeof(infoText));
@@ -124,42 +123,12 @@ const char *CConn::connectionInfo()
   infoText[0] = '\0';
 
   snprintf(scratch, sizeof(scratch),
-           _("Desktop name: %.80s"), cp.name());
+           _("Parent display: %.80s"), cp.name());
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 
   snprintf(scratch, sizeof(scratch),
            _("Size: %d x %d"), cp.width, cp.height);
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  // TRANSLATORS: Will be filled in with a string describing the
-  // protocol pixel format in a fairly language neutral way
-  cp.pf().print(pfStr, 100);
-  snprintf(scratch, sizeof(scratch),
-           _("Pixel format: %s"), pfStr);
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  // TRANSLATORS: Similar to the earlier "Pixel format" string
-  serverPF.print(pfStr, 100);
-  snprintf(scratch, sizeof(scratch),
-           _("(server default %s)"), pfStr);
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  snprintf(scratch, sizeof(scratch),
-           _("Last used encoding: %s"), encodingName(lastServerEncoding));
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  snprintf(scratch, sizeof(scratch),
-           _("Line speed estimate: %d kbit/s"), sock->inStream().kbitsPerSecond());
-  strcat(infoText, scratch);
-  strcat(infoText, "\n");
-
-  snprintf(scratch, sizeof(scratch),
-           _("Protocol version: %d.%d"), cp.majorVersion, cp.minorVersion);
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 
