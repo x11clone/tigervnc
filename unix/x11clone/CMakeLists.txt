@@ -14,7 +14,7 @@ set(X11CLONE_SOURCES
   PlatformPixelBuffer.cxx
   Viewport.cxx
   parameters.cxx
-  keysym2ucs.c
+  ../../vncviewer/xkb_to_qnum.c
   ../x0vncserver/Geometry.cxx
   ../x0vncserver/XDesktop.cxx
   ../x0vncserver/Image.cxx
@@ -26,7 +26,6 @@ set(X11CLONE_SOURCES
   ../x0vncserver/qnum_to_xorgkbd.c
   x11clone.cxx)
 
-set(X11CLONE_SOURCES ${X11CLONE_SOURCES} xkb_to_qnum.c)
 set(X11CLONE_SOURCES ${X11CLONE_SOURCES} Surface_X11.cxx)
 
 add_executable(x11clone ${X11CLONE_SOURCES})

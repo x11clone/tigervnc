@@ -60,7 +60,6 @@
 #include "vncviewer/i18n.h"
 #include "vncviewer/fltk_layout.h"
 #include "parameters.h"
-#include "keysym2ucs.h"
 #include "menukey.h"
 #include "x11clone.h"
 
