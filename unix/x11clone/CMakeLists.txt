@@ -9,9 +9,10 @@ set(X11CLONE_SOURCES
   DesktopWindow.cxx
   UserDialog.cxx
   ServerDialog.cxx
-  Surface.cxx
   OptionsDialog.cxx
-  PlatformPixelBuffer.cxx
+  ../../vncviewer/Surface.cxx
+  ../../vncviewer/Surface_X11.cxx
+  ../../vncviewer/PlatformPixelBuffer.cxx
   Viewport.cxx
   parameters.cxx
   ../../vncviewer/xkb_to_qnum.c
@@ -25,8 +26,6 @@ set(X11CLONE_SOURCES
   ../x0vncserver/qnum_to_xorgevdev.c
   ../x0vncserver/qnum_to_xorgkbd.c
   x11clone.cxx)
-
-set(X11CLONE_SOURCES ${X11CLONE_SOURCES} Surface_X11.cxx)
 
 add_executable(x11clone ${X11CLONE_SOURCES})
 

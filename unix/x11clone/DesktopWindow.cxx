@@ -35,7 +35,7 @@
 #include "parameters.h"
 #include "x11clone.h"
 #include "CConn.h"
-#include "Surface.h"
+#include "../../vncviewer/Surface.h"
 #include "Viewport.h"
 
 #include <FL/Fl.H>

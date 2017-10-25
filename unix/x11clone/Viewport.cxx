@@ -63,7 +63,7 @@
 #include "../../vncviewer/menukey.h"
 #include "x11clone.h"
 
-#include "PlatformPixelBuffer.h"
+#include "../../vncviewer/PlatformPixelBuffer.h"
 
 #include <FL/fl_draw.H>
 #include <FL/fl_ask.H>
