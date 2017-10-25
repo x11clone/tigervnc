@@ -46,9 +46,6 @@
 #include <rfb/SecurityClient.h>
 #include <rfb/SecurityServer.h>
 #include <rfb/Security.h>
-#ifdef HAVE_GNUTLS
-#include <rfb/CSecurityTLS.h>
-#endif
 #include <rfb/LogWriter.h>
 #include <rfb/Timer.h>
 #include <rfb/Exception.h>
@@ -461,9 +458,6 @@ int main(int argc, char** argv)
 
   /* RFB client */
   CSecurity::upg = &dlg;
-#ifdef HAVE_GNUTLS
-  CSecurityTLS::msg = &dlg;
-#endif
 
   UnixSocket *clientsocket = new UnixSocket(pairfds[0]);
   CConn *cc = new CConn(clientsocket);
