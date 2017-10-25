@@ -27,7 +27,7 @@
 #include <rdr/types.h>
 
 #include "OptionsDialog.h"
-#include "fltk_layout.h"
+#include "vncviewer/fltk_layout.h"
 #include "i18n.h"
 #include "menukey.h"
 #include "parameters.h"

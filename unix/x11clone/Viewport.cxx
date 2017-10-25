@@ -58,7 +58,7 @@
 #include "OptionsDialog.h"
 #include "DesktopWindow.h"
 #include "i18n.h"
-#include "fltk_layout.h"
+#include "vncviewer/fltk_layout.h"
 #include "parameters.h"
 #include "keysym2ucs.h"
 #include "menukey.h"

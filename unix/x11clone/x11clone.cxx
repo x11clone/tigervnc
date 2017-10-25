@@ -69,7 +69,7 @@
 #include "ServerDialog.h"
 #include "UserDialog.h"
 #include "x11clone.h"
-#include "fltk_layout.h"
+#include "vncviewer/fltk_layout.h"
 
 
 rfb::LogWriter vlog("main");
