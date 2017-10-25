@@ -48,11 +48,6 @@
 #define NoSymbol 0
 #endif
 
-// Missing in at least some versions of MinGW
-#ifndef MAPVK_VK_TO_VSC
-#define MAPVK_VK_TO_VSC 0
-#endif
-
 #include "Viewport.h"
 #include "CConn.h"
 #include "OptionsDialog.h"
@@ -62,7 +57,6 @@
 #include "parameters.h"
 #include "../../vncviewer/menukey.h"
 #include "x11clone.h"
-
 #include "../../vncviewer/PlatformPixelBuffer.h"
 
 #include <FL/fl_draw.H>
@@ -90,8 +84,6 @@ static rfb::LogWriter vlog("Viewport");
 enum { ID_EXIT, ID_FULLSCREEN, ID_MINIMIZE, ID_RESIZE,
        ID_CTRL, ID_ALT, ID_MENUKEY, ID_CTRLALTDEL,
        ID_REFRESH, ID_OPTIONS, ID_INFO, ID_ABOUT, ID_DISMISS };
-
-// Used to detect fake input (0xaa is not a real key)
 
 Viewport::Viewport(int w, int h, const rfb::PixelFormat& serverPF, CConn* cc_)
   : Fl_Widget(0, 0, w, h), cc(cc_), frameBuffer(NULL),
