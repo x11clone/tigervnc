@@ -90,19 +90,19 @@ DesktopWindow::DesktopWindow(int w, int h, const char *name,
   // Hack. See below...
   Fl::event_dispatch(&fltkHandle);
 
-  // Support for -cloneGeometry option. Note that although we do support
+  // Support for -ClientGeometry option. Note that although we do support
   // negative coordinates, we do not support -XOFF-YOFF (ie
   // coordinates relative to the right edge / bottom edge) at this
   // time.
   int geom_x = 0, geom_y = 0;
-  if (strcmp(cloneGeometry, "") != 0) {
+  if (strcmp(clientGeometry, "") != 0) {
     int matched;
-    matched = sscanf(cloneGeometry.getValueStr(), "+%d+%d", &geom_x, &geom_y);
+    matched = sscanf(clientGeometry.getValueStr(), "+%d+%d", &geom_x, &geom_y);
     if (matched == 2) {
       force_position(1);
     } else {
       int geom_w, geom_h;
-      matched = sscanf(cloneGeometry.getValueStr(), "%dx%d+%d+%d", &geom_w, &geom_h, &geom_x, &geom_y);
+      matched = sscanf(clientGeometry.getValueStr(), "%dx%d+%d+%d", &geom_w, &geom_h, &geom_x, &geom_y);
       switch (matched) {
       case 4:
         force_position(1);
@@ -113,7 +113,7 @@ DesktopWindow::DesktopWindow(int w, int h, const char *name,
         break;
       default:
         geom_x = geom_y = 0;
-        vlog.error(_("Invalid cloneGeometry specified!"));
+        vlog.error(_("Invalid clientGeometry specified!"));
       }
     }
   }

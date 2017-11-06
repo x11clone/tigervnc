@@ -64,30 +64,30 @@ BoolParameter fullScreenAllMonitors("FullScreenAllMonitors",
                                     "Enable full screen over all monitors",
                                     true);
 StringParameter desktopSize("DesktopSize",
-                            "Reconfigure desktop size on parent display on "
+                            "Reconfigure server display desktop size on "
                             "connect (if possible)", "");
-StringParameter cloneGeometry("CloneGeometry",
-                         "Specify size and position of clone window", "");
+StringParameter clientGeometry("ClientGeometry",
+			       "Specify size and position of client window", "");
 
-BoolParameter remoteResize("ParentResize",
-                           "Dynamically resize the parent display as "
-                           "the size of the clone window changes.", true);
+BoolParameter remoteResize("ServerResize",
+                           "Dynamically resize the server display as "
+                           "the size of the client window changes. ", true);
 
 BoolParameter viewOnly("ViewOnly",
-                       "Don't send any mouse or keyboard events to parent display",
+                       "Don't send any mouse or keyboard events to the server",
                        false);
 
 BoolParameter acceptClipboard("AcceptClipboard",
-                              "Accept clipboard changes from parent display",
+                              "Accept clipboard changes from the server",
                               true);
 BoolParameter setPrimary("SetPrimary",
                          "Set the primary selection as well as the "
                          "clipboard selection", true);
 BoolParameter sendClipboard("SendClipboard",
-                            "Send clipboard changes to parent display", true);
+                            "Send clipboard changes to the server", true);
 BoolParameter sendPrimary("SendPrimary",
                           "Send the primary selection to the "
-                          "parent display as well as the clipboard selection",
+                          "server as well as the clipboard selection",
                           true);
 
 StringParameter menuKey("MenuKey", "The key which brings up the popup menu",
@@ -95,10 +95,10 @@ StringParameter menuKey("MenuKey", "The key which brings up the popup menu",
 
 BoolParameter fullscreenSystemKeys("FullscreenSystemKeys",
                                    "Pass special keys (like Alt+Tab) directly "
-                                   "to the parent display when in full screen mode.",
+                                   "to the server when in full screen mode.",
                                    true);
 
-StringParameter parentDisplay("ParentDisplay", "The X display to clone", "");
+StringParameter serverDisplay("ServerDisplay", "The X display to clone", "");
 BoolParameter useShm("UseSHM", "Use MIT-SHM extension if available", true);
 IntParameter pollingCycle("PollingCycle", "Milliseconds per one polling "
                           "cycle; actual interval may be dynamically "

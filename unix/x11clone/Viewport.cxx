@@ -730,7 +730,7 @@ void Viewport::initContextMenu()
                 FL_MENU_TOGGLE | (window()->fullscreen_active()?FL_MENU_VALUE:0));
   fltk_menu_add(contextMenu, p_("ContextMenu|", "Minimi&ze"),
                 0, NULL, (void*)ID_MINIMIZE, 0);
-  fltk_menu_add(contextMenu, p_("ContextMenu|", "Resize &window to parent display"),
+  fltk_menu_add(contextMenu, p_("ContextMenu|", "Resize &window to server display"),
                 0, NULL, (void*)ID_RESIZE,
                 (window()->fullscreen_active()?FL_MENU_INACTIVE:0) |
                 FL_MENU_DIVIDER);

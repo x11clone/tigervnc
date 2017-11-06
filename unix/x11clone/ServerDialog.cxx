@@ -46,12 +46,12 @@ ServerDialog::ServerDialog()
   Fl_Box *divider;
 
   int margin = 20;
-  int server_label_width = gui_str_len(_("Parent display: "));
+  int server_label_width = gui_str_len(_("Server display: "));
 
   x = margin + server_label_width;
   y = margin;
   
-  serverName = new Fl_Input(x, y, w() - margin*2 - server_label_width, INPUT_HEIGHT, _("Parent display: "));
+  serverName = new Fl_Input(x, y, w() - margin*2 - server_label_width, INPUT_HEIGHT, _("Server display: "));
 
   int adjust = (w() - 20) / 4;
   int button_width = adjust - margin/2;

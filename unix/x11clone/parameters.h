@@ -29,7 +29,7 @@ extern rfb::BoolParameter maximize;
 extern rfb::BoolParameter fullScreen;
 extern rfb::BoolParameter fullScreenAllMonitors;
 extern rfb::StringParameter desktopSize;
-extern rfb::StringParameter cloneGeometry;
+extern rfb::StringParameter clientGeometry;
 extern rfb::BoolParameter remoteResize;
 
 extern rfb::BoolParameter viewOnly;
@@ -44,7 +44,7 @@ extern rfb::StringParameter menuKey;
 extern rfb::BoolParameter fullscreenSystemKeys;
 extern rfb::BoolParameter alertOnFatalError;
 
-extern rfb::StringParameter parentDisplay;
+extern rfb::StringParameter serverDisplay;
 extern rfb::BoolParameter useShm;
 
 extern rfb::IntParameter pollingCycle;

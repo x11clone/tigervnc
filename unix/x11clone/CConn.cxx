@@ -123,7 +123,7 @@ const char *CConn::connectionInfo()
   infoText[0] = '\0';
 
   snprintf(scratch, sizeof(scratch),
-           _("Parent display: %.80s"), cp.name());
+           _("Server display: %.80s"), cp.name());
   strcat(infoText, scratch);
   strcat(infoText, "\n");
 

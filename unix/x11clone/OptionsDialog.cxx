@@ -229,7 +229,7 @@ void OptionsDialog::createInputPage(int tx, int ty, int tw, int th)
   acceptClipboardCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                          CHECK_MIN_WIDTH,
                                                          CHECK_HEIGHT,
-                                                         _("Accept clipboard from parent display")));
+                                                         _("Accept clipboard from server")));
   acceptClipboardCheckbox->callback(handleClipboard, this);
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
@@ -242,7 +242,7 @@ void OptionsDialog::createInputPage(int tx, int ty, int tw, int th)
   sendClipboardCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                        CHECK_MIN_WIDTH,
                                                        CHECK_HEIGHT,
-                                                       _("Send clipboard to parent display")));
+                                                       _("Send clipboard to server")));
   sendClipboardCheckbox->callback(handleClipboard, this);
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
@@ -255,7 +255,7 @@ void OptionsDialog::createInputPage(int tx, int ty, int tw, int th)
   systemKeysCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                     CHECK_MIN_WIDTH,
                                                     CHECK_HEIGHT,
-                                                    _("Pass system keys directly to parent display (full screen)")));
+                                                    _("Pass system keys directly to server (full screen)")));
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   menuKeyChoice = new Fl_Choice(LBLLEFT(tx, ty, 150, CHOICE_HEIGHT, _("Menu key")));
@@ -282,7 +282,7 @@ void OptionsDialog::createScreenPage(int tx, int ty, int tw, int th)
   desktopSizeCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                      CHECK_MIN_WIDTH,
                                                      CHECK_HEIGHT,
-                                                     _("Resize parent display on connect")));
+                                                     _("Resize server display on connect")));
   desktopSizeCheckbox->callback(handleDesktopSize, this);
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
@@ -295,7 +295,7 @@ void OptionsDialog::createScreenPage(int tx, int ty, int tw, int th)
   remoteResizeCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                       CHECK_MIN_WIDTH,
                                                       CHECK_HEIGHT,
-                                                      _("Resize parent display to the local window")));
+                                                      _("Resize server display to the local window")));
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   fullScreenCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,

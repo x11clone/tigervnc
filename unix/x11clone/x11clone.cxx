@@ -78,7 +78,7 @@ using namespace network;
 using namespace rfb;
 using namespace std;
 
-static Display* parentDpy = NULL;
+static Display* serverDpy = NULL;
 
 char serverName[SERVERNAMELEN] = { '\0' };
 
@@ -132,11 +132,11 @@ void about_x11clone()
   fl_message("%s", about_text());
 }
 
-void parentDpyEvent(FL_SOCKET fd, void *data)
+void serverDpyEvent(FL_SOCKET fd, void *data)
 {
   Display *dpy = (Display*)data;
 
-  //fprintf(stderr, "parentDpyEvent\n");
+  //fprintf(stderr, "serverDpyEvent\n");
   TXWindow::handleXEvents(dpy);
 }
 
@@ -156,9 +156,9 @@ void serverWriteEvent(FL_SOCKET fd, void *data)
 
 void run_mainloop()
 {
-  // The parentDpy fd is only selected for read, so flush anything in
+  // The serverDpy fd is only selected for read, so flush anything in
   // the output buffer first
-  XFlush(parentDpy);
+  XFlush(serverDpy);
 
   int next_timer = 0;
 
@@ -370,17 +370,11 @@ int main(int argc, char** argv)
   setRemoveParam("DotWhenNoCursor", "1");
   setRemoveParam("PointerEventInterval", NULL);
 
-  // New description for "FrameRate"
-  if (VoidParameter *p = Configuration::getParam("FrameRate")) {
-      setRemoveParam("FrameRate", NULL);
-      new AliasParameter("FrameRate",
-			 "The maximum number of updates per second", p);
-  }
   // New name and description for server side "Geometry"
   if (VoidParameter *p = Configuration::getParam("Geometry")) {
       setRemoveParam("Geometry", NULL);
-      new AliasParameter("ParentGeometry",
-			 "Parent screen area to show. "
+      new AliasParameter("ServerGeometry",
+			 "Server display screen area to show. "
 			 "Format is <width>x<height>+<offset_x>+<offset_y>, "
 			 "more information in man X, section GEOMETRY SPECIFICATIONS. "
 			 "If the argument is empty, the entire screen shown.",
@@ -405,7 +399,7 @@ int main(int argc, char** argv)
 
     }
 
-  const char *s = parentDisplay.getData();
+  const char *s = serverDisplay.getData();
   strncpy(serverName, s, SERVERNAMELEN);
   serverName[SERVERNAMELEN - 1] = '\0';
   delete s;
@@ -416,22 +410,22 @@ int main(int argc, char** argv)
       return 1;
   }
 
-  /* RFB server - connect to parent display */
-  if (!(parentDpy = XOpenDisplay(serverName))) {
+  /* RFB server - connect to server display */
+  if (!(serverDpy = XOpenDisplay(serverName))) {
     // FIXME: Why not vlog.error(...)?
     fprintf(stderr,"%s: unable to open display \"%s\"\r\n",
 	    "x11clone", serverName);
     return 1;
   }
-  TXWindow::init(parentDpy, "x11clone");
-  Geometry geo(DisplayWidth(parentDpy, DefaultScreen(parentDpy)),
-	       DisplayHeight(parentDpy, DefaultScreen(parentDpy)));
+  TXWindow::init(serverDpy, "x11clone");
+  Geometry geo(DisplayWidth(serverDpy, DefaultScreen(serverDpy)),
+	       DisplayHeight(serverDpy, DefaultScreen(serverDpy)));
   if (geo.getRect().is_empty()) {
     vlog.error("Exiting with error");
     return 1;
   }
   try {
-    desktop = new XDesktop(parentDpy, &geo);
+    desktop = new XDesktop(serverDpy, &geo);
     server = new VNCServerST(serverName, desktop);
   } catch (rdr::Exception &e) {
     vlog.error("%s", e.str());
@@ -450,12 +444,12 @@ int main(int argc, char** argv)
 
   sconnection = (VNCSConnectionST*)server->getSConnection(&serversocket);
 
-  Fl::add_fd(ConnectionNumber(parentDpy), FL_READ, parentDpyEvent, parentDpy);
+  Fl::add_fd(ConnectionNumber(serverDpy), FL_READ, serverDpyEvent, serverDpy);
   Fl::add_fd(serversocket.getFd(), FL_READ, serverReadEvent, sconnection);
-  TXWindow::handleXEvents(parentDpy);
+  TXWindow::handleXEvents(serverDpy);
 
-  //fprintf(stderr, "FDs: parentDpy=%d, server=%d, client=%d\n",
-  //ConnectionNumber(parentDpy), pairfds[1], pairfds[0]);
+  //fprintf(stderr, "FDs: serverDpy=%d, server=%d, client=%d\n",
+  //ConnectionNumber(serverDpy), pairfds[1], pairfds[0]);
 
   sched = new PollingScheduler((int)pollingCycle, (int)maxProcessorUsage);
 
