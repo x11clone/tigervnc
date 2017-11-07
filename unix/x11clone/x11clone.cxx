@@ -270,7 +270,7 @@ static void init_fltk()
   fl_message_hotspot(false);
 
   // Avoid empty titles for popups
-  fl_message_title_default(_("x11clone"));
+  fl_message_title_default("x11clone");
 
 
   // FLTK exposes these so that we can translate them.
