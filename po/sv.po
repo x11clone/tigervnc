@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tigervnc 1.7.90\n"
 "Report-Msgid-Bugs-To: tigervnc-devel@googlegroups.com\n"
-"POT-Creation-Date: 2017-04-19 13:05+0000\n"
+"POT-Creation-Date: 2017-11-07 13:25+0000\n"
 "PO-Revision-Date: 2017-05-13 13:59+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -21,131 +21,127 @@ msgstr ""
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: vncviewer/CConn.cxx:110
+#: vncviewer/CConn.cxx:112
 #, c-format
 msgid "connected to host %s port %d"
 msgstr "ansluten till värd %s port %d"
 
-#: vncviewer/CConn.cxx:169
+#: vncviewer/CConn.cxx:172
 #, c-format
 msgid "Desktop name: %.80s"
 msgstr "Skrivbordsnamn: %.80s"
 
-#: vncviewer/CConn.cxx:174
+#: vncviewer/CConn.cxx:177
 #, c-format
 msgid "Host: %.80s port: %d"
 msgstr "Värd: %.80s port: %d"
 
-#: vncviewer/CConn.cxx:179
+#: vncviewer/CConn.cxx:182
 #, c-format
 msgid "Size: %d x %d"
 msgstr "Storlek: %d x %d"
 
-#: vncviewer/CConn.cxx:187
+#: vncviewer/CConn.cxx:190
 #, c-format
 msgid "Pixel format: %s"
 msgstr "Pixelformat: %s"
 
-#: vncviewer/CConn.cxx:194
+#: vncviewer/CConn.cxx:197
 #, c-format
 msgid "(server default %s)"
 msgstr "(serverstandard %s)"
 
-#: vncviewer/CConn.cxx:199
+#: vncviewer/CConn.cxx:202
 #, c-format
 msgid "Requested encoding: %s"
 msgstr "Begärd kodning: %s"
 
-#: vncviewer/CConn.cxx:204
+#: vncviewer/CConn.cxx:207
 #, c-format
 msgid "Last used encoding: %s"
 msgstr "Senast använd kodning: %s"
 
-#: vncviewer/CConn.cxx:209
+#: vncviewer/CConn.cxx:212
 #, c-format
 msgid "Line speed estimate: %d kbit/s"
 msgstr "Uppskattad hastighet på förbindelsen: %d kbit/s"
 
-#: vncviewer/CConn.cxx:214
+#: vncviewer/CConn.cxx:217
 #, c-format
 msgid "Protocol version: %d.%d"
 msgstr "Protokollversion: %d.%d"
 
-#: vncviewer/CConn.cxx:219
+#: vncviewer/CConn.cxx:222
 #, c-format
 msgid "Security method: %s"
 msgstr "Säkerhetsmetod: %s"
 
-#: vncviewer/CConn.cxx:343
+#: vncviewer/CConn.cxx:346
 #, c-format
 msgid "SetDesktopSize failed: %d"
 msgstr "SetDesktopSize misslyckades: %d"
 
-#: vncviewer/CConn.cxx:413
+#: vncviewer/CConn.cxx:416
 msgid "Invalid SetColourMapEntries from server!"
 msgstr "Ogiltig SetColourMapEntries från server!"
 
-#: vncviewer/CConn.cxx:489
+#: vncviewer/CConn.cxx:492
 msgid "Enabling continuous updates"
 msgstr "Aktiverar kontinuerliga uppdateringar"
 
-#: vncviewer/CConn.cxx:559
+#: vncviewer/CConn.cxx:569
 #, c-format
 msgid "Throughput %d kbit/s - changing to quality %d"
 msgstr "Bandbredd %d kbit/s - byter till kvalitet %d"
 
-#: vncviewer/CConn.cxx:581
+#: vncviewer/CConn.cxx:591
 #, c-format
 msgid "Throughput %d kbit/s - full color is now %s"
 msgstr "Bandbredd %d kbit/s - fullfärg är nu %s"
 
-#: vncviewer/CConn.cxx:583
+#: vncviewer/CConn.cxx:593
 msgid "disabled"
 msgstr "avaktiverad"
 
-#: vncviewer/CConn.cxx:583
+#: vncviewer/CConn.cxx:593
 msgid "enabled"
 msgstr "aktiverad"
 
-#: vncviewer/CConn.cxx:593
+#: vncviewer/CConn.cxx:603
 #, c-format
 msgid "Using %s encoding"
 msgstr "Använder kodning %s"
 
-#: vncviewer/CConn.cxx:640
+#: vncviewer/CConn.cxx:650
 #, c-format
 msgid "Using pixel format %s"
 msgstr "Använder pixelformat %s"
 
-#: vncviewer/DesktopWindow.cxx:121
+#: vncviewer/DesktopWindow.cxx:122
 msgid "Invalid geometry specified!"
 msgstr "Ogiltig geometri angiven!"
 
-#: vncviewer/DesktopWindow.cxx:434
+#: vncviewer/DesktopWindow.cxx:445
 msgid "Adjusting window size to avoid accidental full screen request"
 msgstr "Justerar fönsterstorleken för att undvika fullskärm av misstag"
 
-#: vncviewer/DesktopWindow.cxx:478
+#: vncviewer/DesktopWindow.cxx:489
 #, c-format
 msgid "Press %s to open the context menu"
 msgstr "Tryck %s för att öppna sammanhangsmenyn"
 
-#: vncviewer/DesktopWindow.cxx:741 vncviewer/DesktopWindow.cxx:747
-#: vncviewer/DesktopWindow.cxx:760
+#: vncviewer/DesktopWindow.cxx:779 vncviewer/DesktopWindow.cxx:787
+#: vncviewer/DesktopWindow.cxx:802
 msgid "Failure grabbing keyboard"
 msgstr "Misslyckades med att fånga tangentbordet"
 
-#: vncviewer/DesktopWindow.cxx:772
+#: vncviewer/DesktopWindow.cxx:854
 msgid "Failure grabbing mouse"
 msgstr "Misslyckades med att fånga musen"
 
-#: vncviewer/DesktopWindow.cxx:1002
+#: vncviewer/DesktopWindow.cxx:1078
 msgid "Invalid screen layout computed for resize request!"
 msgstr "Ogiltig skärmlayout beräknad för storleksförändrings-begäran!"
-
-#: vncviewer/FLTKPixelBuffer.cxx:33
-msgid "Not enough memory for framebuffer"
-msgstr "Inte tillräckligt med minne för framebuffer"
 
 #: vncviewer/OptionsDialog.cxx:57
 msgid "VNC Viewer: Connection Options"
@@ -341,220 +337,287 @@ msgstr "Om..."
 msgid "Connect"
 msgstr "Anslut"
 
-#: vncviewer/UserDialog.cxx:74
+#: vncviewer/ServerDialog.cxx:137 vncviewer/ServerDialog.cxx:171
+msgid "TigerVNC configuration (*.tigervnc)"
+msgstr ""
+
+#: vncviewer/ServerDialog.cxx:138
+msgid "Select a TigerVNC configuration file"
+msgstr ""
+
+#: vncviewer/ServerDialog.cxx:172
+msgid "Save the TigerVNC configuration to file"
+msgstr ""
+
+#: vncviewer/ServerDialog.cxx:197
+#, c-format
+msgid "%s already exists. Do you want to overwrite?"
+msgstr ""
+
+#: vncviewer/ServerDialog.cxx:198 vncviewer/vncviewer.cxx:279
+msgid "No"
+msgstr "Ingen"
+
+#: vncviewer/ServerDialog.cxx:198
+msgid "Overwrite"
+msgstr ""
+
+#: vncviewer/UserDialog.cxx:85
 msgid "Opening password file failed"
 msgstr "Öppning av lösenordsfilen misslyckades"
 
-#: vncviewer/UserDialog.cxx:86 vncviewer/UserDialog.cxx:96
+#: vncviewer/UserDialog.cxx:105
 msgid "VNC authentication"
 msgstr "VNC-autentisering"
 
-#: vncviewer/UserDialog.cxx:87 vncviewer/UserDialog.cxx:102
-msgid "Password:"
-msgstr "Lösenord:"
+#: vncviewer/UserDialog.cxx:112
+msgid "This connection is secure"
+msgstr ""
 
-#: vncviewer/UserDialog.cxx:89
-msgid "Authentication cancelled"
-msgstr "Autentisering avbruten"
+#: vncviewer/UserDialog.cxx:116
+#, fuzzy
+msgid "This connection is not secure"
+msgstr "VNC anslutningsinformation"
 
-#: vncviewer/UserDialog.cxx:99
+#: vncviewer/UserDialog.cxx:133
 msgid "Username:"
 msgstr "Användarnamn:"
 
-#: vncviewer/Viewport.cxx:586
+#: vncviewer/UserDialog.cxx:140
+msgid "Password:"
+msgstr "Lösenord:"
+
+#: vncviewer/UserDialog.cxx:179
+msgid "Authentication cancelled"
+msgstr "Autentisering avbruten"
+
+#: vncviewer/Viewport.cxx:335
+#, c-format
+msgid "Failed to update keyboard LED state: %lu"
+msgstr ""
+
+#: vncviewer/Viewport.cxx:341 vncviewer/Viewport.cxx:347
+#, fuzzy, c-format
+msgid "Failed to update keyboard LED state: %d"
+msgstr "Misslyckades med att skapa registernyckel: %ld"
+
+#: vncviewer/Viewport.cxx:377
+msgid "Failed to update keyboard LED state"
+msgstr ""
+
+#: vncviewer/Viewport.cxx:404 vncviewer/Viewport.cxx:412
+#: vncviewer/Viewport.cxx:429
+#, fuzzy, c-format
+msgid "Failed to get keyboard LED state: %d"
+msgstr "Misslyckades med att skapa registernyckel: %ld"
+
+#: vncviewer/Viewport.cxx:717
+msgid "No key code specified on key press"
+msgstr ""
+
+#: vncviewer/Viewport.cxx:882
 #, c-format
 msgid "No scan code for extended virtual key 0x%02x"
 msgstr "Ingen scancode för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:588
+#: vncviewer/Viewport.cxx:884
 #, c-format
 msgid "No scan code for virtual key 0x%02x"
 msgstr "Ingen scancode för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:605
+#: vncviewer/Viewport.cxx:890
+#, c-format
+msgid "Invalid scan code 0x%02x"
+msgstr ""
+
+#: vncviewer/Viewport.cxx:906
 #, c-format
 msgid "No symbol for extended virtual key 0x%02x"
 msgstr "Ingen symbol för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:607
+#: vncviewer/Viewport.cxx:908
 #, c-format
 msgid "No symbol for virtual key 0x%02x"
 msgstr "Ingen symbol för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:645
+#: vncviewer/Viewport.cxx:959
 #, c-format
 msgid "No symbol for key code 0x%02x (in the current state)"
 msgstr "Ingen symbol för tangentkod 0x%02x (i nuvarande tillstånd)"
 
-#: vncviewer/Viewport.cxx:671
+#: vncviewer/Viewport.cxx:992
 #, c-format
 msgid "No symbol for key code %d (in the current state)"
 msgstr "Ingen symbol för tangentkod %d (i nuvarande tillstånd)"
 
-#: vncviewer/Viewport.cxx:708
+#: vncviewer/Viewport.cxx:1031
 msgctxt "ContextMenu|"
 msgid "E&xit viewer"
 msgstr "&Avsluta visaren"
 
-#: vncviewer/Viewport.cxx:711
+#: vncviewer/Viewport.cxx:1034
 msgctxt "ContextMenu|"
 msgid "&Full screen"
 msgstr "&Fullskärm"
 
-#: vncviewer/Viewport.cxx:714
+#: vncviewer/Viewport.cxx:1037
 msgctxt "ContextMenu|"
 msgid "Minimi&ze"
 msgstr "M&inimera"
 
-#: vncviewer/Viewport.cxx:716
+#: vncviewer/Viewport.cxx:1039
 msgctxt "ContextMenu|"
 msgid "Resize &window to session"
 msgstr "Anpassa &fönster till session"
 
-#: vncviewer/Viewport.cxx:721
+#: vncviewer/Viewport.cxx:1044
 msgctxt "ContextMenu|"
 msgid "&Ctrl"
 msgstr "&Ctrl"
 
-#: vncviewer/Viewport.cxx:724
+#: vncviewer/Viewport.cxx:1047
 msgctxt "ContextMenu|"
 msgid "&Alt"
 msgstr "&Alt"
 
-#: vncviewer/Viewport.cxx:730
+#: vncviewer/Viewport.cxx:1053
 #, c-format
 msgctxt "ContextMenu|"
 msgid "Send %s"
 msgstr "Skicka %s"
 
-#: vncviewer/Viewport.cxx:736
+#: vncviewer/Viewport.cxx:1059
 msgctxt "ContextMenu|"
 msgid "Send Ctrl-Alt-&Del"
 msgstr "Skicka Ctrl-Alt-&Del"
 
-#: vncviewer/Viewport.cxx:739
+#: vncviewer/Viewport.cxx:1062
 msgctxt "ContextMenu|"
 msgid "&Refresh screen"
 msgstr "&Uppdatera skärm"
 
-#: vncviewer/Viewport.cxx:742
+#: vncviewer/Viewport.cxx:1065
 msgctxt "ContextMenu|"
 msgid "&Options..."
 msgstr "&Inställningar..."
 
-#: vncviewer/Viewport.cxx:744
+#: vncviewer/Viewport.cxx:1067
 msgctxt "ContextMenu|"
 msgid "Connection &info..."
 msgstr "&Information om anslutningen..."
 
-#: vncviewer/Viewport.cxx:746
+#: vncviewer/Viewport.cxx:1069
 msgctxt "ContextMenu|"
 msgid "About &TigerVNC viewer..."
 msgstr "Om &TigerVNC-visaren..."
 
-#: vncviewer/Viewport.cxx:749
+#: vncviewer/Viewport.cxx:1072
 msgctxt "ContextMenu|"
 msgid "Dismiss &menu"
 msgstr "Stäng &meny"
 
-#: vncviewer/Viewport.cxx:833
+#: vncviewer/Viewport.cxx:1156
 msgid "VNC connection info"
 msgstr "VNC anslutningsinformation"
 
-#: vncviewer/parameters.cxx:286 vncviewer/parameters.cxx:320
+#: vncviewer/parameters.cxx:291 vncviewer/parameters.cxx:325
 #, c-format
 msgid "The name of the parameter %s was too large to write to the registry"
 msgstr "Namnet på parameter %s var för stor för skrivning till registret"
 
-#: vncviewer/parameters.cxx:292 vncviewer/parameters.cxx:299
+#: vncviewer/parameters.cxx:297 vncviewer/parameters.cxx:304
 #, c-format
 msgid "The parameter %s was too large to write to the registry"
 msgstr "Parameter %s var för stor för skrivning till registret"
 
-#: vncviewer/parameters.cxx:305 vncviewer/parameters.cxx:326
+#: vncviewer/parameters.cxx:310 vncviewer/parameters.cxx:331
 #, c-format
 msgid "Failed to write parameter %s of type %s to the registry: %ld"
 msgstr "Misslyckades med att skriva parameter %s av typ %s till registret: %ld"
 
-#: vncviewer/parameters.cxx:341 vncviewer/parameters.cxx:380
+#: vncviewer/parameters.cxx:346 vncviewer/parameters.cxx:385
 #, c-format
 msgid "The name of the parameter %s was too large to read from the registry"
 msgstr "Namnet på parameter %s var för stor för att läsas från registret"
 
-#: vncviewer/parameters.cxx:350 vncviewer/parameters.cxx:389
+#: vncviewer/parameters.cxx:355 vncviewer/parameters.cxx:394
 #, c-format
 msgid "Failed to read parameter %s from the registry: %ld"
 msgstr "Misslyckades med att läsa parameter %s från registret: %ld"
 
-#: vncviewer/parameters.cxx:359
+#: vncviewer/parameters.cxx:364
 #, c-format
 msgid "The parameter %s was too large to read from the registry"
 msgstr "Parameter %s var för stor för läsning från registret"
 
-#: vncviewer/parameters.cxx:409
+#: vncviewer/parameters.cxx:414
 #, c-format
 msgid "Failed to create registry key: %ld"
 msgstr "Misslyckades med att skapa registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:423 vncviewer/parameters.cxx:472
-#: vncviewer/parameters.cxx:534 vncviewer/parameters.cxx:665
+#: vncviewer/parameters.cxx:428 vncviewer/parameters.cxx:477
+#: vncviewer/parameters.cxx:539 vncviewer/parameters.cxx:670
 #, c-format
 msgid "Unknown parameter type for parameter %s"
 msgstr "Okänd parametertyp för parameter %s"
 
-#: vncviewer/parameters.cxx:430 vncviewer/parameters.cxx:479
+#: vncviewer/parameters.cxx:435 vncviewer/parameters.cxx:484
 #, c-format
 msgid "Failed to close registry key: %ld"
 msgstr "Misslyckades med att stänga registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:446
+#: vncviewer/parameters.cxx:451
 #, c-format
 msgid "Failed to open registry key: %ld"
 msgstr "Misslyckades med att öppna registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:503
+#: vncviewer/parameters.cxx:508
 msgid "Failed to write configuration file, can't obtain home directory path."
-msgstr "Misslyckades med att skriva konfigurations-fil, kan inte avgöra hemkatalogens sökväg."
+msgstr ""
+"Misslyckades med att skriva konfigurations-fil, kan inte avgöra "
+"hemkatalogens sökväg."
 
-#: vncviewer/parameters.cxx:516
+#: vncviewer/parameters.cxx:521
 #, c-format
 msgid "Failed to write configuration file, can't open %s: %s"
 msgstr "Misslyckades med att skriva konfigurations-fil: kan inte öppna %s: %s"
 
-#: vncviewer/parameters.cxx:559
+#: vncviewer/parameters.cxx:564
 msgid "Failed to read configuration file, can't obtain home directory path."
-msgstr "Misslyckades med att läsa konfigurations-fil, kan inte avgöra hemkatalogens sökväg."
+msgstr ""
+"Misslyckades med att läsa konfigurations-fil, kan inte avgöra hemkatalogens "
+"sökväg."
 
-#: vncviewer/parameters.cxx:572
+#: vncviewer/parameters.cxx:577
 #, c-format
 msgid "Failed to read configuration file, can't open %s: %s"
 msgstr "Misslyckades med att läsa konfigurations-fil, kan inte öppna %s: %s"
 
-#: vncviewer/parameters.cxx:585 vncviewer/parameters.cxx:590
-#: vncviewer/parameters.cxx:615 vncviewer/parameters.cxx:628
-#: vncviewer/parameters.cxx:644
+#: vncviewer/parameters.cxx:590 vncviewer/parameters.cxx:595
+#: vncviewer/parameters.cxx:620 vncviewer/parameters.cxx:633
+#: vncviewer/parameters.cxx:649
 #, c-format
 msgid "Failed to read line %d in file %s: %s"
 msgstr "Misslyckades med att läsa rad %d i fil %s: %s"
 
-#: vncviewer/parameters.cxx:591
+#: vncviewer/parameters.cxx:596
 msgid "Line too long"
 msgstr "Raden är för lång"
 
-#: vncviewer/parameters.cxx:598
+#: vncviewer/parameters.cxx:603
 #, c-format
 msgid "Configuration file %s is in an invalid format"
 msgstr "Konfigurationsfilen %s har ogiltigt format"
 
-#: vncviewer/parameters.cxx:616
+#: vncviewer/parameters.cxx:621
 msgid "Invalid format"
 msgstr "Ogiltigt format"
 
-#: vncviewer/parameters.cxx:629 vncviewer/parameters.cxx:645
+#: vncviewer/parameters.cxx:634 vncviewer/parameters.cxx:650
 msgid "Invalid format or too large value"
 msgstr "Ogiltigt format eller för stort värde"
 
-#: vncviewer/parameters.cxx:672
+#: vncviewer/parameters.cxx:677
 #, c-format
 msgid "Unknown parameter %s on line %d in file %s"
 msgstr "Okänd parameter %s på rad %d i fil %s"
@@ -588,15 +651,12 @@ msgstr "Fel vid start av ny TigerVNC-visare: %s"
 #: vncviewer/vncviewer.cxx:179
 #, c-format
 msgid "Termination signal %d has been received. TigerVNC Viewer will now exit."
-msgstr "Termineringssignal %d har mottagits. TigerVNC-visaren kommer nu att avslutas."
+msgstr ""
+"Termineringssignal %d har mottagits. TigerVNC-visaren kommer nu att avslutas."
 
-#: vncviewer/vncviewer.cxx:271
+#: vncviewer/vncviewer.cxx:271 vncviewer/vncviewer.desktop.in.in:3
 msgid "TigerVNC Viewer"
 msgstr "VNC-visare"
-
-#: vncviewer/vncviewer.cxx:279
-msgid "No"
-msgstr "Ingen"
 
 #: vncviewer/vncviewer.cxx:280
 msgid "Yes"
@@ -651,11 +711,26 @@ msgstr "Kunde inte skapa VNC-hemkatalog: %s."
 
 #. TRANSLATORS: "Parameters" are command line arguments, or settings
 #. from a file or the Windows registry.
-#: vncviewer/vncviewer.cxx:534 vncviewer/vncviewer.cxx:535
+#: vncviewer/vncviewer.cxx:536 vncviewer/vncviewer.cxx:538
 msgid "Parameters -listen and -via are incompatible"
 msgstr "Parametrar -listen och -via är inkompatibla"
 
-#: vncviewer/vncviewer.cxx:550
+#: vncviewer/vncviewer.cxx:553
 #, c-format
 msgid "Listening on port %d"
 msgstr "Lyssnar på port %d"
+
+#: vncviewer/vncviewer.desktop.in.in:4
+msgid "Remote Desktop Viewer"
+msgstr ""
+
+#: vncviewer/vncviewer.desktop.in.in:5
+msgid "Connect to VNC server and display remote desktop"
+msgstr ""
+
+#: vncviewer/vncviewer.desktop.in.in:7
+msgid "tigervnc"
+msgstr ""
+
+#~ msgid "Not enough memory for framebuffer"
+#~ msgstr "Inte tillräckligt med minne för framebuffer"
