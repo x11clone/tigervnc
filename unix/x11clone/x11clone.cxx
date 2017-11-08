@@ -367,7 +367,6 @@ int main(int argc, char** argv)
   setRemoveParam("BlacklistTimeout", NULL);
   setRemoveParam("BlacklistThreshold", NULL);
   setRemoveParam("PlainUsers", NULL);
-  setRemoveParam("DotWhenNoCursor", "1");
   setRemoveParam("PointerEventInterval", NULL);
 
   // New name and description for server side "Geometry"
@@ -377,7 +376,7 @@ int main(int argc, char** argv)
 			 "Server display screen area to show. "
 			 "Format is <width>x<height>+<offset_x>+<offset_y>, "
 			 "more information in man X, section GEOMETRY SPECIFICATIONS. "
-			 "If the argument is empty, the entire screen shown.",
+			 "If the argument is empty, the entire screen is shown.",
 			 p);
   }
 
