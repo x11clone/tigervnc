@@ -368,6 +368,9 @@ int main(int argc, char** argv)
   setRemoveParam("BlacklistThreshold", NULL);
   setRemoveParam("PlainUsers", NULL);
   setRemoveParam("PointerEventInterval", NULL);
+  setRemoveParam("pam_service", NULL);
+  setRemoveParam("PAMService", NULL);
+  setRemoveParam("GnuTLSPriority", NULL);
 
   // New name and description for server side "Geometry"
   if (VoidParameter *p = Configuration::getParam("Geometry")) {
