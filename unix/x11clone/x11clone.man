@@ -1,44 +1,50 @@
-.TH x11clone 1 "" "TigerVNC" "Virtual Network Computing"
+.TH x11clone 1
 .SH NAME
 x11clone
 .SH SYNOPSIS
 .B x11clone
-.RI [ options ] 
-.RI [ host ][: display# ]
+.RI [ options ]
+.RI [ serverDisplay ]
 .br
-.B x11clone
-.RI [ options ] 
-.RI [ host ][:: port ]
-.br
-.B x11clone
-.RI [ options ] 
 .SH DESCRIPTION
 .B x11clone
-FIXME - entire page
+is a tool which connects two independent X11 displays. It retrieves
+the image from the "server display" and displays it in an application
+window, created on the "client display". Keyboard and mouse events in
+the application window are transferred to the "server display".
 
+.B x11clone
+is based on TigerVNC and is a fusion between
+.B x0vncserver
+and
+.B vncviewer.
+In some cases, documentation, log messages etc refers to the "server"
+and "client", meaning the components of
+.B x11clone
+connected to the "server display" and "client display".
+.
 .SH POPUP MENU
-The viewer has a popup menu containing entries which perform various actions.
+The application has a popup menu containing entries which perform various actions.
 It is usually brought up by pressing F8, but this can be configured with the
 MenuKey parameter.  Actions which the popup menu can perform include:
 .RS 2
 .IP * 2
 switching in and out of full-screen mode
 .IP *
-quitting the viewer
+quitting the application
 .IP *
 generating key events, e.g. sending ctrl-alt-del
 .IP *
 accessing the options dialog and various other dialogs
 .RE
 .PP
-By default, key presses in the popup menu get sent to the VNC server and
-dismiss the popup.  So to get an F8 through to the VNC server simply press it
-twice.
-
+By default, key presses in the popup menu get sent to the server and
+dismiss the popup.  So to get an F8 through simply press it twice.
+.
 .SH FULL SCREEN MODE
 A full-screen mode is supported.  This is particularly useful when connecting
-to a remote screen which is the same size as your local one. If the remote
-screen is bigger, you can scroll by bumping the mouse against the edge of the
+to a server display which is the same size as your local one. If the server
+display is bigger, you can scroll by bumping the mouse against the edge of the
 screen.
 
 .SH OPTIONS (PARAMETERS)
@@ -52,82 +58,35 @@ case-insensitive.
 Many of the parameters can also be set graphically via the options dialog box.
 This can be accessed from the popup menu or from the "Connection details"
 dialog box.
-
-.TP
-.B \-display \fIXdisplay\fP
-Specifies the X display on which the x11clone window should appear.
 .
 .TP
-.B \-geometry \fIgeometry\fP
-Standard X position and sizing specification.
+.B -ServerGeometry
+This option specifies the screen area to show.  The
+format is
+.B \fIwidth\fPx\fIheight\fP+\fIxoffset\fP+\fIyoffset\fP
+, where `+' signs can be replaced with `\-' signs to specify offsets from the
+right and/or from the bottom of the screen.  Offsets are optional, +0+0 is
+assumed by default (top left corner).  If the argument is empty, the entire screen
+is shown.
 .
 .TP
-.B \-ViewOnly
-Specifies that no keyboard or mouse events should be sent to the server.
-Useful if you want to view a desktop without interfering; often needs to be
-combined with
+.B -FrameRate
+The maximum number of updates per second sent to the client.
 .
 .TP
-.B \-AcceptClipboard
-Accept clipboard changes from the server. Default is on.
+.B -MaxIdleTime
+Terminate after \fIN\fP seconds of user inactivity.  Default is 0.
 .
 .TP
-.B \-SetPrimary
-Set the primary selection as well as the clipboard selection.
-Default is on.
+.B \-MaxCutText \fIbytes\fP
+The maximum size of a clipboard update that will be accepted from a client.
+Default is \fB262144\fP.
 .
 .TP
-.B \-SendClipboard
-Send clipboard changes to the server. Default is on.
-.
-.TP
-.B \-SendPrimary
-Send the primary selection to the server as well as the clipboard
-selection. Default is on.
-.
-.TP
-.B \-Maximize
-Maximize viewer window. 
-.
-.TP
-.B \-FullScreen
-Start in full-screen mode.
-.
-.TP
-.B \-FullScreenAllMonitors
-Use all local monitors and not just the current one when switching to
-full-screen mode.
-.
-.TP
-.B \-FullscreenSystemKeys
-Pass special keys (like Alt+Tab) directly to the server when in full-screen
-mode.
-.
-.TP
-.B \-DesktopSize \fIwidth\fPx\fIheight\fP
-Instead of keeping the existing remote screen size, the client will attempt to
-switch to the specified since when connecting. If the server does not support
-the SetDesktopSize message then the screen will retain the original size.
-.
-.TP
-.B \-RemoteResize
-Dynamically resize the remote desktop size as the size of the local client
-window changes. Note that this may not work with all VNC servers.
-.
-.TP
-.B \-AutoSelect
-Use automatic selection of encoding and pixel format (default is on).  Normally
-the viewer tests the speed of the connection to the server and chooses the
-encoding and pixel format appropriately.  Turn it off with \fB-AutoSelect=0\fP.
-.
-.TP
-.B \-DotWhenNoCursor
-Show the dot cursor when the server sends an invisible cursor. Default is off.
-.
-.TP
-.B \-PointerEventInterval \fItime\fP
-Time in milliseconds to rate-limit successive pointer events. Default is
-17 ms (60 Hz).
+.B -RemapKeys
+Comma-separated list of incoming keysyms to remap.  Mappings are expressed as
+two hex values, prefixed by \fB0x\fP, and separated by \fB->\fP (`dash' and
+`greater than' characters).
 .
 .TP
 .B \-Log \fIlogname\fP:\fIdest\fP:\fIlevel\fP
@@ -135,7 +94,33 @@ Configures the debug log settings.  \fIdest\fP can currently be \fBstderr\fP or
 \fBstdout\fP, and \fIlevel\fP is between 0 and 100, 100 meaning most verbose
 output.  \fIlogname\fP is usually \fB*\fP meaning all, but you can target a
 specific source file if you know the name of its "LogWriter".  Default is
-\fB*:stderr:30\fP.
+\fB*:stderr:20,XDesktop:stderr:30,CConn:stderr:30\fP.
+.
+.TP
+.B -RawKeyboard
+Send keyboard events straight through and avoid mapping them to the current
+keyboard layout. This effectively makes the keyboard behave according to the
+layout configured on the server instead of the layout configured on the
+client. Default is on.
+.
+.TP
+.B -MaxProcessorUsage
+Maximum percentage of CPU time to be consumed when polling the
+screen.  Default is 35.
+.
+.TP
+.B  -PollingCycle
+Milliseconds per one polling cycle.  Actual interval may be dynamically
+adjusted to satisfy \fBMaxProcessorUsage\fP setting.  Default is 30.
+.
+.B -UseSHM
+Use MIT-SHM extension if available.  Using that extension accelerates reading
+the screen.  Default is on.
+.
+.TP
+.B \-FullscreenSystemKeys
+Pass special keys (like Alt+Tab) directly to the server when in full-screen
+mode.
 .
 .TP
 .B \-MenuKey \fIkeysym-name\fP
@@ -144,29 +129,69 @@ supported list is: F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, Pause,
 Scroll_Lock, Escape, Insert, Delete, Home, Page_Up, Page_Down). Default is F8.
 .
 .TP
+.B \-SendPrimary
+Send the primary selection to the server as well as the clipboard
+selection. Default is on.
+.
+.TP
+.B \-SendClipboard
+Send clipboard changes to the server. Default is on.
+.
+.TP
+.B \-SetPrimary
+Set the primary selection as well as the clipboard selection.
+Default is on.
+.TP
+.B \-AcceptClipboard
+Accept clipboard changes from the server. Default is on.
+.
+.TP
+.B \-ViewOnly
+Specifies that no keyboard or mouse events should be sent to the server.
+Useful if you want to view a desktop without interfering.
+.TP
+.B \-ServerResize
+Dynamically resize the server display as the size of the client window
+changes.
+.
+.TP
+.B \-ClientGeometry \fIgeometry\fP
+Standard X position and sizing specification.
+.
+.TP
+.B \-DesktopSize \fIwidth\fPx\fIheight\fP
+Reconfigure server display to specified desktop size on connect (if
+possible).
+.TP
+.B \-FullScreenAllMonitors
+Use all local monitors and not just the current one when switching to
+full-screen mode.
+.
+.TP
+.B \-FullScreen
+Start in full-screen mode.
+.
+.TP
+.B \-Maximize
+Maximize viewer window.
+.
+.TP
 .B \-AlertOnFatalError
 Display a dialog with any fatal error before exiting. Default is on.
-
-.SH FILES
+.
 .TP
-$HOME/.vnc/default.tigervnc
-Default configuration options. This file must have a "magic" first line of
-"TigerVNC Configuration file Version 1.0" (without quotes), followed by simple
-<setting>=<value> pairs of your choosing. The available settings are those
-shown in this man page.
+.B \-DotWhenNoCursor
+Show the dot cursor when the server sends an invisible cursor. Default is off.
+
 .SH SEE ALSO
-.BR Xvnc (1),
-.BR vncpasswd (1),
-.BR vncconfig (1),
-.BR vncserver (1)
-.br
 http://www.tigervnc.org
 
 .SH AUTHOR
-Tristan Richardson, RealVNC Ltd. and others.
+Peter Astrand <astrand@cendio.se> for Cendio AB
+
+The TigerVNC Team
 
 VNC was originally developed by the RealVNC team while at Olivetti
 Research Ltd / AT&T Laboratories Cambridge.  TightVNC additions were
 implemented by Constantin Kaplinsky. Many other people have since
-participated in development, testing and support. This manual is part
-of the TigerVNC software suite.
+participated in development, testing and support.
