@@ -98,7 +98,6 @@ BoolParameter fullscreenSystemKeys("FullscreenSystemKeys",
                                    "to the server when in full screen mode.",
                                    true);
 
-StringParameter serverDisplay("ServerDisplay", "The X display to clone", "");
 BoolParameter useShm("UseSHM", "Use MIT-SHM extension if available", true);
 IntParameter pollingCycle("PollingCycle", "Milliseconds per one polling "
                           "cycle; actual interval may be dynamically "

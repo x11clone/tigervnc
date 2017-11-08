@@ -396,13 +396,9 @@ int main(int argc, char** argv)
         }
         usage(argv[0]);
       }
-
+      strncpy(serverName, argv[i], SERVERNAMELEN);
+      serverName[SERVERNAMELEN - 1] = '\0';
     }
-
-  const char *s = serverDisplay.getData();
-  strncpy(serverName, s, SERVERNAMELEN);
-  serverName[SERVERNAMELEN - 1] = '\0';
-  delete s;
 
   if (serverName[0] == '\0') {
     ServerDialog::run(":0", serverName);
