@@ -25,5 +25,6 @@ void exit_x11clone(const char *error = NULL);
 bool should_exit();
 void about_x11clone();
 void run_mainloop();
+void flush_serverdpy();
 
 #endif

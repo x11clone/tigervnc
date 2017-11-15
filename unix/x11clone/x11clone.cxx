@@ -154,11 +154,18 @@ void serverWriteEvent(FL_SOCKET fd, void *data)
   sconnection->flushSocket();
 }
 
-void run_mainloop()
+
+void flush_serverdpy()
 {
   // The serverDpy fd is only selected for read, so flush anything in
   // the output buffer first
   XFlush(serverDpy);
+}
+
+
+void run_mainloop()
+{
+  flush_serverdpy();
 
   int next_timer = 0;
 

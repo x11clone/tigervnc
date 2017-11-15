@@ -184,6 +184,7 @@ void CConn::socketEvent(FL_SOCKET fd, void *data)
 
       // Make sure that the FLTK handling and the timers gets some CPU
       // time in case of back to back messages
+       flush_serverdpy();
        Fl::check();
        Timer::checkTimeouts();
 
