@@ -71,6 +71,8 @@
 #include "x11clone.h"
 #include "vncviewer/fltk_layout.h"
 
+#undef PACKAGE_NAME
+#define PACKAGE_NAME "x11clone"
 
 rfb::LogWriter vlog("main");
 

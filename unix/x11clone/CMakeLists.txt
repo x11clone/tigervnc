@@ -113,3 +113,18 @@ foreach(SIZE 16 22 24 32 48)
   endif()
 
 endforeach()
+
+
+file(STRINGS ../../po/LINGUAS po_FILES)
+foreach(lang ${po_FILES})
+  set(mo "../../po/${lang}.mo")
+
+  install(FILES ${mo}
+    DESTINATION "${LOCALE_DIR}/${lang}/LC_MESSAGES"
+    RENAME x11clone.mo
+  )
+
+  set(moFiles ${moFiles} ${mo})
+endforeach(lang)
+
+add_custom_target(x11clonetranslations ALL DEPENDS translations)
