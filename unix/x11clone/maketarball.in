@@ -1,0 +1,44 @@
+#!/bin/bash
+
+set -u
+set -e
+trap onexit INT
+trap onexit TERM
+trap onexit EXIT
+
+TMPDIR=
+
+onexit()
+{
+	if [ ! "$TMPDIR" = "" ]; then
+		rm -rf $TMPDIR
+	fi
+}
+
+PACKAGE_NAME=x11clone
+VERSION=@VERSION@
+OS=@CMAKE_SYSTEM_NAME@
+CPU=@CMAKE_SYSTEM_PROCESSOR@
+PREFIX=@CMAKE_INSTALL_PREFIX@
+CFLAGS="@CMAKE_C_FLAGS@"
+if [[ $CFLAGS = *-m32* ]]; then
+	CPU=i686
+fi
+PACKAGE_FILE=$PACKAGE_NAME-$OS-$CPU-$VERSION.tar.gz
+
+umask 022
+TMPDIR=`mktemp -d /tmp/$PACKAGE_NAME-build.XXXXXX`
+rm -f $PACKAGE_FILE
+OUTDIR=$TMPDIR/inst/$PREFIX
+
+mkdir -p $OUTDIR/bin
+mkdir -p $OUTDIR/man/man1
+
+make DESTDIR=$TMPDIR/inst install
+
+pushd $TMPDIR/inst
+tar cfz ../$PACKAGE_FILE .
+popd
+cp $TMPDIR/$PACKAGE_FILE .
+
+exit

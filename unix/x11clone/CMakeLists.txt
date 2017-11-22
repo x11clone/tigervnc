@@ -128,3 +128,9 @@ foreach(lang ${po_FILES})
 endforeach(lang)
 
 add_custom_target(x11clonetranslations ALL DEPENDS translations)
+
+configure_file(maketarball.in maketarball)
+set(TARBALL_DEPENDS x11clone)
+add_custom_target(x11clone-tarball sh maketarball
+  DEPENDS ${TARBALL_DEPENDS}
+  SOURCES maketarball)
