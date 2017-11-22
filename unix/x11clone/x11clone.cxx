@@ -242,7 +242,7 @@ static void init_fltk()
       char icon_path[PATH_MAX];
       bool exists;
 
-      sprintf(icon_path, "%s/icons/hicolor/%dx%d/apps/tigervnc.png",
+      sprintf(icon_path, "%s/icons/hicolor/%dx%d/apps/x11clone.png",
               DATA_DIR, icon_sizes[i], icon_sizes[i]);
 
       struct stat st;
