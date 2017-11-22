@@ -53,40 +53,40 @@ else()
 endif()
 
 install(TARGETS x11clone DESTINATION ${BIN_DIR})
-if(UNIX)
-  install(FILES x11clone.man DESTINATION ${MAN_DIR}/man1 RENAME x11clone.1)
 
-  configure_file(x11clone.desktop.in.in x11clone.desktop.in)
-  find_program(INTLTOOL_MERGE_EXECUTABLE intltool-merge)
-  if("${GETTEXT_VERSION_STRING}" VERSION_GREATER 0.18.99)
-    add_custom_command(OUTPUT x11clone.desktop
-      COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
-                --desktop --template x11clone.desktop.in
-                -d ${CMAKE_SOURCE_DIR}/po -o x11clone.desktop
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
-    )
-  elseif(INTLTOOL_MERGE_EXECUTABLE)
-    add_custom_command(OUTPUT x11clone.desktop
-      COMMAND sed -e 's/^Name/_Name/'
-                -e 's/^GenericName/_GenericName/'
-                -e 's/^Comment/_Comment/'
-                x11clone.desktop.in > x11clone.desktop.intl
-      COMMAND ${INTLTOOL_MERGE_EXECUTABLE}
-                -d ${CMAKE_SOURCE_DIR}/po
-                x11clone.desktop.intl x11clone.desktop
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
-    )
-  else()
-    add_custom_command(OUTPUT x11clone.desktop
-      COMMAND cp x11clone.desktop.in x11clone.desktop
-      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
-    )
-  endif()
-  add_custom_target(x11clonedesktop ALL DEPENDS x11clone.desktop)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop DESTINATION ${DATA_DIR}/applications)
+install(FILES x11clone.man DESTINATION ${MAN_DIR}/man1 RENAME x11clone.1)
 
-  foreach(res 16 22 24 32 48)
-    install(FILES ../../media/icons/tigervnc_${res}.png DESTINATION ${DATA_DIR}/icons/hicolor/${res}x${res}/apps RENAME tigervnc.png)
-  endforeach()
-  install(FILES ../../media/icons/tigervnc.svg DESTINATION ${DATA_DIR}/icons/hicolor/scalable/apps)
+configure_file(x11clone.desktop.in.in x11clone.desktop.in)
+find_program(INTLTOOL_MERGE_EXECUTABLE intltool-merge)
+if("${GETTEXT_VERSION_STRING}" VERSION_GREATER 0.18.99)
+  add_custom_command(OUTPUT x11clone.desktop
+    COMMAND ${GETTEXT_MSGFMT_EXECUTABLE}
+              --desktop --template x11clone.desktop.in
+              -d ${CMAKE_SOURCE_DIR}/po -o x11clone.desktop
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
+  )
+elseif(INTLTOOL_MERGE_EXECUTABLE)
+  add_custom_command(OUTPUT x11clone.desktop
+    COMMAND sed -e 's/^Name/_Name/'
+              -e 's/^GenericName/_GenericName/'
+              -e 's/^Comment/_Comment/'
+              x11clone.desktop.in > x11clone.desktop.intl
+    COMMAND ${INTLTOOL_MERGE_EXECUTABLE}
+              -d ${CMAKE_SOURCE_DIR}/po
+              x11clone.desktop.intl x11clone.desktop
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
+  )
+else()
+  add_custom_command(OUTPUT x11clone.desktop
+    COMMAND cp x11clone.desktop.in x11clone.desktop
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop.in
+  )
 endif()
+add_custom_target(x11clonedesktop ALL DEPENDS x11clone.desktop)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop DESTINATION ${DATA_DIR}/applications)
+
+foreach(res 16 22 24 32 48)
+  install(FILES ../../media/icons/tigervnc_${res}.png DESTINATION ${DATA_DIR}/icons/hicolor/${res}x${res}/apps RENAME tigervnc.png)
+endforeach()
+install(FILES ../../media/icons/tigervnc.svg DESTINATION ${DATA_DIR}/icons/hicolor/scalable/apps)
+
