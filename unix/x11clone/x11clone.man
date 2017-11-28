@@ -11,7 +11,8 @@ x11clone
 is a tool which connects two independent X11 displays. It retrieves
 the image from the "server display" and displays it in an application
 window, created on the "client display". Keyboard and mouse events in
-the application window are transferred to the "server display".
+the application window are transferred to the "server display". This
+allows you to view and interact with another X11 session.
 
 .B x11clone
 is based on TigerVNC and is a fusion between
