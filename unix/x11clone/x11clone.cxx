@@ -139,6 +139,9 @@ void serverDpyEvent(FL_SOCKET fd, void *data)
   Display *dpy = (Display*)data;
 
   //fprintf(stderr, "serverDpyEvent\n");
+  // Note that handleXEvents will not return until XPending returns
+  // zero; until there are no more events to read from the
+  // connection.
   TXWindow::handleXEvents(dpy);
 }
 
@@ -167,8 +170,6 @@ void flush_serverdpy()
 
 void run_mainloop()
 {
-  flush_serverdpy();
-
   int next_timer = 0;
 
   if (sconnection->getSock()->outStream().bufferUsage() > 0) {
@@ -198,6 +199,12 @@ void run_mainloop()
   if (Fl::wait((double)next_timer / 1000.0) < 0.0) {
     vlog.error(_("Internal FLTK error. Exiting."));
     exit(-1);
+  }
+
+  // Some Xlib calls, for example XFlush, may enqueue events in the
+  // input queue.
+  if (XEventsQueued(serverDpy, QueuedAlready)) {
+    TXWindow::handleXEvents(serverDpy);
   }
 
   sched->sleepFinished();
