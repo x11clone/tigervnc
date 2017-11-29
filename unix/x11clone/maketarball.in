@@ -34,7 +34,7 @@ OUTDIR=$TMPDIR/inst/$PREFIX
 mkdir -p $OUTDIR/bin
 mkdir -p $OUTDIR/man/man1
 
-make DESTDIR=$TMPDIR/inst install
+make DESTDIR=$TMPDIR/inst install/strip
 
 pushd $TMPDIR/inst
 tar cfz ../$PACKAGE_FILE .
