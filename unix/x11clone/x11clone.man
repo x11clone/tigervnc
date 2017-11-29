@@ -1,6 +1,6 @@
 .TH x11clone 1
 .SH NAME
-x11clone
+x11clone \- view and interact with another X11 server
 .SH SYNOPSIS
 .B x11clone
 .RI [ options ]
