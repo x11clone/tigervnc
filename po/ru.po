@@ -564,12 +564,12 @@ msgstr "Неизвестный параметр %s в строке %d файла
 msgid ""
 "TigerVNC Viewer %d-bit v%s\n"
 "Built on: %s\n"
-"Copyright (C) 1999-%d TigerVNC Team and many others (see README.txt)\n"
+"Copyright (C) 1999-%d TigerVNC Team and many others (see README.rst)\n"
 "See http://www.tigervnc.org for information on TigerVNC."
 msgstr ""
 "TigerVNC Viewer (%d-разрядная версия) %s\n"
 "Сборка от: %s\n"
-"© 1999-%d, TigerVNC Team и многие другие (см. README.txt).\n"
+"© 1999-%d, TigerVNC Team и многие другие (см. README.rst).\n"
 "Информацию о TigerVNC на сайте http://www.tigervnc.org"
 
 #: vncviewer/vncviewer.cxx:127
