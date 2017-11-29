@@ -1,179 +1,97 @@
-About TigerVNC
-==============
 
-Virtual Network Computing (VNC) is a remote display system which allows you to
-view and interact with a virtual desktop environment that is running on another
-computer on the network.  Using VNC, you can run graphical applications on a
-remote machine and send only the display from these applications to your local
-machine.  VNC is platform-independent and supports a wide variety of operating
-systems and architectures as both servers and clients.
+x11clone
+========
 
-TigerVNC is a high-speed version of VNC based on the RealVNC 4 and X.org code
-bases.  TigerVNC started as a next-generation development effort for TightVNC
-on Unix and Linux platforms, but it split from its parent project in early 2009
-so that TightVNC could focus on Windows platforms.  TigerVNC supports a variant
-of Tight encoding that is greatly accelerated by the use of the libjpeg-turbo
-JPEG codec.
+Description
+-----------
 
+x11clone is a tool which connects two independent X11 displays. It
+retrieves the image from the "server display" and displays it in an
+application window, created on the "client display". Keyboard and
+mouse events in the application window are transferred to the "server
+display". This allows you to view and interact with another X11
+session.
 
-Legal
-=====
+x11clone is based on TigerVNC_ and is a fusion between x0vncserver and
+vncviewer.  In some cases, documentation, log messages etc refers to
+the "server" and "client", meaning the components of x11clone
+connected to the "server display" and "client display". Please refer
+to README.tigervnc for legal information and more information about
+TigerVNC.
 
-Incomplete and generally out of date copyright list::
+x11clone can be used in conjunction with ThinLinc_. In particular, it
+makes it possible to connect to the local Xserver console (typically
+:0) from a ThinLinc_ session.
 
-        Copyright (C) 1999 AT&T Laboratories Cambridge
-        Copyright (C) 2002-2005 RealVNC Ltd.
-        Copyright (C) 2000-2006 TightVNC Group
-        Copyright (C) 2005-2006 Martin Koegler
-        Copyright (C) 2005-2006 Sun Microsystems, Inc.
-        Copyright (C) 2006 OCCAM Financial Technology
-        Copyright (C) 2000-2008 Constantin Kaplinsky
-        Copyright (C) 2004-2009 Peter Astrand for Cendio AB
-        Copyright (C) 2010 Antoine Martin
-        Copyright (C) 2010 m-privacy GmbH
-        Copyright (C) 2009-2011 D. R. Commander
-        Copyright (C) 2009-2011 Pierre Ossman for Cendio AB
-        Copyright (C) 2004, 2009-2011 Red Hat, Inc.
-        Copyright (C) 2017 Peter Astrand for Cendio AB
-        Copyright (C) 2009-2017 TigerVNC Team
-        All Rights Reserved.
-
-This software is distributed under the GNU General Public Licence as published
-by the Free Software Foundation.  See the file LICENCE.TXT for the conditions
-under which this software is made available.  TigerVNC also contains code from
-other sources.  See the Acknowledgements section below, and the individual
-source files, for details of the conditions under which they are made
-available.
+x11clone can also be used to remotely displaying 3D applications with
+server side hardware acceleration. From the application point of view,
+the best performance is achieved by running the desktop session and
+applications on the console. To access this session remotely, x11clone
+can be used from a X11 client (using X11 forwarding). Another option
+is to run x11clone with Xvnc and connect with a VNC client. In this
+context, x11clone provides an alternative to VirtualGL_. However,
+x11clone does not provide any GPU sharing: You are restricted to one
+console session per machine. Virtual machines with GPU virtualization
+can be used to provide multiple sessions on the same server hardware.
 
 
-All Platforms
-=============
+Code and Issues
+---------------
 
-All versions of TigerVNC contain the following programs:
-
-* vncviewer - the cross-platform TigerVNC Viewer, written using FLTK.
-              vncviewer connects to a VNC server and allows you to interact
-              with the remote desktop being displayed by the VNC server.  The
-              VNC server can be running on a Windows or a Unix/Linux machine.
+Please report any issues on the `Github x11clone project page`_.
 
 
-Windows-Specific
-================
+Build Requirements
+------------------
 
-The Windows version of TigerVNC contains the following programs:
+* CMake (http://www.cmake.org) v2.8 or later
 
-* winvnc - the TigerVNC Server for Windows.  winvnc allows a Windows desktop to
-           be accessed remotely using a VNC viewer.
+* zlib
 
-winvnc may not work if the Fast User Switching or Remote Desktop features are
-in use.
+* FLTK 1.3.3 or later
 
+* If building native language support (NLS):
+   * Gnu gettext 0.14.4 or later
+   * See "Building Native Language Support" below.
 
-Unix/Linux-Specific (not Mac)
-=============================
-
-The Unix/Linux version of TigerVNC contains the following programs:
-
-* Xvnc - the TigerVNC Server for Unix.  Xvnc is both a VNC server and an X
-         server with a "virtual" framebuffer.  You should normally use the
-         vncserver script to start Xvnc.
-
-* vncserver - a wrapper script which makes starting Xvnc more convenient.
-              vncserver requires Perl.
-
-* vncpasswd - a program which allows you to change the VNC password used to
-              access your VNC server sessions (assuming that VNC authentication
-              is being used.)  The vncserver script will automatically launch
-              this program if it detects that VNC authentication is in use and
-              a VNC password has not yet been configured.
-
-* vncconfig - a program which is used to configure and control a running
-              instance of Xvnc.
-
-* x0vncserver - an inefficient VNC server which continuously polls any X
-                display, allowing it to be controlled via VNC.  It is intended
-                mainly as a demonstration of a simple VNC server.
+* X11 development kit
 
 
-ACKNOWLEDGEMENTS
-================
+Building x11clone
+-----------------
 
-This distribution contains zlib compression software.  This is:
+To build x11clone, run::
 
-  Copyright (C) 1995-2002 Jean-loup Gailly and Mark Adler
+  cd {source_directory}
+  cmake -G "Unix Makefiles" [additional CMake flags]
+  make x11clone
 
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
+You can use the build system to install x11clone into a directory of
+your choosing.  To do this, add::
 
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
+  -DCMAKE_INSTALL_PREFIX={install_directory}
 
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-  Jean-loup Gailly        Mark Adler
-  jloup@gzip.org          madler@alumni.caltech.edu
-
-  The data format used by the zlib library is described by RFCs (Request for
-  Comments) 1950 to 1952 in the files ftp://ds.internic.net/rfc/rfc1950.txt
-  (zlib format), rfc1951.txt (deflate format) and rfc1952.txt (gzip format).
+to the CMake command line.
 
 
-This distribution contains public domain DES software by Richard Outerbridge.
-This is:
+Installing x11clone
+-------------------
 
-    Copyright (c) 1988,1989,1990,1991,1992 by Richard Outerbridge.
-    (GEnie : OUTER; CIS : [71755,204]) Graven Imagery, 1992.
+To install x11clone, run::
+
+  make -C unix/x11clone install
 
 
-This distribution contains software from the X Window System.  This is:
+Creating Binary Package
+------------------------
 
- Copyright 1987, 1988, 1998  The Open Group
- 
- Permission to use, copy, modify, distribute, and sell this software and its
- documentation for any purpose is hereby granted without fee, provided that
- the above copyright notice appear in all copies and that both that
- copyright notice and this permission notice appear in supporting
- documentation.
- 
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
- OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
- AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
- CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- 
- Except as contained in this notice, the name of The Open Group shall not be
- used in advertising or otherwise to promote the sale, use or other dealings
- in this Software without prior written authorization from The Open Group.
- 
- 
- Copyright 1987, 1988 by Digital Equipment Corporation, Maynard, Massachusetts.
- 
-                         All Rights Reserved
- 
- Permission to use, copy, modify, and distribute this software and its 
- documentation for any purpose and without fee is hereby granted, 
- provided that the above copyright notice appear in all copies and that
- both that copyright notice and this permission notice appear in 
- supporting documentation, and that the name of Digital not be
- used in advertising or publicity pertaining to distribution of the
- software without specific, written prior permission.  
- 
- DIGITAL DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
- ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
- DIGITAL BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
- ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
- WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
- ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
- SOFTWARE.
+To create a tarball with binaries, run::
+
+  make x11clone-tarball
+
+
+.. _x11clone: https://github.com/x11clone/x11clone
+.. _ThinLinc: https://www.cendio.com/thinlinc/
+.. _TigerVNC: http://tigervnc.org
+.. _Github x11clone project page: https://github.com/x11clone/x11clone
+.. _VirtualGL: http://www.virtualgl.org/
