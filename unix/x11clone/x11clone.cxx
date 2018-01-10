@@ -396,24 +396,30 @@ int main(int argc, char** argv)
 			 p);
   }
 
-  int i = 1;
-  if (!Fl::args(argc, argv, i) || i < argc)
-    for (; i < argc; i++) {
-      if (Configuration::setParam(argv[i]))
-        continue;
+  for (int i = 1; i < argc;) {
+    if (Fl::arg(argc, argv, i))
+      continue;
 
-      if (argv[i][0] == '-') {
-        if (i+1 < argc) {
-          if (Configuration::setParam(&argv[i][1], argv[i+1])) {
-            i++;
-            continue;
-          }
-        }
-        usage(argv[0]);
-      }
-      strncpy(serverName, argv[i], SERVERNAMELEN);
-      serverName[SERVERNAMELEN - 1] = '\0';
+    if (Configuration::setParam(argv[i])) {
+      i++;
+      continue;
     }
+
+    if (argv[i][0] == '-') {
+      if (i+1 < argc) {
+        if (Configuration::setParam(&argv[i][1], argv[i+1])) {
+          i += 2;
+          continue;
+        }
+      }
+
+      usage(argv[0]);
+    }
+
+    strncpy(serverName, argv[i], SERVERNAMELEN);
+    serverName[SERVERNAMELEN - 1] = '\0';
+    i++;
+  }
 
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
