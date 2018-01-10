@@ -360,9 +360,6 @@ int main(int argc, char** argv)
 
   init_fltk();
 
-  fl_open_display();
-  XkbSetDetectableAutoRepeat(fl_display, True, NULL);
-
   setRemoveParam("ZlibLevel", NULL);
   setRemoveParam("QueryConnect", NULL);
   setRemoveParam("AcceptSetDesktopSize", NULL);
@@ -417,6 +414,9 @@ int main(int argc, char** argv)
       strncpy(serverName, argv[i], SERVERNAMELEN);
       serverName[SERVERNAMELEN - 1] = '\0';
     }
+
+  fl_open_display();
+  XkbSetDetectableAutoRepeat(fl_display, True, NULL);
 
   if (serverName[0] == '\0') {
     ServerDialog::run(":0", serverName);
