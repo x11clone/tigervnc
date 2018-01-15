@@ -811,7 +811,7 @@ void DesktopWindow::grabPointer()
 void DesktopWindow::ungrabPointer()
 {
   mouseGrabbed = false;
-  XUngrabPointer(fl_display, fl_event_time);
+  XUngrabPointer(fl_display, CurrentTime);
 }
 
 
