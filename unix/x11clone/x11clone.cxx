@@ -424,20 +424,32 @@ int main(int argc, char** argv)
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
 
-  if (serverName[0] == '\0') {
-    ServerDialog::run(":0", serverName);
-    if (serverName[0] == '\0')
-      return 1;
-  }
-
   /* RFB server - connect to server display */
-  if (!(serverDpy = XOpenDisplay(serverName))) {
-    vlog.error(_("Unable to open display \"%s\""), serverName);
-    if (alertOnFatalError) {
+  if (serverName[0] == '\0') {
+    strcpy(serverName, ":0");
+  } else {
+    // Command line
+    serverDpy = XOpenDisplay(serverName);
+    if (!serverDpy) {
+      vlog.error(_("Unable to open display \"%s\""), serverName);
+      if (alertOnFatalError) {
+	fl_alert(_("Unable to open display \"%s\""), serverName);
+      }
+      return 1;
+    }
+  }
+  while (!serverDpy) {
+    ServerDialog::run(serverName, serverName);
+    if (serverName[0] == '\0') {
+      return 1;
+    }
+    serverDpy = XOpenDisplay(serverName);
+    if (!serverDpy) {
+      vlog.error(_("Unable to open display \"%s\""), serverName);
       fl_alert(_("Unable to open display \"%s\""), serverName);
     }
-    return 1;
   }
+
   TXWindow::init(serverDpy, "x11clone");
   Geometry geo(DisplayWidth(serverDpy, DefaultScreen(serverDpy)),
 	       DisplayHeight(serverDpy, DefaultScreen(serverDpy)));
