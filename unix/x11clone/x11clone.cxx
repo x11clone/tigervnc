@@ -432,16 +432,20 @@ int main(int argc, char** argv)
 
   /* RFB server - connect to server display */
   if (!(serverDpy = XOpenDisplay(serverName))) {
-    // FIXME: Why not vlog.error(...)?
-    fprintf(stderr,"%s: unable to open display \"%s\"\r\n",
-	    "x11clone", serverName);
+    vlog.error(_("Unable to open display \"%s\""), serverName);
+    if (alertOnFatalError) {
+      fl_alert(_("Unable to open display \"%s\""), serverName);
+    }
     return 1;
   }
   TXWindow::init(serverDpy, "x11clone");
   Geometry geo(DisplayWidth(serverDpy, DefaultScreen(serverDpy)),
 	       DisplayHeight(serverDpy, DefaultScreen(serverDpy)));
   if (geo.getRect().is_empty()) {
-    vlog.error("Exiting with error");
+    vlog.error(_("Invalid server geometry"));
+    if (alertOnFatalError) {
+      fl_alert(_("Invalid server geometry"));
+    }
     return 1;
   }
   try {
@@ -449,12 +453,18 @@ int main(int argc, char** argv)
     server = new VNCServerST(serverName, desktop);
   } catch (rdr::Exception &e) {
     vlog.error("%s", e.str());
+    if (alertOnFatalError) {
+      fl_alert("%s", e.str());
+    }
     return 1;
   }
 
   int pairfds[2];
   if (socketpair(AF_UNIX, SOCK_STREAM, 0, pairfds) < 0) {
     vlog.error(_("socketpair failed: %s"), strerror(errno));
+    if (alertOnFatalError) {
+      fl_alert(_("socketpair failed: %s"), strerror(errno));
+    }
     return 1;
   }
 
