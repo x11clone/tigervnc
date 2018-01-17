@@ -313,7 +313,7 @@ msgstr "Stäng"
 #: unix/x11clone/x11clone.cxx:451
 #, c-format
 msgid "socketpair failed: %s"
-msgstr "SetDesktopSize misslyckades: %d"
+msgstr "socketpair misslyckades: %s"
 
 #: unix/x11clone/x11clone.desktop.in.in:3
 #: unix/x11clone/x11clone.desktop.in.in:4
