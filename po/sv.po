@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: tigervnc 1.7.90\n"
 "Report-Msgid-Bugs-To: tigervnc-devel@googlegroups.com\n"
-"POT-Creation-Date: 2017-11-29 09:20+0000\n"
+"POT-Creation-Date: 2018-01-17 08:06+0000\n"
 "PO-Revision-Date: 2017-05-13 13:59+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -180,92 +180,92 @@ msgstr "Om..."
 msgid "Connect"
 msgstr "Anslut"
 
-#: unix/x11clone/Viewport.cxx:289 vncviewer/Viewport.cxx:377
+#: unix/x11clone/Viewport.cxx:283 vncviewer/Viewport.cxx:371
 msgid "Failed to update keyboard LED state"
 msgstr "Misslyckades med att uppdatera tangentbordets LED-tillstånd"
 
-#: unix/x11clone/Viewport.cxx:309 vncviewer/Viewport.cxx:404
-#: vncviewer/Viewport.cxx:412 vncviewer/Viewport.cxx:429
+#: unix/x11clone/Viewport.cxx:303 vncviewer/Viewport.cxx:398
+#: vncviewer/Viewport.cxx:406 vncviewer/Viewport.cxx:423
 #, c-format
 msgid "Failed to get keyboard LED state: %d"
 msgstr "Misslyckades med att hämta tangentbordets LED-tillstånd: %ld"
 
-#: unix/x11clone/Viewport.cxx:592 vncviewer/Viewport.cxx:717
+#: unix/x11clone/Viewport.cxx:586 vncviewer/Viewport.cxx:711
 msgid "No key code specified on key press"
 msgstr "Ingen tangentbordskod angiven vid tangenttryck"
 
-#: unix/x11clone/Viewport.cxx:687 vncviewer/Viewport.cxx:992
+#: unix/x11clone/Viewport.cxx:681 vncviewer/Viewport.cxx:1014
 #, c-format
 msgid "No symbol for key code %d (in the current state)"
 msgstr "Ingen symbol för tangentkod %d (i nuvarande tillstånd)"
 
-#: unix/x11clone/Viewport.cxx:725
+#: unix/x11clone/Viewport.cxx:719
 msgctxt "ContextMenu|"
 msgid "E&xit x11clone"
 msgstr "&Avsluta x11clone"
 
-#: unix/x11clone/Viewport.cxx:728 vncviewer/Viewport.cxx:1034
+#: unix/x11clone/Viewport.cxx:722 vncviewer/Viewport.cxx:1056
 msgctxt "ContextMenu|"
 msgid "&Full screen"
 msgstr "&Fullskärm"
 
-#: unix/x11clone/Viewport.cxx:731 vncviewer/Viewport.cxx:1037
+#: unix/x11clone/Viewport.cxx:725 vncviewer/Viewport.cxx:1059
 msgctxt "ContextMenu|"
 msgid "Minimi&ze"
 msgstr "M&inimera"
 
-#: unix/x11clone/Viewport.cxx:733
+#: unix/x11clone/Viewport.cxx:727
 msgctxt "ContextMenu|"
 msgid "Resize &window to server display"
 msgstr "Anpassa &fönster till server-display"
 
-#: unix/x11clone/Viewport.cxx:738 vncviewer/Viewport.cxx:1044
+#: unix/x11clone/Viewport.cxx:732 vncviewer/Viewport.cxx:1066
 msgctxt "ContextMenu|"
 msgid "&Ctrl"
 msgstr "&Ctrl"
 
-#: unix/x11clone/Viewport.cxx:741 vncviewer/Viewport.cxx:1047
+#: unix/x11clone/Viewport.cxx:735 vncviewer/Viewport.cxx:1069
 msgctxt "ContextMenu|"
 msgid "&Alt"
 msgstr "&Alt"
 
-#: unix/x11clone/Viewport.cxx:747 vncviewer/Viewport.cxx:1053
+#: unix/x11clone/Viewport.cxx:741 vncviewer/Viewport.cxx:1075
 #, c-format
 msgctxt "ContextMenu|"
 msgid "Send %s"
 msgstr "Skicka %s"
 
-#: unix/x11clone/Viewport.cxx:753 vncviewer/Viewport.cxx:1059
+#: unix/x11clone/Viewport.cxx:747 vncviewer/Viewport.cxx:1081
 msgctxt "ContextMenu|"
 msgid "Send Ctrl-Alt-&Del"
 msgstr "Skicka Ctrl-Alt-&Del"
 
-#: unix/x11clone/Viewport.cxx:756 vncviewer/Viewport.cxx:1062
+#: unix/x11clone/Viewport.cxx:750 vncviewer/Viewport.cxx:1084
 msgctxt "ContextMenu|"
 msgid "&Refresh screen"
 msgstr "&Uppdatera skärm"
 
-#: unix/x11clone/Viewport.cxx:759 vncviewer/Viewport.cxx:1065
+#: unix/x11clone/Viewport.cxx:753 vncviewer/Viewport.cxx:1087
 msgctxt "ContextMenu|"
 msgid "&Options..."
 msgstr "&Inställningar..."
 
-#: unix/x11clone/Viewport.cxx:761 vncviewer/Viewport.cxx:1067
+#: unix/x11clone/Viewport.cxx:755 vncviewer/Viewport.cxx:1089
 msgctxt "ContextMenu|"
 msgid "Connection &info..."
 msgstr "&Information om anslutningen..."
 
-#: unix/x11clone/Viewport.cxx:763
+#: unix/x11clone/Viewport.cxx:757
 msgctxt "ContextMenu|"
 msgid "About &x11clone..."
 msgstr "Om &x11clone..."
 
-#: unix/x11clone/Viewport.cxx:766 vncviewer/Viewport.cxx:1072
+#: unix/x11clone/Viewport.cxx:760 vncviewer/Viewport.cxx:1094
 msgctxt "ContextMenu|"
 msgid "Dismiss &menu"
 msgstr "Stäng &meny"
 
-#: unix/x11clone/Viewport.cxx:850
+#: unix/x11clone/Viewport.cxx:844
 msgid "x11clone connection info"
 msgstr "x11clone anslutningsinformation"
 
@@ -310,7 +310,16 @@ msgstr "Ja"
 msgid "Close"
 msgstr "Stäng"
 
-#: unix/x11clone/x11clone.cxx:451
+#: unix/x11clone/x11clone.cxx:435 unix/x11clone/x11clone.cxx:437
+#, c-format
+msgid "Unable to open display \"%s\""
+msgstr "Kunde inte öppna display \"%s\""
+
+#: unix/x11clone/x11clone.cxx:445 unix/x11clone/x11clone.cxx:447
+msgid "Invalid server geometry"
+msgstr "Ogiltig server-geometri"
+
+#: unix/x11clone/x11clone.cxx:464 unix/x11clone/x11clone.cxx:466
 #, c-format
 msgid "socketpair failed: %s"
 msgstr "socketpair misslyckades: %s"
@@ -566,62 +575,62 @@ msgstr "Lösenord:"
 msgid "Authentication cancelled"
 msgstr "Autentisering avbruten"
 
-#: vncviewer/Viewport.cxx:335
+#: vncviewer/Viewport.cxx:329
 #, c-format
 msgid "Failed to update keyboard LED state: %lu"
 msgstr ""
 
-#: vncviewer/Viewport.cxx:341 vncviewer/Viewport.cxx:347
+#: vncviewer/Viewport.cxx:335 vncviewer/Viewport.cxx:341
 #, fuzzy, c-format
 msgid "Failed to update keyboard LED state: %d"
 msgstr "Misslyckades med att skapa registernyckel: %ld"
 
-#: vncviewer/Viewport.cxx:882
+#: vncviewer/Viewport.cxx:876
 #, c-format
 msgid "No scan code for extended virtual key 0x%02x"
 msgstr "Ingen scancode för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:884
+#: vncviewer/Viewport.cxx:878
 #, c-format
 msgid "No scan code for virtual key 0x%02x"
 msgstr "Ingen scancode för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:890
+#: vncviewer/Viewport.cxx:884
 #, c-format
 msgid "Invalid scan code 0x%02x"
 msgstr ""
 
-#: vncviewer/Viewport.cxx:906
+#: vncviewer/Viewport.cxx:914
 #, c-format
 msgid "No symbol for extended virtual key 0x%02x"
 msgstr "Ingen symbol för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:908
+#: vncviewer/Viewport.cxx:916
 #, c-format
 msgid "No symbol for virtual key 0x%02x"
 msgstr "Ingen symbol för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:959
+#: vncviewer/Viewport.cxx:981
 #, c-format
 msgid "No symbol for key code 0x%02x (in the current state)"
 msgstr "Ingen symbol för tangentkod 0x%02x (i nuvarande tillstånd)"
 
-#: vncviewer/Viewport.cxx:1031
+#: vncviewer/Viewport.cxx:1053
 msgctxt "ContextMenu|"
 msgid "E&xit viewer"
 msgstr "&Avsluta visaren"
 
-#: vncviewer/Viewport.cxx:1039
+#: vncviewer/Viewport.cxx:1061
 msgctxt "ContextMenu|"
 msgid "Resize &window to session"
 msgstr "Anpassa &fönster till session"
 
-#: vncviewer/Viewport.cxx:1069
+#: vncviewer/Viewport.cxx:1091
 msgctxt "ContextMenu|"
 msgid "About &TigerVNC viewer..."
 msgstr "Om &TigerVNC-visaren..."
 
-#: vncviewer/Viewport.cxx:1156
+#: vncviewer/Viewport.cxx:1178
 msgid "VNC connection info"
 msgstr "VNC anslutningsinformation"
 
@@ -804,11 +813,11 @@ msgstr "Kunde inte skapa VNC-hemkatalog: %s."
 
 #. TRANSLATORS: "Parameters" are command line arguments, or settings
 #. from a file or the Windows registry.
-#: vncviewer/vncviewer.cxx:536 vncviewer/vncviewer.cxx:538
+#: vncviewer/vncviewer.cxx:541 vncviewer/vncviewer.cxx:543
 msgid "Parameters -listen and -via are incompatible"
 msgstr "Parametrar -listen och -via är inkompatibla"
 
-#: vncviewer/vncviewer.cxx:553
+#: vncviewer/vncviewer.cxx:558
 #, c-format
 msgid "Listening on port %d"
 msgstr "Lyssnar på port %d"
@@ -820,9 +829,3 @@ msgstr ""
 #: vncviewer/vncviewer.desktop.in.in:5
 msgid "Connect to VNC server and display remote desktop"
 msgstr ""
-
-#~ msgid "Not enough memory for framebuffer"
-#~ msgstr "Inte tillräckligt med minne för framebuffer"
-
-#~ msgid "Clone another X11 display"
-#~ msgstr "Klona en annan X11-display"
