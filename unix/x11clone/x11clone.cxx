@@ -33,6 +33,8 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <x0vncserver/Geometry.h>
 #include <x0vncserver/PollingScheduler.h>
@@ -40,6 +42,7 @@
 #include <tx/TXWindow.h>
 
 #include <X11/Xlib.h>
+#include <X11/Xauth.h>
 #include <X11/XKBlib.h>
 
 #include <rfb/Logger_stdio.h>
@@ -301,10 +304,10 @@ static void init_fltk()
 
 static void usage(const char *programName)
 {
-
   fprintf(stderr,
-          "\nusage: %s [parameters] [host:displayNum] [parameters]\n",
-          programName);
+          "\nusage: %s [parameters] [serverDisplay]\n"
+          "       %s [parameters] xinitcmd [ [client] options ... ] [ -- [server] [serverDisplay] options ... ]",
+          programName, programName);
   fprintf(stderr,"\n"
           "Parameters can be turned on with -<param> or off with -<param>=0\n"
           "Parameters which take a value can be specified as "
@@ -326,11 +329,195 @@ static void setRemoveParam(const char* param, const char* value)
     Configuration::removeParam(param);
 }
 
+#define MAX_XINIT_ARGS 64
+
+/* A preexec function must return zero, or the exec will be aborted */
+typedef int (*preexec_ptr)(void *data);
+
+pid_t
+subprocess(char *const cmd[], preexec_ptr preexec_fn, void *preexec_data)
+{
+  int close_exec_pipe[2];
+
+  if (pipe(close_exec_pipe) < 0) {
+    vlog.error(_("pipe failed: %s"), strerror(errno));
+    return -1;
+  }
+
+  if (fcntl(close_exec_pipe[1], F_SETFD, FD_CLOEXEC) < 0) {
+    vlog.error(_("fcntl failed: %s"), strerror(errno));
+    return -1;
+  }
+
+  pid_t pid = fork();
+  if (pid < 0) {
+    vlog.error(_("fork failed: %s"), strerror(errno));
+    return pid;
+  }
+
+  if (pid > 0) {
+    /* parent, wait for exec */
+    /* close write end of pipe */
+    if (close(close_exec_pipe[1]) < 0) {
+      vlog.error(_("close failed: %s"), strerror(errno));
+    }
+    /* block on read from close_exec_pipe */
+    char onechar;
+    ssize_t gotchars = read(close_exec_pipe[0], &onechar, 1);
+    if (close(close_exec_pipe[0]) < 0) {
+      vlog.error(_("close failed: %s"), strerror(errno));
+    }
+    if (gotchars != 0) {
+      /* exec failed */
+      return -1;
+    }
+    return pid;
+  }
+
+  /* child */
+  /* close read end of pipe */
+  if (close(close_exec_pipe[0]) < 0) {
+    vlog.error(_("close failed: %s"), strerror(errno));
+  }
+
+  /* close all other fds */
+  int fd = 3;
+  int fdlimit = sysconf(_SC_OPEN_MAX);
+  while (fd < fdlimit) {
+    if (fd != close_exec_pipe[1]) {
+      close(fd);
+    }
+    fd++;
+  }
+
+  /* execute preexec_fn */
+  if (preexec_fn) {
+    if ((*preexec_fn) (preexec_data) != 0) {
+      goto fail;
+    }
+  }
+
+  execvp(cmd[0], cmd);
+
+  /* execvp failed */
+  vlog.error(_("execvp failed: %s"), strerror(errno));
+
+ fail:
+  if (write(close_exec_pipe[1], "E", 1) < 0) {
+    vlog.error(_("write failed: %s"), strerror(errno));
+  }
+  if (close(close_exec_pipe[1]) < 0) {
+    vlog.error(_("close failed: %s"), strerror(errno));
+  }
+  close(2);
+  _exit(71); /* system error (e.g., can't fork) */
+  return 0;
+}
+
+
+static int
+setup_xinit_fds(void *data)
+{
+  /* set stdin to /dev/null */
+  if (close(0) < 0) {
+    vlog.error(_("Unable to close stdin"));
+  }
+  int devnull = open("/dev/null", O_RDONLY);
+  if (devnull < 0) {
+    vlog.error(_("Unable to open /dev/null"));
+  }
+  else if (devnull != 0) {
+    vlog.error(_("Didn't get fd 0 for stdin"));
+  }
+
+  /* close stdout */
+  if (close(1) < 0) {
+    vlog.error(_("Unable to close stdout"));
+  }
+
+  /* open log file */
+  char *home = getenv("HOME");
+  if (!home || chdir(home) < 0) {
+    vlog.error(_("Unable to change to home dir: .xsession-errors created in working directory"));
+  }
+  int log = open(".xsession-errors", O_WRONLY | O_CREAT | O_APPEND, 0600);
+  if (log < 0) {
+    vlog.error(_("Unable to open .xsession-errors for writing"));
+  }
+  else if (log != 1) {
+    vlog.error(_("Didn't get fd 1 for stdout"));
+  }
+
+  /* since we are mixing stdout, stderr, and program output, it's
+     convenient to have stdout at least line buffered */
+  setvbuf(stdout, NULL, _IOLBF, 0);
+
+  /* redirect stderr */
+  if (close(2) < 0) {
+    vlog.error(_(" unable to close stderr"));
+  }
+  else {
+    dup(log);
+  }
+
+  return 0;
+}
+
+#define OPEN_DISP_RETRIES 40
+/* Wait for Xserver to accept connections */
+static int
+waitforserver(pid_t pid)
+{
+  Display *disp = NULL;
+  int status;
+
+  for (int i = 0; i < OPEN_DISP_RETRIES; i++) {
+    if ((disp = XOpenDisplay(serverName))) {
+      return 0;
+    }
+
+    pid_t gotpid = waitpid(pid, &status, WNOHANG);
+    if (gotpid < 0) {
+      if (errno == ECHILD) {
+	break;
+      }
+    }
+    if (gotpid == pid) {
+      break;
+    }
+
+    usleep(500000);
+  }
+
+  return -1;
+}
+
+
+/* Call XOpenDisplay, possibly without XAUTHORITY set */
+static Display *OpenDisplayNoXauth(char *display_name)
+{
+  Display *dpy = XOpenDisplay(display_name);
+  if (!dpy) {
+    char *xauthenv = getenv("XAUTHORITY");
+    unsetenv("XAUTHORITY");
+    dpy = XOpenDisplay(display_name);
+    if (!dpy) {
+      /* Didn't help, restore */
+      setenv("XAUTHORITY", xauthenv, 1);
+    }
+  }
+  return dpy;
+}
+
+
 int main(int argc, char** argv)
 {
   UserDialog dlg;
 
   argv0 = argv[0];
+  char *xinitargs[MAX_XINIT_ARGS] = { NULL };
+  int xinitargc = 0;
+  int displayarg = -1;
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE_NAME, LOCALE_DIR);
@@ -416,20 +603,73 @@ int main(int argc, char** argv)
       usage(argv[0]);
     }
 
-    strncpy(serverName, argv[i], SERVERNAMELEN);
-    serverName[SERVERNAMELEN - 1] = '\0';
-    i++;
+    if (argc-i == 1) {
+      strncpy(serverName, argv[i], SERVERNAMELEN);
+      serverName[SERVERNAMELEN - 1] = '\0';
+    } else if (argc-i > MAX_XINIT_ARGS-1) {
+      vlog.error(_("Too many arguments; only %d allowed"), MAX_XINIT_ARGS-1);
+      return 1;
+    } else {
+      strcpy(serverName, ":0"); // Default to :0, just like xinit does
+      for (int j = i; j < argc; j++) {
+	xinitargs[xinitargc++] = argv[j];
+	if (!strcmp("--", argv[j])) {
+	  /* syntax requires that display is directly after server */
+	  displayarg = j + 2;
+        }
+        if (j == displayarg) {
+	  /* retrieve display number */
+	  strncpy(serverName, argv[j], SERVERNAMELEN);
+	  serverName[SERVERNAMELEN - 1] = '\0';
+        }
+      }
+      xinitargs[xinitargc++] = NULL;
+    }
+    break;
   }
 
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
+
+  if (xinitargc > 0) {
+    /* xinit command given */
+    /* Check if server is already running - try connecting */
+    serverDpy = OpenDisplayNoXauth(serverName);
+    if (serverDpy) {
+      /* Close and let the code below open */
+      XCloseDisplay(serverDpy);
+    } else {
+      vlog.status(_("Cannot connect to display - starting Xserver (output to ~/.xsession-errors)"));
+      /* Check if XAUTHORITY is writable, otherwise clear */
+      if (getenv("XAUTHORITY") && access(XauFileName(), W_OK) < 0) {
+	vlog.status(_("Cannot write to XAUTHORITY - unsetting"));
+	unsetenv("XAUTHORITY");
+      }
+      pid_t xinit = subprocess(xinitargs, setup_xinit_fds, NULL);
+      if (xinit < 0) {
+	vlog.error(_("Unable to start Xserver"));
+	if (alertOnFatalError) {
+	  fl_alert(_("Unable to start Xserver"));
+	}
+      } else {
+	if (waitforserver(xinit) < 0) {
+	  vlog.error(_("Xserver failed to start within timeout"));
+	  if (alertOnFatalError) {
+	    fl_alert(_("Xserver failed to start within timeout"));
+	  }
+	} else {
+	  vlog.status(_("Xserver started"));
+	}
+      }
+    }
+  }
 
   /* RFB server - connect to server display */
   if (serverName[0] == '\0') {
     strcpy(serverName, ":0");
   } else {
     // Command line
-    serverDpy = XOpenDisplay(serverName);
+    serverDpy = OpenDisplayNoXauth(serverName);
     if (!serverDpy) {
       vlog.error(_("Unable to open display \"%s\""), serverName);
       if (alertOnFatalError) {
@@ -443,7 +683,7 @@ int main(int argc, char** argv)
     if (serverName[0] == '\0') {
       return 1;
     }
-    serverDpy = XOpenDisplay(serverName);
+    serverDpy = OpenDisplayNoXauth(serverName);
     if (!serverDpy) {
       vlog.error(_("Unable to open display \"%s\""), serverName);
       fl_alert(_("Unable to open display \"%s\""), serverName);

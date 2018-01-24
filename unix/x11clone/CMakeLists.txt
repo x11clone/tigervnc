@@ -52,6 +52,11 @@ else()
   message(WARNING "No XFIXES extension.  x11clone will not be able to show cursors.")
 endif()
 
+if(X11_FOUND AND X11_Xau_LIB)
+  add_definitions(-DHAVE_XAU)
+  target_link_libraries(x11clone ${X11_Xau_LIB})
+endif()
+
 install(TARGETS x11clone DESTINATION ${BIN_DIR})
 
 install(FILES x11clone.man DESTINATION ${MAN_DIR}/man1 RENAME x11clone.1)

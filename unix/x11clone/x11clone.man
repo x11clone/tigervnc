@@ -6,6 +6,16 @@ x11clone \- view and interact with another X11 server
 .RI [ options ]
 .RI [ serverDisplay ]
 .br
+.B x11clone xinitcmd
+[
+.RI [ client ]
+.RI options
+\&\.\|.\|. ] [
+.B \-\^\-
+.RI [ server ]
+.RI [ serverDisplay ]
+.RI options
+\&.\|.\|. ]
 .SH DESCRIPTION
 .B x11clone
 is a tool which connects two independent X11 displays. It retrieves
@@ -23,7 +33,13 @@ In some cases, documentation, log messages etc refers to the "server"
 and "client", meaning the components of
 .B x11clone
 connected to the "server display" and "client display".
-.
+
+In the 1st form, x11clone tries to connect to "serverDisplay", if specified.
+
+In the 2nd form, the "serverDisplay" defaults to :0. If the connection
+to "serverDisplay" fails, x11clone tries to start a new Xserver
+instance using the specified command (typically xinit or startx).
+
 .SH POPUP MENU
 The application has a popup menu containing entries which perform various actions.
 It is usually brought up by pressing F8, but this can be configured with the
@@ -183,7 +199,17 @@ Display a dialog with any fatal error before exiting. Default is on.
 .TP
 .B \-DotWhenNoCursor
 Show the dot cursor when the server sends an invisible cursor. Default is off.
-
+.
+.SH EXAMPLES
+.TP
+.B "x11clone :0"
+Connect to existing server display ":0"
+.
+.TP
+.B "x11clone startx /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"
+If no server is running on ":50", start a new instance using the specified
+"startx" command line. Then, connect to server display ":50".
+.
 .SH SEE ALSO
 http://www.tigervnc.org
 
