@@ -185,14 +185,14 @@ static void init_fltk()
   // Basic text size (10pt @ 96 dpi => 13px)
   FL_NORMAL_SIZE = 13;
 
-#ifndef __APPLE__
   // Select a FLTK scheme and background color that looks somewhat
-  // close to modern Linux and Windows.
+  // close to modern systems
   Fl::scheme("gtk+");
   Fl::background(220, 220, 220);
-#else
-  // On Mac OS X there is another scheme that fits better though.
-  Fl::scheme("plastic");
+
+  // macOS has a slightly brighter default background though
+#ifdef __APPLE__
+  Fl::background(240, 240, 240);
 #endif
 
   // Proper Gnome Shell integration requires that we set a sensible
@@ -495,9 +495,6 @@ int main(int argc, char** argv)
   }
 
   for (int i = 1; i < argc;) {
-    if (Fl::arg(argc, argv, i))
-      continue;
-
     if (Configuration::setParam(argv[i])) {
       i++;
       continue;
@@ -522,6 +519,9 @@ int main(int argc, char** argv)
   mkvnchomedir();
 
 #if !defined(WIN32) && !defined(__APPLE__)
+  if (strcmp(display, "") != 0) {
+    Fl::display(display);
+  }
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
 #endif
