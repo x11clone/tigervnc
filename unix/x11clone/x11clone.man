@@ -200,6 +200,10 @@ Display a dialog with any fatal error before exiting. Default is on.
 .B \-DotWhenNoCursor
 Show the dot cursor when the server sends an invisible cursor. Default is off.
 .
+.TP
+.B \-Check
+Return true if it is possible to connect to server display.
+.
 .SH EXAMPLES
 .TP
 .B "x11clone :0"

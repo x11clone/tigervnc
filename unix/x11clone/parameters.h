@@ -32,6 +32,8 @@ extern rfb::StringParameter desktopSize;
 extern rfb::StringParameter clientGeometry;
 extern rfb::BoolParameter remoteResize;
 
+extern rfb::BoolParameter check;
+
 extern rfb::BoolParameter viewOnly;
 
 extern rfb::BoolParameter acceptClipboard;

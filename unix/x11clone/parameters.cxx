@@ -73,6 +73,10 @@ BoolParameter remoteResize("ServerResize",
                            "Dynamically resize the server display as "
                            "the size of the client window changes. ", true);
 
+BoolParameter check("Check",
+		    "Return true if it is possible to connect to server display",
+		    false);
+
 BoolParameter viewOnly("ViewOnly",
                        "Don't send any mouse or keyboard events to the server",
                        false);

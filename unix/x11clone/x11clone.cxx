@@ -687,6 +687,11 @@ int main(int argc, char** argv)
       }
     }
     serverDpy = OpenDisplayNoXauth(serverName);
+
+    if (check) {
+      return !serverDpy;
+    }
+
     if (!serverDpy) {
       vlog.error(_("Unable to open display \"%s\""), serverName);
       if (!cmdLineServer || alertOnFatalError) {
