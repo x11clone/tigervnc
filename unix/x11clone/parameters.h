@@ -38,6 +38,7 @@ extern rfb::BoolParameter acceptClipboard;
 extern rfb::BoolParameter setPrimary;
 extern rfb::BoolParameter sendClipboard;
 extern rfb::BoolParameter sendPrimary;
+extern rfb::StringParameter display;
 
 extern rfb::StringParameter menuKey;
 

@@ -584,9 +584,6 @@ int main(int argc, char** argv)
   }
 
   for (int i = 1; i < argc;) {
-    if (Fl::arg(argc, argv, i))
-      continue;
-
     if (Configuration::setParam(argv[i])) {
       i++;
       continue;
@@ -628,6 +625,9 @@ int main(int argc, char** argv)
     break;
   }
 
+  if (strcmp(display, "") != 0) {
+    Fl::display(display);
+  }
   fl_open_display();
   XkbSetDetectableAutoRepeat(fl_display, True, NULL);
 
