@@ -664,31 +664,33 @@ int main(int argc, char** argv)
     }
   }
 
+  bool cmdLineServer = false;
   /* RFB server - connect to server display */
   if (serverName[0] == '\0') {
     strcpy(serverName, ":0");
   } else {
-    // Command line
+    // Server name given on command line
+    cmdLineServer = true;
+  }
+
+  do {
+    if (!cmdLineServer) {
+      ServerDialog::run(serverName, serverName);
+      if (serverName[0] == '\0') {
+	return 1;
+      }
+    }
     serverDpy = OpenDisplayNoXauth(serverName);
     if (!serverDpy) {
       vlog.error(_("Unable to open display \"%s\""), serverName);
-      if (alertOnFatalError) {
+      if (!cmdLineServer || alertOnFatalError) {
 	fl_alert(_("Unable to open display \"%s\""), serverName);
       }
-      return 1;
+      if (cmdLineServer) {
+	return 1;
+      }
     }
-  }
-  while (!serverDpy) {
-    ServerDialog::run(serverName, serverName);
-    if (serverName[0] == '\0') {
-      return 1;
-    }
-    serverDpy = OpenDisplayNoXauth(serverName);
-    if (!serverDpy) {
-      vlog.error(_("Unable to open display \"%s\""), serverName);
-      fl_alert(_("Unable to open display \"%s\""), serverName);
-    }
-  }
+  } while (!serverDpy);
 
   TXWindow::init(serverDpy, "x11clone");
   Geometry geo(DisplayWidth(serverDpy, DefaultScreen(serverDpy)),
