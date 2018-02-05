@@ -501,17 +501,19 @@ static Display *OpenDisplayNoXauth(char *display_name)
      https://bugs.freedesktop.org/show_bug.cgi?id=25722 */
   fprintf(stderr, "Xlib: ");
   Display *dpy = XOpenDisplay(display_name);
+  fprintf(stderr, "\r      \r");
   if (!dpy) {
     char *xauthenv = getenv("XAUTHORITY");
     unsetenv("XAUTHORITY");
+    fprintf(stderr, "Xlib: ");
     dpy = XOpenDisplay(display_name);
+    fprintf(stderr, "\r      \r");
     if (!dpy) {
       /* Didn't help, restore */
       setenv("XAUTHORITY", xauthenv, 1);
     }
   }
-  /* Remove string above, in case nothing was printed */
-  fprintf(stderr, "\b\b\b\b\b\b");
+
   return dpy;
 }
 
