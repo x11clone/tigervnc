@@ -1,6 +1,7 @@
 include_directories(${FLTK_INCLUDE_DIR})
 include_directories(${GETTEXT_INCLUDE_DIR})
 
+include_directories(${CMAKE_SOURCE_DIR}/unix/common)
 include_directories(${CMAKE_SOURCE_DIR}/unix)
 include_directories(${CMAKE_SOURCE_DIR}/common)
 set(X11CLONE_SOURCES
@@ -18,6 +19,7 @@ set(X11CLONE_SOURCES
   ../../vncviewer/xkb_to_qnum.c
   ../x0vncserver/Geometry.cxx
   ../x0vncserver/XDesktop.cxx
+  ../x0vncserver/RandrGlue.c
   ../x0vncserver/Image.cxx
   ../x0vncserver/XPixelBuffer.cxx
   ../x0vncserver/PollingManager.cxx
@@ -29,7 +31,7 @@ set(X11CLONE_SOURCES
 
 add_executable(x11clone ${X11CLONE_SOURCES})
 
-target_link_libraries(x11clone tx rfb network rdr os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
+target_link_libraries(x11clone tx rfb network rdr unixcommon os ${FLTK_LIBRARIES} ${GETTEXT_LIBRARIES})
 
 if(X11_FOUND AND X11_XTest_LIB)
   add_definitions(-DHAVE_XTEST)
@@ -50,6 +52,13 @@ if(X11_FOUND AND X11_Xfixes_LIB)
   target_link_libraries(x11clone ${X11_Xfixes_LIB})
 else()
   message(WARNING "No XFIXES extension.  x11clone will not be able to show cursors.")
+endif()
+
+if(X11_FOUND AND X11_Xrandr_LIB)
+  add_definitions(-DHAVE_XRANDR)
+  target_link_libraries(x11clone ${X11_Xrandr_LIB})
+else()
+  message(WARNING "No Xrandr extension.  x11clone will not be able to resize session.")
 endif()
 
 if(X11_FOUND AND X11_Xau_LIB)
