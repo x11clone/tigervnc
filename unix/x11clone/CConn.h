@@ -41,7 +41,7 @@ public:
 
   const char *connectionInfo();
 
-  unsigned getFrameCount();
+  unsigned getUpdateCount();
   unsigned getPixelCount();
   unsigned getPosition();
 
@@ -93,7 +93,7 @@ private:
 
   DesktopWindow *desktop;
 
-  unsigned frameCount;
+  unsigned updateCount;
   unsigned pixelCount;
 
   rfb::PixelFormat serverPF;

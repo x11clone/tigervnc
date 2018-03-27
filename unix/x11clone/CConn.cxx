@@ -59,7 +59,7 @@ static rfb::LogWriter vlog("CConn");
 
 CConn::CConn(network::Socket* socket)
   : desktop(NULL),
-    frameCount(0), pixelCount(0), pendingPFChange(false),
+    updateCount(0), pixelCount(0), pendingPFChange(false),
     lastServerEncoding((unsigned int)-1),
     formatChange(false), encodingChange(false),
     firstUpdate(true), pendingUpdate(false), continuousUpdates(false),
@@ -135,9 +135,9 @@ const char *CConn::connectionInfo()
   return infoText;
 }
 
-unsigned CConn::getFrameCount()
+unsigned CConn::getUpdateCount()
 {
-  return frameCount;
+  return updateCount;
 }
 
 unsigned CConn::getPixelCount()
@@ -288,7 +288,7 @@ void CConn::framebufferUpdateEnd()
 {
   CConnection::framebufferUpdateEnd();
 
-  frameCount++;
+  updateCount++;
 
   Fl::remove_timeout(handleUpdateTimeout, this);
   desktop->updateWindow();
