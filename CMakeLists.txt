@@ -21,7 +21,7 @@ include(CheckCSourceRuns)
 include(CMakeMacroLibtoolFile)
 
 project(tigervnc)
-set(VERSION 1.8.80.2) # TigerVNC uses X.Y.Z, x11clone adds a fourth digit
+set(VERSION 1.8.80.3) # TigerVNC uses X.Y.Z, x11clone adds a fourth digit
 
 # The RC version must always be four comma-separated numbers
 set(RCVERSION 1,8,80,0)
