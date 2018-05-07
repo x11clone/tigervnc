@@ -75,16 +75,11 @@
 #include "x11clone.h"
 #include "vncviewer/fltk_layout.h"
 
-#undef PACKAGE_NAME
-#define PACKAGE_NAME "x11clone"
-
 rfb::LogWriter vlog("main");
 
 using namespace network;
 using namespace rfb;
 using namespace std;
-
-static Display* serverDpy = NULL;
 
 char serverName[SERVERNAMELEN] = { '\0' };
 
@@ -93,6 +88,10 @@ static const char *argv0 = NULL;
 static bool exitMainloop = false;
 static const char *exitError = NULL;
 
+#undef PACKAGE_NAME
+#define PACKAGE_NAME "x11clone"
+
+static Display* serverDpy = NULL;
 XDesktop *desktop;
 VNCServerST *server;
 VNCSConnectionST* sconnection;
@@ -138,39 +137,12 @@ void about_x11clone()
   fl_message("%s", about_text());
 }
 
-void serverDpyEvent(FL_SOCKET fd, void *data)
-{
-  Display *dpy = (Display*)data;
-
-  //fprintf(stderr, "serverDpyEvent\n");
-  // Note that handleXEvents will not return until XPending returns
-  // zero; until there are no more events to read from the
-  // connection.
-  TXWindow::handleXEvents(dpy);
-}
-
-void serverReadEvent(FL_SOCKET fd, void *data)
-{
-  VNCSConnectionST* sconnection = (VNCSConnectionST*)data;
-  //fprintf(stderr, "serverReadEvent\n");
-  sconnection->processMessages();
-}
-
 void serverWriteEvent(FL_SOCKET fd, void *data)
 {
   VNCSConnectionST* sconnection = (VNCSConnectionST*)data;
   //fprintf(stderr, "serverWriteEvent\n");
   sconnection->flushSocket();
 }
-
-
-void flush_serverdpy()
-{
-  // The serverDpy fd is only selected for read, so flush anything in
-  // the output buffer first
-  XFlush(serverDpy);
-}
-
 
 void run_mainloop()
 {
@@ -219,6 +191,23 @@ void run_mainloop()
   }
 }
 
+void serverDpyEvent(FL_SOCKET fd, void *data)
+{
+  Display *dpy = (Display*)data;
+
+  //fprintf(stderr, "serverDpyEvent\n");
+  // Note that handleXEvents will not return until XPending returns
+  // zero; until there are no more events to read from the
+  // connection.
+  TXWindow::handleXEvents(dpy);
+}
+
+void serverReadEvent(FL_SOCKET fd, void *data)
+{
+  VNCSConnectionST* sconnection = (VNCSConnectionST*)data;
+  //fprintf(stderr, "serverReadEvent\n");
+  sconnection->processMessages();
+}
 
 static void CleanupSignalHandler(int sig)
 {
@@ -234,7 +223,7 @@ static void init_fltk()
   FL_NORMAL_SIZE = 13;
 
   // Select a FLTK scheme and background color that looks somewhat
-  // close to modern Linux and Windows.
+  // close to modern systems
   Fl::scheme("gtk+");
   Fl::background(220, 220, 220);
 
@@ -781,4 +770,11 @@ int main(int argc, char** argv)
     fl_alert("%s", exitError);
 
   return 0;
+}
+
+void flush_serverdpy()
+{
+  // The serverDpy fd is only selected for read, so flush anything in
+  // the output buffer first
+  XFlush(serverDpy);
 }
