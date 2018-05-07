@@ -56,6 +56,7 @@
 #include <rfb/Timer.h>
 #include <rfb/Exception.h>
 #include <rfb/VNCSConnectionST.h>
+#include <rfb/DecodeManager.h>
 #include <network/UnixSocket.h>
 #include <os/os.h>
 
@@ -533,6 +534,13 @@ int main(int argc, char** argv)
 
   rfb::SecurityClient::secTypes.setParam("None");
   rfb::SecurityServer::secTypes.setParam("None");
+
+  // Currently disabling threads:
+  // * Minimizes the overall CPU usage
+  // * Tests indicates that decoder threads are only using ~1% CPU in
+  //   this application
+  // * Avoid possible bugs in our or other code
+  DecodeManager::maxThreads = 1;
 
   // Write about text to console, still using normal locale codeset
   fprintf(stderr,"\n%s\n", about_text());
