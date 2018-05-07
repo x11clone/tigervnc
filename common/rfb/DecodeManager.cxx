@@ -35,6 +35,8 @@ using namespace rfb;
 
 static LogWriter vlog("DecodeManager");
 
+size_t DecodeManager::maxThreads = 0;
+
 DecodeManager::DecodeManager(CConnection *conn) :
   conn(conn), threadException(NULL)
 {
@@ -52,6 +54,9 @@ DecodeManager::DecodeManager(CConnection *conn) :
     cpuCount = 1;
   } else {
     vlog.info("Detected %d CPU core(s)", (int)cpuCount);
+    if (maxThreads > 0) {
+	cpuCount = __rfbmin(maxThreads, cpuCount);
+    }
     // No point creating more threads than this, they'll just end up
     // wasting CPU fighting for locks
     if (cpuCount > 4)
