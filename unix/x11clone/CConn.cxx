@@ -1,7 +1,7 @@
 /* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
  * Copyright (C) 2011 D. R. Commander.  All Rights Reserved.
  * Copyright 2009-2014 Pierre Ossman for Cendio AB
- * Copyright 2017 Peter Astrand <astrand@cendio.se> for Cendio AB
+ * Copyright 2018 Peter Astrand <astrand@cendio.se> for Cendio AB
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,6 @@ CConn::~CConn()
 
   if (sock)
     Fl::remove_fd(sock->getFd());
-
   delete sock;
 }
 
@@ -248,7 +247,9 @@ void CConn::setExtendedDesktopSize(unsigned reason, unsigned result,
   CConnection::setExtendedDesktopSize(reason, result, w, h, layout);
 
   if ((reason == reasonClient) && (result != resultSuccess)) {
-    vlog.error(_("SetDesktopSize failed: %d"), result);
+    // In x11clone, resultInvalid is common when resizing to odd
+    // screensizes. Use higher log level.
+    vlog.debug(_("SetDesktopSize failed: %d"), result);
     return;
   }
 
