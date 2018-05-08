@@ -1,0 +1,42 @@
+#!/bin/bash
+set -e
+
+run_with_args()
+{
+    ./x11clone -Log '*:stdout:100' -AlertOnFatalError=0 "$@" 2>&1
+}
+
+fail()
+{
+    echo "FAILED ON LINE" "$@"
+    exit 1
+}
+
+# Parameter names are case-insensitive.
+
+# Parameters can be turned on with -<param> or off with -<param>=0
+run_with_args -ViewonlY :99 | egrep -q 'ViewOnly.*to 1' || fail ${LINENO}
+run_with_args -ViewonlY=0 :99 | egrep -q 'ViewOnly.*to 0' || fail ${LINENO}
+
+# Parameters which take a value can be specified as -<param> <value>
+run_with_args -FrameratE 7 :99 | egrep -q 'FrameRate.*to 7' || fail ${LINENO}
+
+# Other valid forms are <param>=<value> -<param>=<value> --<param>=<value>
+run_with_args FrameratE=7 :99 | egrep -q 'FrameRate.*to 7' || fail ${LINENO}
+run_with_args -FrameratE=7 :99 | egrep -q 'FrameRate.*to 7' || fail ${LINENO}
+run_with_args --FrameratE=7 :99 | egrep -q 'FrameRate.*to 7' || fail ${LINENO}
+
+# Options after display
+run_with_args -ViewonlY=0 :99 -FullScreen=0 | egrep -q 'FullScreen.*to 0' || fail ${LINENO}
+
+# --start without anything
+run_with_args --start | egrep -q "^usage:" || fail ${LINENO}
+
+# --start with 64 arguments
+run_with_args --start /bin/true -- /bin/true `seq 61` | egrep -q "Too many --start arguments" || fail ${LINENO}
+
+# Mixing 1st and 2nd form is not allowed
+run_with_args :99 --start /bin/true -- /bin/true | egrep -q "^usage:" || fail ${LINENO}
+
+# Trying out --start
+run_with_args --start xinit /bin/sleep 5 -- /usr/bin/Xvfb :50 -screen 0 1024x768x24 | egrep -q "Xserver started" || fail ${LINENO}

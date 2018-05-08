@@ -295,10 +295,10 @@ static void init_fltk()
 static void usage(const char *programName)
 {
   fprintf(stderr,
-          "\nusage: %s [parameters] [serverDisplay]\n"
-          "       %s [parameters] xinitcmd [ [client] options ... ] [ -- [server] [serverDisplay] options ... ]",
+          "\nusage: %s [parameters] [serverDisplay] [parameters]\n"
+          "       %s [parameters] --start <xinitcmd> [ [client] options ... ] [ -- [server] [serverDisplay] options ... ]",
           programName, programName);
-  fprintf(stderr,"\n"
+  fprintf(stderr,"\n\n"
           "Parameters can be turned on with -<param> or off with -<param>=0\n"
           "Parameters which take a value can be specified as "
           "-<param> <value>\n"
@@ -589,6 +589,33 @@ int main(int argc, char** argv)
   }
 
   for (int i = 1; i < argc;) {
+    if (!strcmp("--start", argv[i])) {
+      if (argc-i < 2 || serverName[0]) {
+	usage(argv[0]);
+      }
+      i++;
+      if (argc-i > MAX_XINIT_ARGS-1) {
+	vlog.error(_("Too many --start arguments; only %d allowed"), MAX_XINIT_ARGS-1);
+	return 1;
+      } else {
+	strcpy(serverName, ":0"); // Default to :0, just like xinit does
+	for (int j = i; j < argc; j++) {
+	  xinitargs[xinitargc++] = argv[j];
+	  if (!strcmp("--", argv[j])) {
+	    /* syntax requires that display is directly after server */
+	    displayarg = j + 2;
+	  }
+	  if (j == displayarg) {
+	    /* retrieve display number */
+	    strncpy(serverName, argv[j], SERVERNAMELEN);
+	    serverName[SERVERNAMELEN - 1] = '\0';
+	  }
+	}
+	xinitargs[xinitargc++] = NULL;
+      }
+      break;
+    }
+
     if (Configuration::setParam(argv[i])) {
       i++;
       continue;
@@ -605,29 +632,9 @@ int main(int argc, char** argv)
       usage(argv[0]);
     }
 
-    if (argc-i == 1) {
-      strncpy(serverName, argv[i], SERVERNAMELEN);
-      serverName[SERVERNAMELEN - 1] = '\0';
-    } else if (argc-i > MAX_XINIT_ARGS-1) {
-      vlog.error(_("Too many arguments; only %d allowed"), MAX_XINIT_ARGS-1);
-      return 1;
-    } else {
-      strcpy(serverName, ":0"); // Default to :0, just like xinit does
-      for (int j = i; j < argc; j++) {
-	xinitargs[xinitargc++] = argv[j];
-	if (!strcmp("--", argv[j])) {
-	  /* syntax requires that display is directly after server */
-	  displayarg = j + 2;
-        }
-        if (j == displayarg) {
-	  /* retrieve display number */
-	  strncpy(serverName, argv[j], SERVERNAMELEN);
-	  serverName[SERVERNAMELEN - 1] = '\0';
-        }
-      }
-      xinitargs[xinitargc++] = NULL;
-    }
-    break;
+    strncpy(serverName, argv[i], SERVERNAMELEN);
+    serverName[SERVERNAMELEN - 1] = '\0';
+    i++;
   }
 
   if (strcmp(display, "") != 0) {

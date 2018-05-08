@@ -3,10 +3,13 @@
 x11clone \- view and interact with another X11 server
 .SH SYNOPSIS
 .B x11clone
-.RI [ options ]
+.RI [ parameters ]
 .RI [ serverDisplay ]
+.RI [ parameters ]
 .br
-.B x11clone xinitcmd
+.B x11clone
+.RI [ parameters ]
+--start <xinitcmd>
 [
 .RI [ client ]
 .RI options
@@ -210,7 +213,7 @@ Return true if it is possible to connect to server display.
 Connect to existing server display ":0"
 .
 .TP
-.B "x11clone startx /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"
+.B "x11clone -FullScreen --start startx /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"
 If no server is running on ":50", start a new instance using the specified
 "startx" command line. Then, connect to server display ":50".
 .
