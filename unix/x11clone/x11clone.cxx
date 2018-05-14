@@ -85,6 +85,8 @@ char serverName[SERVERNAMELEN] = { '\0' };
 
 static const char *argv0 = NULL;
 
+static char *env_xauthority = NULL;
+
 static bool exitMainloop = false;
 static const char *exitError = NULL;
 
@@ -493,14 +495,15 @@ static Display *OpenDisplayNoXauth(char *display_name)
   Display *dpy = XOpenDisplay(display_name);
   fprintf(stderr, "\r      \r");
   if (!dpy) {
-    char *xauthenv = getenv("XAUTHORITY");
-    unsetenv("XAUTHORITY");
-    fprintf(stderr, "Xlib: ");
-    dpy = XOpenDisplay(display_name);
-    fprintf(stderr, "\r      \r");
-    if (!dpy) {
-      /* Didn't help, restore */
-      setenv("XAUTHORITY", xauthenv, 1);
+    if (env_xauthority) {
+      unsetenv("XAUTHORITY");
+      fprintf(stderr, "Xlib: ");
+      dpy = XOpenDisplay(display_name);
+      fprintf(stderr, "\r      \r");
+      if (!dpy) {
+        /* Didn't help, restore */
+        putenv(env_xauthority);
+      }
     }
   }
 
@@ -530,6 +533,15 @@ int main(int argc, char** argv)
   //   this application
   // * Avoid possible bugs in our or other code
   DecodeManager::maxThreads = 1;
+
+  // Do putenv() on XAUTHORITY, so that we own the memory
+  char *xauthvalue = getenv("XAUTHORITY");
+  if (xauthvalue) {
+    env_xauthority = (char *)malloc(strlen(xauthvalue) + sizeof("XAUTHORITY="));
+    strcpy(env_xauthority, "XAUTHORITY=");
+    strcat(env_xauthority, xauthvalue);
+    putenv(env_xauthority);
+  }
 
   // Write about text to console, still using normal locale codeset
   fprintf(stderr,"\n%s\n", about_text());
