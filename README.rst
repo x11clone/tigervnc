@@ -54,6 +54,10 @@ Build Requirements
    * Gnu gettext 0.14.4 or later
    * See "Building Native Language Support" below.
 
+* libjpeg-turbo
+   * "Normal" libjpegv6 is also supported, although it is not
+     recommended as it is much slower.
+
 * X11 development kit
 
 
