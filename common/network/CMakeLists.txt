@@ -1,10 +1,13 @@
 include_directories(${CMAKE_SOURCE_DIR}/common)
 
 set(NETWORK_SOURCES
+  Socket.cxx
   TcpSocket.cxx)
-if(UNIX)
+
+if(NOT WIN32)
   set(NETWORK_SOURCES ${NETWORK_SOURCES} UnixSocket.cxx)
 endif()
+
 add_library(network STATIC ${NETWORK_SOURCES})
 
 if(WIN32)

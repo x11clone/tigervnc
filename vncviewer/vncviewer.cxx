@@ -376,15 +376,24 @@ potentiallyLoadConfigurationFile(char *vncServerName)
                                  (strchr(vncServerName, '\\')) != NULL);
 
   if (hasPathSeparator) {
+#ifndef WIN32
+    struct stat sb;
+
+    // This might be a UNIX socket, we need to check
+    if (stat(vncServerName, &sb) == -1) {
+      // Some access problem; let loadViewerParameters() deal with it...
+    } else {
+      if ((sb.st_mode & S_IFMT) == S_IFSOCK)
+        return;
+    }
+#endif
+
     try {
-      strncpy(vncServerName, loadViewerParameters(vncServerName),
-              VNCSERVERNAMELEN);
-      if (vncServerName[0] == '\0') {
-        vlog.error("Unable to load the server name from given file");
-        if (alertOnFatalError)
-          fl_alert("Unable to load the server name from given file");
-        exit(EXIT_FAILURE);
-      }
+      const char* newServerName;
+      newServerName = loadViewerParameters(vncServerName);
+      // This might be empty, but we still need to clear it so we
+      // don't try to connect to the filename
+      strncpy(vncServerName, newServerName, VNCSERVERNAMELEN);
     } catch (rfb::Exception& e) {
       vlog.error("%s", e.str());
       if (alertOnFatalError)
@@ -510,11 +519,11 @@ int main(int argc, char** argv)
   Configuration::enableViewerParams();
 
   /* Load the default parameter settings */
-  const char* defaultServerName;
+  char defaultServerName[VNCSERVERNAMELEN];
   try {
-    defaultServerName = loadViewerParameters(NULL);
+    strncpy(defaultServerName, loadViewerParameters(NULL), VNCSERVERNAMELEN);
   } catch (rfb::Exception& e) {
-    defaultServerName = "";
+    strcpy(defaultServerName, "");
     vlog.error("%s", e.str());
     if (alertOnFatalError)
       fl_alert("%s", e.str());
@@ -576,7 +585,7 @@ int main(int argc, char** argv)
 #endif
 
   if (listenMode) {
-    std::list<TcpListener*> listeners;
+    std::list<SocketListener*> listeners;
     try {
       int port = 5500;
       if (isdigit(vncServerName[0]))
@@ -590,7 +599,7 @@ int main(int argc, char** argv)
       while (sock == NULL) {
         fd_set rfds;
         FD_ZERO(&rfds);
-        for (std::list<TcpListener*>::iterator i = listeners.begin();
+        for (std::list<SocketListener*>::iterator i = listeners.begin();
              i != listeners.end();
              i++)
           FD_SET((*i)->getFd(), &rfds);
@@ -605,7 +614,7 @@ int main(int argc, char** argv)
           }
         }
 
-        for (std::list<TcpListener*>::iterator i = listeners.begin ();
+        for (std::list<SocketListener*>::iterator i = listeners.begin ();
              i != listeners.end();
              i++)
           if (FD_ISSET((*i)->getFd(), &rfds)) {

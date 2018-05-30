@@ -1,4 +1,5 @@
-/* Copyright (C) 2017 Peter Åstrand for Cendio AB.  All Rights Reserved.
+/* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
+ * Copyright (c) 2012 University of Oslo.  All Rights Reserved.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,53 +21,151 @@
 #include <config.h>
 #endif
 
-#define closesocket close
-
+#include <sys/stat.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <unistd.h>
+#include <errno.h>
+#include <stdlib.h>
+#include <stddef.h>
+
 #include <network/UnixSocket.h>
-#include <rfb/util.h>
+#include <rfb/LogWriter.h>
 
 using namespace network;
 using namespace rdr;
 
-UnixSocket::UnixSocket(int sock, bool close, int bufSize_)
-  : Socket(new FdInStream(sock), new FdOutStream(sock, true, -1, bufSize_), true), closeFd(close)
+static rfb::LogWriter vlog("UnixSocket");
+
+// -=- UnixSocket
+
+UnixSocket::UnixSocket(int sock, int bufSize) : Socket(sock, bufSize)
 {
 }
 
-UnixSocket::~UnixSocket() {
-  if (closeFd) {
-    closesocket(getFd());
+UnixSocket::UnixSocket(const char *path)
+{
+  int sock, err, result;
+  sockaddr_un addr;
+  socklen_t salen;
+
+  if (strlen(path) >= sizeof(addr.sun_path))
+    throw SocketException("socket path is too long", ENAMETOOLONG);
+
+  // - Create a socket
+  sock = socket(AF_UNIX, SOCK_STREAM, 0);
+  if (sock == -1)
+    throw SocketException("unable to create socket", errno);
+
+  // - Attempt to connect
+  memset(&addr, 0, sizeof(addr));
+  addr.sun_family = AF_UNIX;
+  strcpy(addr.sun_path, path);
+  salen = sizeof(addr);
+  while ((result = connect(sock, (sockaddr *)&addr, salen)) == -1) {
+    err = errno;
+    close(sock);
+    break;
   }
+
+  if (result == -1)
+    throw SocketException("unable connect to socket", err);
+
+  setFd(sock);
 }
 
-void UnixSocket::shutdown()
-{
-  Socket::shutdown();
-  ::shutdown(getFd(), 2);
+char* UnixSocket::getPeerAddress() {
+  struct sockaddr_un addr;
+  socklen_t salen;
+
+  // AF_UNIX only has a single address (the server side).
+  // Unfortunately we don't know which end we are, so we'll have to
+  // test a bit.
+
+  salen = sizeof(addr);
+  if (getpeername(getFd(), (struct sockaddr *)&addr, &salen) != 0) {
+    vlog.error("unable to get peer name for socket");
+    return rfb::strDup("");
+  }
+
+  if (salen > offsetof(struct sockaddr_un, sun_path))
+    return rfb::strDup(addr.sun_path);
+
+  salen = sizeof(addr);
+  if (getsockname(getFd(), (struct sockaddr *)&addr, &salen) != 0) {
+    vlog.error("unable to get local name for socket");
+    return rfb::strDup("");
+  }
+
+  if (salen > offsetof(struct sockaddr_un, sun_path))
+    return rfb::strDup(addr.sun_path);
+
+  // socketpair() will create unnamed sockets
+
+  return rfb::strDup("(unnamed UNIX socket)");
+}
+
+char* UnixSocket::getPeerEndpoint() {
+  return getPeerAddress();
 }
 
 bool UnixSocket::cork(bool enable)
 {
-  return false;
-}
-
-int UnixSocket::getMyPort() {
-  return 0;
-}
-
-char* UnixSocket::getPeerAddress() {
-  return rfb::strDup("UNIX Socket");
-}
-
-int UnixSocket::getPeerPort() {
-  return 0;
-}
-
-char* UnixSocket::getPeerEndpoint() {
-  return rfb::strDup("UNIX Socket");
-}
-
-bool UnixSocket::sameMachine() {
   return true;
+}
+
+UnixListener::UnixListener(const char *path, int mode)
+{
+  struct sockaddr_un addr;
+  mode_t saved_umask;
+  int err, result;
+
+  if (strlen(path) >= sizeof(addr.sun_path))
+    throw SocketException("socket path is too long", ENAMETOOLONG);
+
+  // - Create a socket
+  if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0)
+    throw SocketException("unable to create listening socket", errno);
+
+  // - Delete existing socket (ignore result)
+  unlink(path);
+
+  // - Attempt to bind to the requested path
+  memset(&addr, 0, sizeof(addr));
+  addr.sun_family = AF_UNIX;
+  strcpy(addr.sun_path, path);
+  saved_umask = umask(0777);
+  result = bind(fd, (struct sockaddr *)&addr, sizeof(addr));
+  err = errno;
+  umask(saved_umask);
+  if (result < 0) {
+    close(fd);
+    throw SocketException("unable to bind listening socket", err);
+  }
+
+  // - Set socket mode
+  if (chmod(path, mode) < 0) {
+    err = errno;
+    close(fd);
+    throw SocketException("unable to set socket mode", err);
+  }
+
+  listen(fd);
+}
+
+UnixListener::~UnixListener()
+{
+  struct sockaddr_un addr;
+  socklen_t salen = sizeof(addr);
+
+  if (getsockname(getFd(), (struct sockaddr *)&addr, &salen) == 0)
+    unlink(addr.sun_path);
+}
+
+Socket* UnixListener::createSocket(int fd) {
+  return new UnixSocket(fd);
+}
+
+int UnixListener::getMyPort() {
+  return 0;
 }

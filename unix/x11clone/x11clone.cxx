@@ -35,6 +35,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <sys/socket.h>
 
 #include <x0vncserver/Geometry.h>
 #include <x0vncserver/PollingScheduler.h>
@@ -751,7 +752,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  UnixSocket serversocket(pairfds[1], true, 33177600);
+  UnixSocket serversocket(pairfds[1], 33177600);
   serversocket.outStream().setBlocking(false);
   server->addSocket(&serversocket);
 

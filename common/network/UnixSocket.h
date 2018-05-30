@@ -1,4 +1,5 @@
-/* Copyright (C) 2017 Peter Åstrand for Cendio AB.  All Rights Reserved.
+/* Copyright (C) 2002-2005 RealVNC Ltd.  All Rights Reserved.
+ * Copyright (c) 2012 University of Oslo.  All Rights Reserved.
  * 
  * This is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,35 +17,44 @@
  * USA.
  */
 
+// -=- UnixSocket.h - base-class for UNIX stream sockets.
+//     This header also defines the UnixListener class, used
+//     to listen for incoming socket connections over UNIX
+//
+//     NB: Any file descriptors created by the UnixSocket or
+//     UnixListener classes are close-on-exec if the OS supports
+//     it.  UnixSockets initialised with a caller-supplied fd
+//     are NOT set to close-on-exec.
+
 #ifndef __NETWORK_UNIX_SOCKET_H__
 #define __NETWORK_UNIX_SOCKET_H__
 
 #include <network/Socket.h>
 
-#include <sys/socket.h> /* for socklen_t */
-#include <netinet/in.h> /* for struct sockaddr_in */
-
 namespace network {
 
   class UnixSocket : public Socket {
   public:
-    UnixSocket(int sock, bool close=true, int bufSize=0);
-    virtual ~UnixSocket();
-
-    virtual int getMyPort();
+    UnixSocket(int sock, int bufSize=0);
+    UnixSocket(const char *name);
 
     virtual char* getPeerAddress();
-    virtual int getPeerPort();
     virtual char* getPeerEndpoint();
-    virtual bool sameMachine();
 
-    virtual void shutdown();
     virtual bool cork(bool enable);
-  private:
-    bool closeFd;
+  };
+
+  class UnixListener : public SocketListener {
+  public:
+    UnixListener(const char *listenaddr, int mode);
+    virtual ~UnixListener();
+
+    int getMyPort();
+
+  protected:
+    virtual Socket* createSocket(int fd);
   };
 
 }
 
 #endif // __NETWORK_UNIX_SOCKET_H__
-
