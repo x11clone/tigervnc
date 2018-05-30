@@ -282,7 +282,7 @@ void DecodeManager::DecodeThread::worker()
       entry->decoder->decodeRect(entry->rect, entry->bufferStream->data(),
                                  entry->bufferStream->length(),
                                  *entry->cp, entry->pb);
-    } catch (rdr::Exception e) {
+    } catch (rdr::Exception& e) {
       manager->setThreadException(e);
     } catch(...) {
       assert(false);
