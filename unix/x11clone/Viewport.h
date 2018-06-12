@@ -103,6 +103,8 @@ private:
   typedef std::map<int, rdr::U32> DownMap;
   DownMap downKeySym;
 
+  bool firstLEDState;
+
   const char* pendingServerCutText;
   const char* pendingClientCutText;
 

@@ -88,6 +88,7 @@ enum { ID_EXIT, ID_FULLSCREEN, ID_MINIMIZE, ID_RESIZE,
 Viewport::Viewport(int w, int h, const rfb::PixelFormat& serverPF, CConn* cc_)
   : Fl_Widget(0, 0, w, h), cc(cc_), frameBuffer(NULL),
     lastPointerPos(0, 0), lastButtonMask(0),
+    firstLEDState(true),
     pendingServerCutText(NULL), pendingClientCutText(NULL),
     menuCtrlKey(false), menuAltKey(false), cursor(NULL)
 {
@@ -285,6 +286,15 @@ void Viewport::setCursor(int width, int height, const Point& hotspot,
 void Viewport::setLEDState(unsigned int state)
 {
   vlog.debug("Got server LED state: 0x%08x", state);
+
+  // The first message is just considered to be the server announcing
+  // support for this extension, so start by pushing our state to the
+  // remote end to get things in sync
+  if (firstLEDState) {
+    firstLEDState = false;
+    pushLEDState();
+    return;
+  }
 
   if (!hasFocus())
     return;
