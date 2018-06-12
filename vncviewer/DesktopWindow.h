@@ -99,7 +99,6 @@ private:
 
   void handleDesktopSize();
   static void handleResizeTimeout(void *data);
-  static void reconfigureFullscreen(void *data);
   void remoteResize(int width, int height);
 
   void repositionWidgets();
