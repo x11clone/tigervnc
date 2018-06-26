@@ -71,7 +71,7 @@ StringParameter clientGeometry("ClientGeometry",
 
 BoolParameter remoteResize("ServerResize",
                            "Dynamically resize the server display as "
-                           "the size of the client window changes. ", true);
+                           "the size of the client window changes. ", false);
 
 BoolParameter check("Check",
 		    "Return true if it is possible to connect to server display",
