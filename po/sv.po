@@ -1,17 +1,18 @@
+# #-#-#-#-#  sv.po (tigervnc 1.8.90)  #-#-#-#-#
 # Swedish messages for TigerVNC.
-# Copyright © 2015, 2016 the TigerVNC Team (msgids)
+# Copyright © 2015, 2016, 2017, 2018 the TigerVNC Team (msgids)
 # This file is distributed under the same license as the TigerVNC package.
 #
 # Peter Åstrand <astrand@cendio.se>, 2011.
-# Göran Uddeborg <goeran@uddeborg.se>, 2015, 2016, 2017.
+# Göran Uddeborg <goeran@uddeborg.se>, 2015, 2016, 2017, 2018.
 #
-# $Revision: 1.15 $
+# $Revision: 1.18 $
 msgid ""
 msgstr ""
-"Project-Id-Version: tigervnc 1.7.90\n"
+"Project-Id-Version: tigervnc 1.8.90\n"
 "Report-Msgid-Bugs-To: tigervnc-devel@googlegroups.com\n"
-"POT-Creation-Date: 2018-01-17 08:06+0000\n"
-"PO-Revision-Date: 2017-05-13 13:59+0200\n"
+"POT-Creation-Date: 2018-06-13 14:22+0000\n"
+"PO-Revision-Date: 2018-07-23 19:27+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -26,115 +27,13 @@ msgstr ""
 msgid "Server display: %.80s"
 msgstr "Server-display: %.80s"
 
-#: unix/x11clone/CConn.cxx:131 vncviewer/CConn.cxx:182
-#, c-format
-msgid "Size: %d x %d"
-msgstr "Storlek: %d x %d"
-
-#: unix/x11clone/CConn.cxx:251 vncviewer/CConn.cxx:346
-#, c-format
-msgid "SetDesktopSize failed: %d"
-msgstr "SetDesktopSize misslyckades: %d"
-
-#: unix/x11clone/CConn.cxx:318 vncviewer/CConn.cxx:416
-msgid "Invalid SetColourMapEntries from server!"
-msgstr "Ogiltig SetColourMapEntries från server!"
-
-#: unix/x11clone/CConn.cxx:394 vncviewer/CConn.cxx:492
-msgid "Enabling continuous updates"
-msgstr "Aktiverar kontinuerliga uppdateringar"
-
-#: unix/x11clone/CConn.cxx:435 vncviewer/CConn.cxx:603
-#, c-format
-msgid "Using %s encoding"
-msgstr "Använder kodning %s"
-
-#: unix/x11clone/CConn.cxx:500 vncviewer/CConn.cxx:650
-#, c-format
-msgid "Using pixel format %s"
-msgstr "Använder pixelformat %s"
-
 #: unix/x11clone/DesktopWindow.cxx:116
 msgid "Invalid clientGeometry specified!"
 msgstr "Ogiltig \"clientGeometry\" angiven!"
 
-#: unix/x11clone/DesktopWindow.cxx:422 vncviewer/DesktopWindow.cxx:445
-msgid "Adjusting window size to avoid accidental full screen request"
-msgstr "Justerar fönsterstorleken för att undvika fullskärm av misstag"
-
-#: unix/x11clone/DesktopWindow.cxx:465 vncviewer/DesktopWindow.cxx:489
-#, c-format
-msgid "Press %s to open the context menu"
-msgstr "Tryck %s för att öppna sammanhangsmenyn"
-
-#: unix/x11clone/DesktopWindow.cxx:759 vncviewer/DesktopWindow.cxx:779
-#: vncviewer/DesktopWindow.cxx:787 vncviewer/DesktopWindow.cxx:802
-msgid "Failure grabbing keyboard"
-msgstr "Misslyckades med att fånga tangentbordet"
-
-#: unix/x11clone/DesktopWindow.cxx:803 vncviewer/DesktopWindow.cxx:854
-msgid "Failure grabbing mouse"
-msgstr "Misslyckades med att fånga musen"
-
-#: unix/x11clone/DesktopWindow.cxx:1001 vncviewer/DesktopWindow.cxx:1078
-msgid "Invalid screen layout computed for resize request!"
-msgstr "Ogiltig skärmlayout beräknad för storleksförändrings-begäran!"
-
 #: unix/x11clone/OptionsDialog.cxx:50
 msgid "x11clone: Connection Options"
 msgstr "x11clone: Anslutningsalternativ"
-
-#: unix/x11clone/OptionsDialog.cxx:74 unix/x11clone/ServerDialog.cxx:81
-#: unix/x11clone/x11clone.cxx:296 vncviewer/OptionsDialog.cxx:83
-#: vncviewer/ServerDialog.cxx:91 vncviewer/vncviewer.cxx:282
-msgid "Cancel"
-msgstr "Avbryt"
-
-#: unix/x11clone/OptionsDialog.cxx:79 unix/x11clone/x11clone.cxx:295
-#: vncviewer/OptionsDialog.cxx:88 vncviewer/vncviewer.cxx:281
-msgid "OK"
-msgstr "Ok"
-
-#: unix/x11clone/OptionsDialog.cxx:218 vncviewer/OptionsDialog.cxx:688
-msgid "Input"
-msgstr "Inmatning"
-
-#: unix/x11clone/OptionsDialog.cxx:226 vncviewer/OptionsDialog.cxx:696
-msgid "View only (ignore mouse and keyboard)"
-msgstr "Endast visning (ignorera mus och tangentbord)"
-
-#: unix/x11clone/OptionsDialog.cxx:232 vncviewer/OptionsDialog.cxx:702
-msgid "Accept clipboard from server"
-msgstr "Acceptera urklipp från server"
-
-#: unix/x11clone/OptionsDialog.cxx:239 vncviewer/OptionsDialog.cxx:710
-msgid "Also set primary selection"
-msgstr "Sätt även primär markering"
-
-#: unix/x11clone/OptionsDialog.cxx:245 vncviewer/OptionsDialog.cxx:717
-msgid "Send clipboard to server"
-msgstr "Skicka urklipp till server"
-
-#: unix/x11clone/OptionsDialog.cxx:252 vncviewer/OptionsDialog.cxx:725
-msgid "Send primary selection as clipboard"
-msgstr "Skicka primär markering som urklipp"
-
-#: unix/x11clone/OptionsDialog.cxx:258 vncviewer/OptionsDialog.cxx:732
-msgid "Pass system keys directly to server (full screen)"
-msgstr "Skicka systemtangenter direkt till servern (fullskärm)"
-
-#: unix/x11clone/OptionsDialog.cxx:261 vncviewer/OptionsDialog.cxx:735
-msgid "Menu key"
-msgstr "Menytangent"
-
-#: unix/x11clone/OptionsDialog.cxx:263 vncviewer/OptionsDialog.cxx:604
-#: vncviewer/OptionsDialog.cxx:657 vncviewer/OptionsDialog.cxx:737
-msgid "None"
-msgstr "Ingen"
-
-#: unix/x11clone/OptionsDialog.cxx:277 vncviewer/OptionsDialog.cxx:751
-msgid "Screen"
-msgstr "Skärm"
 
 #: unix/x11clone/OptionsDialog.cxx:285
 msgid "Resize server display on connect"
@@ -144,22 +43,6 @@ msgstr "Storleksförändra server-display vid anslutning"
 msgid "Resize server display to the local window"
 msgstr "Anpassa storlek på server-display till lokalt fönster"
 
-#: unix/x11clone/OptionsDialog.cxx:304 vncviewer/OptionsDialog.cxx:778
-msgid "Full-screen mode"
-msgstr "Fullskärmsläge"
-
-#: unix/x11clone/OptionsDialog.cxx:310 vncviewer/OptionsDialog.cxx:784
-msgid "Enable full-screen mode over all monitors"
-msgstr "Aktivera fullskärmsläge på alla skärmar"
-
-#: unix/x11clone/OptionsDialog.cxx:319 vncviewer/OptionsDialog.cxx:793
-msgid "Misc."
-msgstr "Diverse"
-
-#: unix/x11clone/OptionsDialog.cxx:327 vncviewer/OptionsDialog.cxx:807
-msgid "Show dot when no cursor"
-msgstr "Visa punkt när muspekare saknas"
-
 #: unix/x11clone/ServerDialog.cxx:42
 msgid "x11clone: Connection Details"
 msgstr "x11clone: Anslutningsdetaljer"
@@ -168,102 +51,20 @@ msgstr "x11clone: Anslutningsdetaljer"
 msgid "Server display: "
 msgstr "Server-display: "
 
-#: unix/x11clone/ServerDialog.cxx:64 vncviewer/ServerDialog.cxx:64
-msgid "Options..."
-msgstr "Inställningar..."
-
-#: unix/x11clone/ServerDialog.cxx:76 vncviewer/ServerDialog.cxx:86
-msgid "About..."
-msgstr "Om..."
-
-#: unix/x11clone/ServerDialog.cxx:86 vncviewer/ServerDialog.cxx:96
-msgid "Connect"
-msgstr "Anslut"
-
-#: unix/x11clone/Viewport.cxx:283 vncviewer/Viewport.cxx:371
-msgid "Failed to update keyboard LED state"
-msgstr "Misslyckades med att uppdatera tangentbordets LED-tillstånd"
-
-#: unix/x11clone/Viewport.cxx:303 vncviewer/Viewport.cxx:398
-#: vncviewer/Viewport.cxx:406 vncviewer/Viewport.cxx:423
-#, c-format
-msgid "Failed to get keyboard LED state: %d"
-msgstr "Misslyckades med att hämta tangentbordets LED-tillstånd: %ld"
-
-#: unix/x11clone/Viewport.cxx:586 vncviewer/Viewport.cxx:711
-msgid "No key code specified on key press"
-msgstr "Ingen tangentbordskod angiven vid tangenttryck"
-
-#: unix/x11clone/Viewport.cxx:681 vncviewer/Viewport.cxx:1014
-#, c-format
-msgid "No symbol for key code %d (in the current state)"
-msgstr "Ingen symbol för tangentkod %d (i nuvarande tillstånd)"
-
 #: unix/x11clone/Viewport.cxx:719
 msgctxt "ContextMenu|"
 msgid "E&xit x11clone"
 msgstr "&Avsluta x11clone"
-
-#: unix/x11clone/Viewport.cxx:722 vncviewer/Viewport.cxx:1056
-msgctxt "ContextMenu|"
-msgid "&Full screen"
-msgstr "&Fullskärm"
-
-#: unix/x11clone/Viewport.cxx:725 vncviewer/Viewport.cxx:1059
-msgctxt "ContextMenu|"
-msgid "Minimi&ze"
-msgstr "M&inimera"
 
 #: unix/x11clone/Viewport.cxx:727
 msgctxt "ContextMenu|"
 msgid "Resize &window to server display"
 msgstr "Anpassa &fönster till server-display"
 
-#: unix/x11clone/Viewport.cxx:732 vncviewer/Viewport.cxx:1066
-msgctxt "ContextMenu|"
-msgid "&Ctrl"
-msgstr "&Ctrl"
-
-#: unix/x11clone/Viewport.cxx:735 vncviewer/Viewport.cxx:1069
-msgctxt "ContextMenu|"
-msgid "&Alt"
-msgstr "&Alt"
-
-#: unix/x11clone/Viewport.cxx:741 vncviewer/Viewport.cxx:1075
-#, c-format
-msgctxt "ContextMenu|"
-msgid "Send %s"
-msgstr "Skicka %s"
-
-#: unix/x11clone/Viewport.cxx:747 vncviewer/Viewport.cxx:1081
-msgctxt "ContextMenu|"
-msgid "Send Ctrl-Alt-&Del"
-msgstr "Skicka Ctrl-Alt-&Del"
-
-#: unix/x11clone/Viewport.cxx:750 vncviewer/Viewport.cxx:1084
-msgctxt "ContextMenu|"
-msgid "&Refresh screen"
-msgstr "&Uppdatera skärm"
-
-#: unix/x11clone/Viewport.cxx:753 vncviewer/Viewport.cxx:1087
-msgctxt "ContextMenu|"
-msgid "&Options..."
-msgstr "&Inställningar..."
-
-#: unix/x11clone/Viewport.cxx:755 vncviewer/Viewport.cxx:1089
-msgctxt "ContextMenu|"
-msgid "Connection &info..."
-msgstr "&Information om anslutningen..."
-
 #: unix/x11clone/Viewport.cxx:757
 msgctxt "ContextMenu|"
 msgid "About &x11clone..."
 msgstr "Om &x11clone..."
-
-#: unix/x11clone/Viewport.cxx:760 vncviewer/Viewport.cxx:1094
-msgctxt "ContextMenu|"
-msgid "Dismiss &menu"
-msgstr "Stäng &meny"
 
 #: unix/x11clone/Viewport.cxx:844
 msgid "x11clone connection info"
@@ -288,27 +89,10 @@ msgstr ""
 msgid "About x11clone"
 msgstr "Om x11clone"
 
-#: unix/x11clone/x11clone.cxx:200 vncviewer/vncviewer.cxx:140
-msgid "Internal FLTK error. Exiting."
-msgstr "Internt FLTK-fel. Avslutar."
-
 #: unix/x11clone/x11clone.cxx:223
 #, c-format
 msgid "Termination signal %d has been received. x11clone will now exit."
 msgstr "Termineringssignal %d har mottagits. x11clone kommer nu att avslutas."
-
-#: unix/x11clone/x11clone.cxx:293 vncviewer/ServerDialog.cxx:198
-#: vncviewer/vncviewer.cxx:279
-msgid "No"
-msgstr "Ingen"
-
-#: unix/x11clone/x11clone.cxx:294 vncviewer/vncviewer.cxx:280
-msgid "Yes"
-msgstr "Ja"
-
-#: unix/x11clone/x11clone.cxx:297 vncviewer/vncviewer.cxx:283
-msgid "Close"
-msgstr "Stäng"
 
 #: unix/x11clone/x11clone.cxx:435 unix/x11clone/x11clone.cxx:437
 #, c-format
@@ -333,85 +117,152 @@ msgstr "x11clone"
 msgid "View and interact with another X11 server"
 msgstr "Visa och interagera med annan X11-server"
 
-#: unix/x11clone/x11clone.desktop.in.in:7 vncviewer/vncviewer.desktop.in.in:7
-msgid "tigervnc"
-msgstr "tigervnc"
+#: vncviewer/CConn.cxx:116
+#, c-format
+msgid "connected to socket %s"
+msgstr "ansluten till uttaget %s"
 
-#: vncviewer/CConn.cxx:112
+#: vncviewer/CConn.cxx:123
 #, c-format
 msgid "connected to host %s port %d"
 msgstr "ansluten till värd %s port %d"
 
-#: vncviewer/CConn.cxx:172
+#: vncviewer/CConn.cxx:184
 #, c-format
 msgid "Desktop name: %.80s"
 msgstr "Skrivbordsnamn: %.80s"
 
-#: vncviewer/CConn.cxx:177
+#: vncviewer/CConn.cxx:189
 #, c-format
 msgid "Host: %.80s port: %d"
 msgstr "Värd: %.80s port: %d"
 
-#: vncviewer/CConn.cxx:190
+#: vncviewer/CConn.cxx:194 unix/x11clone/CConn.cxx:131 vncviewer/CConn.cxx:182
+#, c-format
+msgid "Size: %d x %d"
+msgstr "Storlek: %d x %d"
+
+#: vncviewer/CConn.cxx:202
 #, c-format
 msgid "Pixel format: %s"
 msgstr "Pixelformat: %s"
 
-#: vncviewer/CConn.cxx:197
+#: vncviewer/CConn.cxx:209
 #, c-format
 msgid "(server default %s)"
 msgstr "(serverstandard %s)"
 
-#: vncviewer/CConn.cxx:202
+#: vncviewer/CConn.cxx:214
 #, c-format
 msgid "Requested encoding: %s"
 msgstr "Begärd kodning: %s"
 
-#: vncviewer/CConn.cxx:207
+#: vncviewer/CConn.cxx:219
 #, c-format
 msgid "Last used encoding: %s"
 msgstr "Senast använd kodning: %s"
 
-#: vncviewer/CConn.cxx:212
+#: vncviewer/CConn.cxx:224
 #, c-format
 msgid "Line speed estimate: %d kbit/s"
 msgstr "Uppskattad hastighet på förbindelsen: %d kbit/s"
 
-#: vncviewer/CConn.cxx:217
+#: vncviewer/CConn.cxx:229
 #, c-format
 msgid "Protocol version: %d.%d"
 msgstr "Protokollversion: %d.%d"
 
-#: vncviewer/CConn.cxx:222
+#: vncviewer/CConn.cxx:234
 #, c-format
 msgid "Security method: %s"
 msgstr "Säkerhetsmetod: %s"
 
-#: vncviewer/CConn.cxx:569
+#: vncviewer/CConn.cxx:358 unix/x11clone/CConn.cxx:251 vncviewer/CConn.cxx:346
+#, c-format
+msgid "SetDesktopSize failed: %d"
+msgstr "SetDesktopSize misslyckades: %d"
+
+#: vncviewer/CConn.cxx:428 unix/x11clone/CConn.cxx:318 vncviewer/CConn.cxx:416
+msgid "Invalid SetColourMapEntries from server!"
+msgstr "Ogiltig SetColourMapEntries från server!"
+
+#: vncviewer/CConn.cxx:479 unix/x11clone/CConn.cxx:394 vncviewer/CConn.cxx:492
+msgid "Enabling continuous updates"
+msgstr "Aktiverar kontinuerliga uppdateringar"
+
+#: vncviewer/CConn.cxx:556
 #, c-format
 msgid "Throughput %d kbit/s - changing to quality %d"
 msgstr "Bandbredd %d kbit/s - byter till kvalitet %d"
 
-#: vncviewer/CConn.cxx:591
+#: vncviewer/CConn.cxx:578
 #, c-format
 msgid "Throughput %d kbit/s - full color is now %s"
 msgstr "Bandbredd %d kbit/s - fullfärg är nu %s"
 
-#: vncviewer/CConn.cxx:593
+#: vncviewer/CConn.cxx:580
 msgid "disabled"
 msgstr "avaktiverad"
 
-#: vncviewer/CConn.cxx:593
+#: vncviewer/CConn.cxx:580
 msgid "enabled"
 msgstr "aktiverad"
+
+#: vncviewer/CConn.cxx:590 unix/x11clone/CConn.cxx:435 vncviewer/CConn.cxx:603
+#, c-format
+msgid "Using %s encoding"
+msgstr "Använder kodning %s"
+
+#: vncviewer/CConn.cxx:637 unix/x11clone/CConn.cxx:500 vncviewer/CConn.cxx:650
+#, c-format
+msgid "Using pixel format %s"
+msgstr "Använder pixelformat %s"
 
 #: vncviewer/DesktopWindow.cxx:122
 msgid "Invalid geometry specified!"
 msgstr "Ogiltig geometri angiven!"
 
+#: vncviewer/DesktopWindow.cxx:451 unix/x11clone/DesktopWindow.cxx:422
+#: vncviewer/DesktopWindow.cxx:445
+msgid "Adjusting window size to avoid accidental full screen request"
+msgstr "Justerar fönsterstorleken för att undvika fullskärm av misstag"
+
+#: vncviewer/DesktopWindow.cxx:495 unix/x11clone/DesktopWindow.cxx:465
+#: vncviewer/DesktopWindow.cxx:489
+#, c-format
+msgid "Press %s to open the context menu"
+msgstr "Tryck %s för att öppna sammanhangsmenyn"
+
+#: vncviewer/DesktopWindow.cxx:794 vncviewer/DesktopWindow.cxx:802
+#: vncviewer/DesktopWindow.cxx:822 unix/x11clone/DesktopWindow.cxx:759
+#: vncviewer/DesktopWindow.cxx:779 vncviewer/DesktopWindow.cxx:787
+msgid "Failure grabbing keyboard"
+msgstr "Misslyckades med att fånga tangentbordet"
+
+#: vncviewer/DesktopWindow.cxx:896 unix/x11clone/DesktopWindow.cxx:803
+#: vncviewer/DesktopWindow.cxx:854
+msgid "Failure grabbing mouse"
+msgstr "Misslyckades med att fånga musen"
+
+#: vncviewer/DesktopWindow.cxx:1120 unix/x11clone/DesktopWindow.cxx:1001
+#: vncviewer/DesktopWindow.cxx:1078
+msgid "Invalid screen layout computed for resize request!"
+msgstr "Ogiltig skärmlayout beräknad för storleksförändrings-begäran!"
+
 #: vncviewer/OptionsDialog.cxx:57
 msgid "VNC Viewer: Connection Options"
 msgstr "VNC-visare: Anslutningsalternativ"
+
+#: vncviewer/OptionsDialog.cxx:83 vncviewer/ServerDialog.cxx:91
+#: vncviewer/vncviewer.cxx:282 unix/x11clone/OptionsDialog.cxx:74
+#: unix/x11clone/ServerDialog.cxx:81 unix/x11clone/x11clone.cxx:296
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: vncviewer/OptionsDialog.cxx:88 vncviewer/vncviewer.cxx:281
+#: unix/x11clone/OptionsDialog.cxx:79 unix/x11clone/x11clone.cxx:295
+msgid "OK"
+msgstr "Ok"
 
 #: vncviewer/OptionsDialog.cxx:423
 msgid "Compression"
@@ -469,6 +320,11 @@ msgstr "Säkerhet"
 msgid "Encryption"
 msgstr "Kryptering"
 
+#: vncviewer/OptionsDialog.cxx:604 vncviewer/OptionsDialog.cxx:657
+#: vncviewer/OptionsDialog.cxx:737 unix/x11clone/OptionsDialog.cxx:263
+msgid "None"
+msgstr "Ingen"
+
 #: vncviewer/OptionsDialog.cxx:610
 msgid "TLS with anonymous certificates"
 msgstr "TLS med anonyma certifikat"
@@ -497,6 +353,42 @@ msgstr "Standard-VNC (osäkert utan kryptering)"
 msgid "Username and password (insecure without encryption)"
 msgstr "Användarnamn och lösenord (osäkert utan kryptering)"
 
+#: vncviewer/OptionsDialog.cxx:688 unix/x11clone/OptionsDialog.cxx:218
+msgid "Input"
+msgstr "Inmatning"
+
+#: vncviewer/OptionsDialog.cxx:696 unix/x11clone/OptionsDialog.cxx:226
+msgid "View only (ignore mouse and keyboard)"
+msgstr "Endast visning (ignorera mus och tangentbord)"
+
+#: vncviewer/OptionsDialog.cxx:702 unix/x11clone/OptionsDialog.cxx:232
+msgid "Accept clipboard from server"
+msgstr "Acceptera urklipp från server"
+
+#: vncviewer/OptionsDialog.cxx:710 unix/x11clone/OptionsDialog.cxx:239
+msgid "Also set primary selection"
+msgstr "Sätt även primär markering"
+
+#: vncviewer/OptionsDialog.cxx:717 unix/x11clone/OptionsDialog.cxx:245
+msgid "Send clipboard to server"
+msgstr "Skicka urklipp till server"
+
+#: vncviewer/OptionsDialog.cxx:725 unix/x11clone/OptionsDialog.cxx:252
+msgid "Send primary selection as clipboard"
+msgstr "Skicka primär markering som urklipp"
+
+#: vncviewer/OptionsDialog.cxx:732 unix/x11clone/OptionsDialog.cxx:258
+msgid "Pass system keys directly to server (full screen)"
+msgstr "Skicka systemtangenter direkt till servern (fullskärm)"
+
+#: vncviewer/OptionsDialog.cxx:735 unix/x11clone/OptionsDialog.cxx:261
+msgid "Menu key"
+msgstr "Menytangent"
+
+#: vncviewer/OptionsDialog.cxx:751 unix/x11clone/OptionsDialog.cxx:277
+msgid "Screen"
+msgstr "Skärm"
+
 #: vncviewer/OptionsDialog.cxx:759
 msgid "Resize remote session on connect"
 msgstr "Anpassa sessionsstorlek vid anslutning"
@@ -505,9 +397,25 @@ msgstr "Anpassa sessionsstorlek vid anslutning"
 msgid "Resize remote session to the local window"
 msgstr "Anpassa sessionsstorlek till lokalt fönster"
 
+#: vncviewer/OptionsDialog.cxx:778 unix/x11clone/OptionsDialog.cxx:304
+msgid "Full-screen mode"
+msgstr "Fullskärmsläge"
+
+#: vncviewer/OptionsDialog.cxx:784 unix/x11clone/OptionsDialog.cxx:310
+msgid "Enable full-screen mode over all monitors"
+msgstr "Aktivera fullskärmsläge på alla skärmar"
+
+#: vncviewer/OptionsDialog.cxx:793 unix/x11clone/OptionsDialog.cxx:319
+msgid "Misc."
+msgstr "Diverse"
+
 #: vncviewer/OptionsDialog.cxx:801
 msgid "Shared (don't disconnect other viewers)"
 msgstr "Delad (koppla ej från andra visare)"
+
+#: vncviewer/OptionsDialog.cxx:807 unix/x11clone/OptionsDialog.cxx:327
+msgid "Show dot when no cursor"
+msgstr "Visa punkt när muspekare saknas"
 
 #: vncviewer/ServerDialog.cxx:42
 msgid "VNC Viewer: Connection Details"
@@ -517,6 +425,10 @@ msgstr "VNC-visare: Anslutningsdetaljer"
 msgid "VNC server:"
 msgstr "VNC-server:"
 
+#: vncviewer/ServerDialog.cxx:64 unix/x11clone/ServerDialog.cxx:64
+msgid "Options..."
+msgstr "Inställningar..."
+
 #: vncviewer/ServerDialog.cxx:69
 msgid "Load..."
 msgstr "Öppna..."
@@ -525,26 +437,39 @@ msgstr "Öppna..."
 msgid "Save As..."
 msgstr "Spara som..."
 
+#: vncviewer/ServerDialog.cxx:86 unix/x11clone/ServerDialog.cxx:76
+msgid "About..."
+msgstr "Om..."
+
+#: vncviewer/ServerDialog.cxx:96 unix/x11clone/ServerDialog.cxx:86
+msgid "Connect"
+msgstr "Anslut"
+
 #: vncviewer/ServerDialog.cxx:137 vncviewer/ServerDialog.cxx:171
 msgid "TigerVNC configuration (*.tigervnc)"
-msgstr ""
+msgstr "TigerVNC-konfiguration (*.tigervnc)"
 
 #: vncviewer/ServerDialog.cxx:138
 msgid "Select a TigerVNC configuration file"
-msgstr ""
+msgstr "Välj en TigerVNC-konfigurationsfil"
 
 #: vncviewer/ServerDialog.cxx:172
 msgid "Save the TigerVNC configuration to file"
-msgstr ""
+msgstr "Spara TigerVNC-konfigurationen i en fil"
 
 #: vncviewer/ServerDialog.cxx:197
 #, c-format
 msgid "%s already exists. Do you want to overwrite?"
-msgstr ""
+msgstr "%s finns redan.  Vill du skriva över den?"
+
+#: vncviewer/ServerDialog.cxx:198 vncviewer/vncviewer.cxx:279
+#: unix/x11clone/x11clone.cxx:293
+msgid "No"
+msgstr "Nej"
 
 #: vncviewer/ServerDialog.cxx:198
 msgid "Overwrite"
-msgstr ""
+msgstr "Skriv över"
 
 #: vncviewer/UserDialog.cxx:85
 msgid "Opening password file failed"
@@ -556,12 +481,11 @@ msgstr "VNC-autentisering"
 
 #: vncviewer/UserDialog.cxx:112
 msgid "This connection is secure"
-msgstr ""
+msgstr "Denna anslutning är säker"
 
 #: vncviewer/UserDialog.cxx:116
-#, fuzzy
 msgid "This connection is not secure"
-msgstr "VNC anslutningsinformation"
+msgstr "Denna anslutning är inte säker"
 
 #: vncviewer/UserDialog.cxx:133
 msgid "Username:"
@@ -575,163 +499,248 @@ msgstr "Lösenord:"
 msgid "Authentication cancelled"
 msgstr "Autentisering avbruten"
 
-#: vncviewer/Viewport.cxx:329
+#: vncviewer/Viewport.cxx:377
 #, c-format
 msgid "Failed to update keyboard LED state: %lu"
-msgstr ""
+msgstr "Misslyckades att uppdatera tillståndet för tangentbords-LED: %lu"
 
-#: vncviewer/Viewport.cxx:335 vncviewer/Viewport.cxx:341
-#, fuzzy, c-format
+#: vncviewer/Viewport.cxx:383 vncviewer/Viewport.cxx:389
+#, c-format
 msgid "Failed to update keyboard LED state: %d"
-msgstr "Misslyckades med att skapa registernyckel: %ld"
+msgstr "Misslyckades att uppdatera tillståndet för tangentbords-LED: %d"
 
-#: vncviewer/Viewport.cxx:876
+#: vncviewer/Viewport.cxx:419 unix/x11clone/Viewport.cxx:283
+#: vncviewer/Viewport.cxx:371
+msgid "Failed to update keyboard LED state"
+msgstr "Misslyckades att uppdatera tillståndet för tangentbords-LED"
+
+#: vncviewer/Viewport.cxx:446 vncviewer/Viewport.cxx:454
+#: vncviewer/Viewport.cxx:471 unix/x11clone/Viewport.cxx:303
+#: vncviewer/Viewport.cxx:398 vncviewer/Viewport.cxx:406
+#: vncviewer/Viewport.cxx:423
+#, c-format
+msgid "Failed to get keyboard LED state: %d"
+msgstr "Misslyckades att hämta tillståndet för tangentbords-LED: %d"
+
+#: vncviewer/Viewport.cxx:817 unix/x11clone/Viewport.cxx:586
+#: vncviewer/Viewport.cxx:711
+msgid "No key code specified on key press"
+msgstr "Ingen tangentkod angiven vid tangenttryckning"
+
+#: vncviewer/Viewport.cxx:959
 #, c-format
 msgid "No scan code for extended virtual key 0x%02x"
 msgstr "Ingen scancode för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:878
+#: vncviewer/Viewport.cxx:961
 #, c-format
 msgid "No scan code for virtual key 0x%02x"
 msgstr "Ingen scancode för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:884
+#: vncviewer/Viewport.cxx:967
 #, c-format
 msgid "Invalid scan code 0x%02x"
-msgstr ""
+msgstr "Felaktig skanningskod 0x%02x"
 
-#: vncviewer/Viewport.cxx:914
+#: vncviewer/Viewport.cxx:997
 #, c-format
 msgid "No symbol for extended virtual key 0x%02x"
 msgstr "Ingen symbol för utökad virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:916
+#: vncviewer/Viewport.cxx:999
 #, c-format
 msgid "No symbol for virtual key 0x%02x"
 msgstr "Ingen symbol för virtuell tangent 0x%02x"
 
-#: vncviewer/Viewport.cxx:981
+#: vncviewer/Viewport.cxx:1086
 #, c-format
 msgid "No symbol for key code 0x%02x (in the current state)"
 msgstr "Ingen symbol för tangentkod 0x%02x (i nuvarande tillstånd)"
 
-#: vncviewer/Viewport.cxx:1053
+#: vncviewer/Viewport.cxx:1119 unix/x11clone/Viewport.cxx:681
+#: vncviewer/Viewport.cxx:1014
+#, c-format
+msgid "No symbol for key code %d (in the current state)"
+msgstr "Ingen symbol för tangentkod %d (i nuvarande tillstånd)"
+
+#: vncviewer/Viewport.cxx:1170
 msgctxt "ContextMenu|"
 msgid "E&xit viewer"
 msgstr "&Avsluta visaren"
 
-#: vncviewer/Viewport.cxx:1061
+#: vncviewer/Viewport.cxx:1173 unix/x11clone/Viewport.cxx:722
+#: vncviewer/Viewport.cxx:1056
+msgctxt "ContextMenu|"
+msgid "&Full screen"
+msgstr "&Fullskärm"
+
+#: vncviewer/Viewport.cxx:1176 unix/x11clone/Viewport.cxx:725
+#: vncviewer/Viewport.cxx:1059
+msgctxt "ContextMenu|"
+msgid "Minimi&ze"
+msgstr "M&inimera"
+
+#: vncviewer/Viewport.cxx:1178
 msgctxt "ContextMenu|"
 msgid "Resize &window to session"
 msgstr "Anpassa &fönster till session"
 
-#: vncviewer/Viewport.cxx:1091
+#: vncviewer/Viewport.cxx:1183 unix/x11clone/Viewport.cxx:732
+#: vncviewer/Viewport.cxx:1066
+msgctxt "ContextMenu|"
+msgid "&Ctrl"
+msgstr "&Ctrl"
+
+#: vncviewer/Viewport.cxx:1186 unix/x11clone/Viewport.cxx:735
+#: vncviewer/Viewport.cxx:1069
+msgctxt "ContextMenu|"
+msgid "&Alt"
+msgstr "&Alt"
+
+#: vncviewer/Viewport.cxx:1192 unix/x11clone/Viewport.cxx:741
+#: vncviewer/Viewport.cxx:1075
+#, c-format
+msgctxt "ContextMenu|"
+msgid "Send %s"
+msgstr "Skicka %s"
+
+#: vncviewer/Viewport.cxx:1198 unix/x11clone/Viewport.cxx:747
+#: vncviewer/Viewport.cxx:1081
+msgctxt "ContextMenu|"
+msgid "Send Ctrl-Alt-&Del"
+msgstr "Skicka Ctrl-Alt-&Del"
+
+#: vncviewer/Viewport.cxx:1201 unix/x11clone/Viewport.cxx:750
+#: vncviewer/Viewport.cxx:1084
+msgctxt "ContextMenu|"
+msgid "&Refresh screen"
+msgstr "&Uppdatera skärm"
+
+#: vncviewer/Viewport.cxx:1204 unix/x11clone/Viewport.cxx:753
+#: vncviewer/Viewport.cxx:1087
+msgctxt "ContextMenu|"
+msgid "&Options..."
+msgstr "&Inställningar..."
+
+#: vncviewer/Viewport.cxx:1206 unix/x11clone/Viewport.cxx:755
+#: vncviewer/Viewport.cxx:1089
+msgctxt "ContextMenu|"
+msgid "Connection &info..."
+msgstr "&Information om anslutningen..."
+
+#: vncviewer/Viewport.cxx:1208
 msgctxt "ContextMenu|"
 msgid "About &TigerVNC viewer..."
 msgstr "Om &TigerVNC-visaren..."
 
-#: vncviewer/Viewport.cxx:1178
+#: vncviewer/Viewport.cxx:1211 unix/x11clone/Viewport.cxx:760
+#: vncviewer/Viewport.cxx:1094
+msgctxt "ContextMenu|"
+msgid "Dismiss &menu"
+msgstr "Stäng &meny"
+
+#: vncviewer/Viewport.cxx:1300
 msgid "VNC connection info"
 msgstr "VNC anslutningsinformation"
 
-#: vncviewer/parameters.cxx:291 vncviewer/parameters.cxx:325
+#: vncviewer/parameters.cxx:279 vncviewer/parameters.cxx:313
 #, c-format
 msgid "The name of the parameter %s was too large to write to the registry"
 msgstr "Namnet på parameter %s var för stor för skrivning till registret"
 
-#: vncviewer/parameters.cxx:297 vncviewer/parameters.cxx:304
+#: vncviewer/parameters.cxx:285 vncviewer/parameters.cxx:292
 #, c-format
 msgid "The parameter %s was too large to write to the registry"
 msgstr "Parameter %s var för stor för skrivning till registret"
 
-#: vncviewer/parameters.cxx:310 vncviewer/parameters.cxx:331
+#: vncviewer/parameters.cxx:298 vncviewer/parameters.cxx:319
 #, c-format
 msgid "Failed to write parameter %s of type %s to the registry: %ld"
 msgstr "Misslyckades med att skriva parameter %s av typ %s till registret: %ld"
 
-#: vncviewer/parameters.cxx:346 vncviewer/parameters.cxx:385
+#: vncviewer/parameters.cxx:334 vncviewer/parameters.cxx:373
 #, c-format
 msgid "The name of the parameter %s was too large to read from the registry"
 msgstr "Namnet på parameter %s var för stor för att läsas från registret"
 
-#: vncviewer/parameters.cxx:355 vncviewer/parameters.cxx:394
+#: vncviewer/parameters.cxx:343 vncviewer/parameters.cxx:382
 #, c-format
 msgid "Failed to read parameter %s from the registry: %ld"
 msgstr "Misslyckades med att läsa parameter %s från registret: %ld"
 
-#: vncviewer/parameters.cxx:364
+#: vncviewer/parameters.cxx:352
 #, c-format
 msgid "The parameter %s was too large to read from the registry"
 msgstr "Parameter %s var för stor för läsning från registret"
 
-#: vncviewer/parameters.cxx:414
+#: vncviewer/parameters.cxx:402
 #, c-format
 msgid "Failed to create registry key: %ld"
 msgstr "Misslyckades med att skapa registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:428 vncviewer/parameters.cxx:477
-#: vncviewer/parameters.cxx:539 vncviewer/parameters.cxx:670
+#: vncviewer/parameters.cxx:416 vncviewer/parameters.cxx:465
+#: vncviewer/parameters.cxx:527 vncviewer/parameters.cxx:660
 #, c-format
 msgid "Unknown parameter type for parameter %s"
 msgstr "Okänd parametertyp för parameter %s"
 
-#: vncviewer/parameters.cxx:435 vncviewer/parameters.cxx:484
+#: vncviewer/parameters.cxx:423 vncviewer/parameters.cxx:472
 #, c-format
 msgid "Failed to close registry key: %ld"
 msgstr "Misslyckades med att stänga registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:451
+#: vncviewer/parameters.cxx:439
 #, c-format
 msgid "Failed to open registry key: %ld"
 msgstr "Misslyckades med att öppna registernyckel: %ld"
 
-#: vncviewer/parameters.cxx:508
+#: vncviewer/parameters.cxx:496
 msgid "Failed to write configuration file, can't obtain home directory path."
 msgstr ""
 "Misslyckades med att skriva konfigurations-fil, kan inte avgöra "
 "hemkatalogens sökväg."
 
-#: vncviewer/parameters.cxx:521
+#: vncviewer/parameters.cxx:509
 #, c-format
 msgid "Failed to write configuration file, can't open %s: %s"
 msgstr "Misslyckades med att skriva konfigurations-fil: kan inte öppna %s: %s"
 
-#: vncviewer/parameters.cxx:564
+#: vncviewer/parameters.cxx:554
 msgid "Failed to read configuration file, can't obtain home directory path."
 msgstr ""
 "Misslyckades med att läsa konfigurations-fil, kan inte avgöra hemkatalogens "
 "sökväg."
 
-#: vncviewer/parameters.cxx:577
+#: vncviewer/parameters.cxx:567
 #, c-format
 msgid "Failed to read configuration file, can't open %s: %s"
 msgstr "Misslyckades med att läsa konfigurations-fil, kan inte öppna %s: %s"
 
-#: vncviewer/parameters.cxx:590 vncviewer/parameters.cxx:595
-#: vncviewer/parameters.cxx:620 vncviewer/parameters.cxx:633
-#: vncviewer/parameters.cxx:649
+#: vncviewer/parameters.cxx:580 vncviewer/parameters.cxx:585
+#: vncviewer/parameters.cxx:610 vncviewer/parameters.cxx:623
+#: vncviewer/parameters.cxx:639
 #, c-format
 msgid "Failed to read line %d in file %s: %s"
 msgstr "Misslyckades med att läsa rad %d i fil %s: %s"
 
-#: vncviewer/parameters.cxx:596
+#: vncviewer/parameters.cxx:586
 msgid "Line too long"
 msgstr "Raden är för lång"
 
-#: vncviewer/parameters.cxx:603
+#: vncviewer/parameters.cxx:593
 #, c-format
 msgid "Configuration file %s is in an invalid format"
 msgstr "Konfigurationsfilen %s har ogiltigt format"
 
-#: vncviewer/parameters.cxx:621
+#: vncviewer/parameters.cxx:611
 msgid "Invalid format"
 msgstr "Ogiltigt format"
 
-#: vncviewer/parameters.cxx:634 vncviewer/parameters.cxx:650
+#: vncviewer/parameters.cxx:624 vncviewer/parameters.cxx:640
 msgid "Invalid format or too large value"
 msgstr "Ogiltigt format eller för stort värde"
 
-#: vncviewer/parameters.cxx:677
+#: vncviewer/parameters.cxx:667
 #, c-format
 msgid "Unknown parameter %s on line %d in file %s"
 msgstr "Okänd parameter %s på rad %d i fil %s"
@@ -741,17 +750,21 @@ msgstr "Okänd parameter %s på rad %d i fil %s"
 msgid ""
 "TigerVNC Viewer %d-bit v%s\n"
 "Built on: %s\n"
-"Copyright (C) 1999-%d TigerVNC Team and many others (see README.txt)\n"
+"Copyright (C) 1999-%d TigerVNC Team and many others (see README.rst)\n"
 "See http://www.tigervnc.org for information on TigerVNC."
 msgstr ""
 "TigerVNC-visare %d-bit v%s\n"
 "Byggd: %s\n"
-"Copyright (C) 1999-%d TigerVNC-teamet och många andra (se README.txt)\n"
+"Copyright © 1999-%d TigerVNC-teamet och många andra (se README.rst)\n"
 "Se http://www.tigervnc.org för information om TigerVNC."
 
 #: vncviewer/vncviewer.cxx:127
 msgid "About TigerVNC Viewer"
 msgstr "Om VNC-visaren"
+
+#: vncviewer/vncviewer.cxx:140 unix/x11clone/x11clone.cxx:200
+msgid "Internal FLTK error. Exiting."
+msgstr "Internt FLTK-fel. Avslutar."
 
 #: vncviewer/vncviewer.cxx:158 vncviewer/vncviewer.cxx:170
 #, c-format
@@ -767,6 +780,14 @@ msgstr ""
 #: vncviewer/vncviewer.cxx:271 vncviewer/vncviewer.desktop.in.in:3
 msgid "TigerVNC Viewer"
 msgstr "VNC-visare"
+
+#: vncviewer/vncviewer.cxx:280 unix/x11clone/x11clone.cxx:294
+msgid "Yes"
+msgstr "Ja"
+
+#: vncviewer/vncviewer.cxx:283 unix/x11clone/x11clone.cxx:297
+msgid "Close"
+msgstr "Stäng"
 
 #: vncviewer/vncviewer.cxx:288
 msgid "About"
@@ -813,19 +834,24 @@ msgstr "Kunde inte skapa VNC-hemkatalog: %s."
 
 #. TRANSLATORS: "Parameters" are command line arguments, or settings
 #. from a file or the Windows registry.
-#: vncviewer/vncviewer.cxx:541 vncviewer/vncviewer.cxx:543
+#: vncviewer/vncviewer.cxx:581 vncviewer/vncviewer.cxx:583
 msgid "Parameters -listen and -via are incompatible"
 msgstr "Parametrar -listen och -via är inkompatibla"
 
-#: vncviewer/vncviewer.cxx:558
+#: vncviewer/vncviewer.cxx:598
 #, c-format
 msgid "Listening on port %d"
 msgstr "Lyssnar på port %d"
 
 #: vncviewer/vncviewer.desktop.in.in:4
 msgid "Remote Desktop Viewer"
-msgstr ""
+msgstr "Fjärrskrivbordsvisare"
 
 #: vncviewer/vncviewer.desktop.in.in:5
 msgid "Connect to VNC server and display remote desktop"
-msgstr ""
+msgstr "Anslut till en VNC-server och visa ett fjärrskrivbord"
+
+#: vncviewer/vncviewer.desktop.in.in:7 unix/x11clone/x11clone.desktop.in.in:7
+msgid "tigervnc"
+msgstr "tigervnc"
+

@@ -47,6 +47,9 @@ from the X Consortium.
 #include <X11/Xproto.h>
 #include <X11/Xos.h>
 #include "scrnintstr.h"
+#if XORG >= 120
+#include "glx_extinit.h"
+#endif
 #include "servermd.h"
 #include "fb.h"
 #include "mi.h"
@@ -84,7 +87,7 @@ from the X Consortium.
 #include "version-config.h"
 #include "site.h"
 
-#define XVNCVERSION "TigerVNC 1.8.80"
+#define XVNCVERSION "TigerVNC 1.9.80"
 #define XVNCCOPYRIGHT ("Copyright (C) 1999-2018 TigerVNC Team and many others (see README.rst)\n" \
                        "See http://www.tigervnc.org for information on TigerVNC.\n")
 
