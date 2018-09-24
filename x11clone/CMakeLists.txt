@@ -2,19 +2,20 @@ include_directories(${FLTK_INCLUDE_DIR})
 include_directories(${GETTEXT_INCLUDE_DIR})
 
 include_directories(${CMAKE_SOURCE_DIR}/common)
+include_directories(${CMAKE_SOURCE_DIR}/vncviewer)
 set(X11CLONE_SOURCES
   ../vncviewer/menukey.cxx
   ../vncviewer/CConn.cxx
   ../vncviewer/DesktopWindow.cxx
   ../vncviewer/UserDialog.cxx
-  ../vncviewer/ServerDialog.cxx
+  ServerDialog.cxx
   ../vncviewer/Surface.cxx
-  ../vncviewer/OptionsDialog.cxx
+  OptionsDialog.cxx
   ../vncviewer/PlatformPixelBuffer.cxx
-  ../vncviewer/Viewport.cxx
+  Viewport.cxx
   ../vncviewer/parameters.cxx
   ../vncviewer/keysym2ucs.c
-  ../vncviewer/vncviewer.cxx)
+  x11clone.cxx)
 
 if(WIN32)
   # Since x11clone.rc is generated, local includes will be looking
@@ -64,7 +65,7 @@ install(TARGETS x11clone DESTINATION ${BIN_DIR})
 if(UNIX)
   install(FILES x11clone.man DESTINATION ${MAN_DIR}/man1 RENAME x11clone.1)
 
-  configure_file(../vncviewer/vncviewer.desktop.in.in x11clone.desktop.in)
+  configure_file(x11clone.desktop.in.in x11clone.desktop.in)
   find_program(INTLTOOL_MERGE_EXECUTABLE intltool-merge)
   if("${GETTEXT_VERSION_STRING}" VERSION_GREATER 0.18.99)
     add_custom_command(OUTPUT x11clone.desktop
