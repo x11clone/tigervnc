@@ -48,9 +48,6 @@
 #include <rfb/Logger_stdio.h>
 #include <rfb/SecurityClient.h>
 #include <rfb/Security.h>
-#ifdef HAVE_GNUTLS
-#include <rfb/CSecurityTLS.h>
-#endif
 #include <rfb/LogWriter.h>
 #include <rfb/Timer.h>
 #include <rfb/Exception.h>
@@ -569,9 +566,6 @@ int main(int argc, char** argv)
 #endif
 
   CSecurity::upg = &dlg;
-#ifdef HAVE_GNUTLS
-  CSecurityTLS::msg = &dlg;
-#endif
 
   Socket *sock = NULL;
 
