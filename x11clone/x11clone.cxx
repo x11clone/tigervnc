@@ -330,6 +330,14 @@ static void mkvnchomedir()
   }
 }
 
+static void setRemoveParam(const char* param, const char* value)
+{
+    if (value) {
+	Configuration::setParam(param, value);
+    }
+    Configuration::removeParam(param);
+}
+
 static void usage(const char *programName)
 {
 #ifdef WIN32
@@ -347,10 +355,9 @@ static void usage(const char *programName)
 #endif
 
   fprintf(stderr,
-          "\nusage: %s [parameters] [host:displayNum] [parameters]\n"
-          "       %s [parameters] -listen [port] [parameters]\n"
+          "\nusage: %s [parameters] [serverDisplay] [parameters]\n"
           "       %s [parameters] [.tigervnc file]\n",
-          programName, programName, programName);
+          programName, programName);
   fprintf(stderr,"\n"
           "Parameters can be turned on with -<param> or off with -<param>=0\n"
           "Parameters which take a value can be specified as "
@@ -515,7 +522,14 @@ int main(int argc, char** argv)
 
   init_fltk();
 
-  Configuration::enableViewerParams();
+  setRemoveParam("UseIPv6", NULL);
+  setRemoveParam("UseIPv4", NULL);
+  setRemoveParam("Shared", NULL);
+  setRemoveParam("PasswordFile", NULL);
+  setRemoveParam("passwd", NULL);
+  setRemoveParam("listen", NULL);
+  // Change default for RemoteResize
+  Configuration::setParam("RemoteResize", "0");
 
   /* Load the default parameter settings */
   char defaultServerName[VNCSERVERNAMELEN] = "";
@@ -569,72 +583,7 @@ int main(int argc, char** argv)
 
   Socket *sock = NULL;
 
-#ifndef WIN32
-  /* Specifying -via and -listen together is nonsense */
-  if (listenMode && strlen(via.getValueStr()) > 0) {
-    // TRANSLATORS: "Parameters" are command line arguments, or settings
-    // from a file or the Windows registry.
-    vlog.error(_("Parameters -listen and -via are incompatible"));
-    if (alertOnFatalError)
-      fl_alert(_("Parameters -listen and -via are incompatible"));
-    exit_vncviewer();
-    return 1;
-  }
-#endif
-
-  if (listenMode) {
-    std::list<SocketListener*> listeners;
-    try {
-      int port = 5500;
-      if (isdigit(vncServerName[0]))
-        port = atoi(vncServerName);
-
-      createTcpListeners(&listeners, 0, port);
-
-      vlog.info(_("Listening on port %d"), port);
-
-      /* Wait for a connection */
-      while (sock == NULL) {
-        fd_set rfds;
-        FD_ZERO(&rfds);
-        for (std::list<SocketListener*>::iterator i = listeners.begin();
-             i != listeners.end();
-             i++)
-          FD_SET((*i)->getFd(), &rfds);
-
-        int n = select(FD_SETSIZE, &rfds, 0, 0, 0);
-        if (n < 0) {
-          if (errno == EINTR) {
-            vlog.debug("Interrupted select() system call");
-            continue;
-          } else {
-            throw rdr::SystemException("select", errno);
-          }
-        }
-
-        for (std::list<SocketListener*>::iterator i = listeners.begin ();
-             i != listeners.end();
-             i++)
-          if (FD_ISSET((*i)->getFd(), &rfds)) {
-            sock = (*i)->accept();
-            if (sock)
-              /* Got a connection */
-              break;
-          }
-      }
-    } catch (rdr::Exception& e) {
-      vlog.error("%s", e.str());
-      if (alertOnFatalError)
-        fl_alert("%s", e.str());
-      exit_vncviewer();
-      return 1; 
-    }
-
-    while (!listeners.empty()) {
-      delete listeners.back();
-      listeners.pop_back();
-    }
-  } else {
+  {
     if (vncServerName[0] == '\0') {
       ServerDialog::run(defaultServerName, vncServerName);
       if (vncServerName[0] == '\0')
