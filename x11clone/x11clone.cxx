@@ -80,7 +80,7 @@ using namespace network;
 using namespace rfb;
 using namespace std;
 
-char vncServerName[VNCSERVERNAMELEN] = { '\0' };
+char serverName[VNCSERVERNAMELEN] = { '\0' }; // "server display"
 
 static const char *argv0 = NULL;
 
@@ -376,17 +376,17 @@ static void usage(const char *programName)
 }
 
 static void
-potentiallyLoadConfigurationFile(char *vncServerName)
+potentiallyLoadConfigurationFile(char *serverName)
 {
-  const bool hasPathSeparator = (strchr(vncServerName, '/') != NULL ||
-                                 (strchr(vncServerName, '\\')) != NULL);
+  const bool hasPathSeparator = (strchr(serverName, '/') != NULL ||
+                                 (strchr(serverName, '\\')) != NULL);
 
   if (hasPathSeparator) {
 #ifndef WIN32
     struct stat sb;
 
     // This might be a UNIX socket, we need to check
-    if (stat(vncServerName, &sb) == -1) {
+    if (stat(serverName, &sb) == -1) {
       // Some access problem; let loadViewerParameters() deal with it...
     } else {
       if ((sb.st_mode & S_IFMT) == S_IFSOCK)
@@ -396,10 +396,10 @@ potentiallyLoadConfigurationFile(char *vncServerName)
 
     try {
       const char* newServerName;
-      newServerName = loadViewerParameters(vncServerName);
+      newServerName = loadViewerParameters(serverName);
       // This might be empty, but we still need to clear it so we
       // don't try to connect to the filename
-      strncpy(vncServerName, newServerName, VNCSERVERNAMELEN);
+      strncpy(serverName, newServerName, VNCSERVERNAMELEN);
     } catch (rfb::Exception& e) {
       vlog.error("%s", e.str());
       if (alertOnFatalError)
@@ -411,10 +411,10 @@ potentiallyLoadConfigurationFile(char *vncServerName)
 
 #ifndef WIN32
 static int
-interpretViaParam(char *remoteHost, int *remotePort, int localPort)
+interpretViaParam(int *remotePort, int localPort)
 {
   const int SERVER_PORT_OFFSET = 5900;
-  char *pos = strchr(vncServerName, ':');
+  char *pos = strchr(serverName, ':');
   if (pos == NULL)
     *remotePort = SERVER_PORT_OFFSET;
   else {
@@ -433,21 +433,14 @@ interpretViaParam(char *remoteHost, int *remotePort, int localPort)
     *remotePort = atoi(pos) + portOffset;
   }
 
-  if (*vncServerName != '\0')
-    strncpy(remoteHost, vncServerName, VNCSERVERNAMELEN);
-  else
-    strncpy(remoteHost, "localhost", VNCSERVERNAMELEN);
-
-  remoteHost[VNCSERVERNAMELEN - 1] = '\0';
-
-  snprintf(vncServerName, VNCSERVERNAMELEN, "localhost::%d", localPort);
-  vncServerName[VNCSERVERNAMELEN - 1] = '\0';
+  snprintf(serverName, VNCSERVERNAMELEN, "localhost::%d", localPort);
+  serverName[VNCSERVERNAMELEN - 1] = '\0';
 
   return 0;
 }
 
 static void
-createTunnel(const char *gatewayHost, const char *remoteHost,
+createTunnel(const char *gatewayHost,
              int remotePort, int localPort)
 {
   const char *cmd = getenv("VNC_VIA_CMD");
@@ -456,11 +449,10 @@ createTunnel(const char *gatewayHost, const char *remoteHost,
   sprintf(lport, "%d", localPort);
   sprintf(rport, "%d", remotePort);
   setenv("G", gatewayHost, 1);
-  setenv("H", remoteHost, 1);
   setenv("R", rport, 1);
   setenv("L", lport, 1);
   if (!cmd)
-    cmd = "/usr/bin/ssh -f -L \"$L\":\"$H\":\"$R\" \"$G\" sleep 20";
+    cmd = "/usr/bin/ssh -f -L \"$L\":localhost:\"$R\" \"$G\" sleep 20";
   /* Compatibility with TigerVNC's method. */
   cmd2 = strdup(cmd);
   while ((percent = strchr(cmd2, '%')) != NULL)
@@ -472,14 +464,14 @@ createTunnel(const char *gatewayHost, const char *remoteHost,
 static int mktunnel()
 {
   const char *gatewayHost;
-  char remoteHost[VNCSERVERNAMELEN];
   int localPort = findFreeTcpPort();
   int remotePort;
 
   gatewayHost = strDup(via.getValueStr());
-  if (interpretViaParam(remoteHost, &remotePort, localPort) != 0)
+  if (interpretViaParam(&remotePort, localPort) != 0)
     return 1;
-  createTunnel(gatewayHost, remoteHost, remotePort, localPort);
+
+  createTunnel(gatewayHost, remotePort, localPort);
 
   return 0;
 }
@@ -561,13 +553,13 @@ int main(int argc, char** argv)
       usage(argv[0]);
     }
 
-    strncpy(vncServerName, argv[i], VNCSERVERNAMELEN);
-    vncServerName[VNCSERVERNAMELEN - 1] = '\0';
+    strncpy(serverName, argv[i], VNCSERVERNAMELEN);
+    serverName[VNCSERVERNAMELEN - 1] = '\0';
     i++;
   }
 
   // Check if the server name in reality is a configuration file
-  potentiallyLoadConfigurationFile(vncServerName);
+  potentiallyLoadConfigurationFile(serverName);
 
   mkvnchomedir();
 
@@ -584,9 +576,9 @@ int main(int argc, char** argv)
   Socket *sock = NULL;
 
   {
-    if (vncServerName[0] == '\0') {
-      ServerDialog::run(defaultServerName, vncServerName);
-      if (vncServerName[0] == '\0')
+    if (serverName[0] == '\0') {
+      ServerDialog::run(defaultServerName, serverName);
+      if (serverName[0] == '\0')
         return 1;
     }
 
@@ -596,7 +588,7 @@ int main(int argc, char** argv)
 #endif
   }
 
-  CConn *cc = new CConn(vncServerName, sock);
+  CConn *cc = new CConn(serverName, sock);
 
   while (!exitMainloop)
     run_mainloop();
