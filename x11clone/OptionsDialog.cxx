@@ -222,7 +222,6 @@ void OptionsDialog::loadOptions(void)
   handleDesktopSize(desktopSizeCheckbox, this);
 
   /* Misc. */
-  sharedCheckbox->value(shared);
   dotCursorCheckbox->value(dotWhenNoCursor);
 }
 
@@ -289,7 +288,6 @@ void OptionsDialog::storeOptions(void)
   fullScreenAllMonitors.setParam(fullScreenAllMonitorsCheckbox->value());
 
   /* Misc. */
-  shared.setParam(sharedCheckbox->value());
   dotWhenNoCursor.setParam(dotCursorCheckbox->value());
 
   std::map<OptionsCallback*, void*>::const_iterator iter;
@@ -526,7 +524,7 @@ void OptionsDialog::createScreenPage(int tx, int ty, int tw, int th)
   desktopSizeCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                      CHECK_MIN_WIDTH,
                                                      CHECK_HEIGHT,
-                                                     _("Resize remote session on connect")));
+                                                     _("Resize server display on connect")));
   desktopSizeCheckbox->callback(handleDesktopSize, this);
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
@@ -539,7 +537,7 @@ void OptionsDialog::createScreenPage(int tx, int ty, int tw, int th)
   remoteResizeCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                       CHECK_MIN_WIDTH,
                                                       CHECK_HEIGHT,
-                                                      _("Resize remote session to the local window")));
+                                                      _("Resize server display to the local window")));
   ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   fullScreenCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
@@ -564,12 +562,6 @@ void OptionsDialog::createMiscPage(int tx, int ty, int tw, int th)
 
   tx += OUTER_MARGIN;
   ty += OUTER_MARGIN;
-
-  sharedCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
-                                                  CHECK_MIN_WIDTH,
-                                                  CHECK_HEIGHT,
-                                                  _("Shared (don't disconnect other viewers)")));
-  ty += CHECK_HEIGHT + TIGHT_MARGIN;
 
   dotCursorCheckbox = new Fl_Check_Button(LBLRIGHT(tx, ty,
                                                   CHECK_MIN_WIDTH,
