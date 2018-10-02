@@ -51,7 +51,10 @@
 #include <rfb/LogWriter.h>
 #include <rfb/Timer.h>
 #include <rfb/Exception.h>
-#include <network/TcpSocket.h>
+#ifndef WIN32
+#include <network/UnixSocket.h>
+#include <sys/socket.h> // MSG_PEEK, recv
+#endif
 #include <os/os.h>
 
 #include <FL/Fl.H>
@@ -75,12 +78,16 @@
 #endif
 
 rfb::LogWriter vlog("main");
+rfb::LogWriter vlogserver("Server");
 
 using namespace network;
 using namespace rfb;
 using namespace std;
 
 char serverName[VNCSERVERNAMELEN] = { '\0' }; // "server display"
+
+// Local x0vncserver process, or over SSH
+pid_t server_pid = 0;
 
 static const char *argv0 = NULL;
 
@@ -135,7 +142,7 @@ void run_mainloop()
   if (next_timer == 0)
     next_timer = INT_MAX;
 
-  if (Fl::wait((double)next_timer / 1000.0) < 0.0) {
+  if (Fl::wait((double)next_timer / 1000.0) < 0.0 && !exitMainloop) {
     vlog.error(_("Internal FLTK error. Exiting."));
     exit(-1);
   }
@@ -173,10 +180,8 @@ static void new_connection_cb(Fl_Widget *widget, void *data)
 
 static void CleanupSignalHandler(int sig)
 {
-  // CleanupSignalHandler allows C++ object cleanup to happen because it calls
-  // exit() rather than the default which is to abort.
   vlog.info(_("Termination signal %d has been received. x11clone will now exit."), sig);
-  exit(1);
+  exitMainloop = true;
 }
 
 static void init_fltk()
@@ -338,6 +343,310 @@ static void setRemoveParam(const char* param, const char* value)
     Configuration::removeParam(param);
 }
 
+#ifndef WIN32
+static Socket *connect_to_socket(const char *localUnixSocket)
+{
+  Socket *sock = NULL;
+
+  // It might take some time until SSH has created the local socket
+  // and for x0vncserver to start accepting connections on the remote
+  // socket, so loop
+  int retries = 20;
+  while (retries) {
+    try {
+      if (--retries == 0 || exitMainloop) {
+        throw SocketException("Unable to connect to server", ECONNREFUSED);
+      }
+    } catch (rdr::Exception& e) {
+      vlog.error("%s", e.str());
+      if (alertOnFatalError)
+        fl_alert("%s", e.str());
+      exit_vncviewer();
+      exit(1);
+    }
+
+    try {
+      sock = new network::UnixSocket(localUnixSocket);
+    } catch (rdr::Exception& e) {
+      usleep(500000);
+      continue;
+    }
+
+    // Now try read
+    char b;
+    if (recv(sock->getFd(), &b, 1, MSG_PEEK) > 0) {
+      break;
+    }
+
+    delete sock;
+    sock = NULL;
+    usleep(500000);
+  }
+
+  return sock;
+}
+
+/* A preexec function must return zero, or the exec will be aborted */
+typedef int (*preexec_ptr)(void *data);
+
+pid_t
+static subprocess(char *const cmd[], preexec_ptr preexec_fn, void *preexec_data)
+{
+  int close_exec_pipe[2];
+
+  if (pipe(close_exec_pipe) < 0) {
+    vlog.error(_("pipe failed: %s"), strerror(errno));
+    return -1;
+  }
+
+  if (fcntl(close_exec_pipe[1], F_SETFD, FD_CLOEXEC) < 0) {
+    vlog.error(_("fcntl failed: %s"), strerror(errno));
+    return -1;
+  }
+
+  pid_t pid = fork();
+  if (pid < 0) {
+    vlog.error(_("fork failed: %s"), strerror(errno));
+    return pid;
+  }
+
+  if (pid > 0) {
+    /* parent, wait for exec */
+    /* close write end of pipe */
+    if (close(close_exec_pipe[1]) < 0) {
+      vlog.error(_("close failed: %s"), strerror(errno));
+    }
+    /* block on read from close_exec_pipe */
+    char onechar;
+    ssize_t gotchars = read(close_exec_pipe[0], &onechar, 1);
+    if (close(close_exec_pipe[0]) < 0) {
+      vlog.error(_("close failed: %s"), strerror(errno));
+    }
+    if (gotchars != 0) {
+      /* exec failed */
+      return -1;
+    }
+    return pid;
+  }
+
+  /* child */
+  /* close read end of pipe */
+  if (close(close_exec_pipe[0]) < 0) {
+    vlog.error(_("close failed: %s"), strerror(errno));
+  }
+
+  /* execute preexec_fn */
+  if (preexec_fn) {
+    if ((*preexec_fn) (preexec_data) != 0) {
+      goto fail;
+    }
+  }
+
+  /* close all other fds */
+  {
+    int fd = 3;
+    int fdlimit = sysconf(_SC_OPEN_MAX);
+    while (fd < fdlimit) {
+      if (fd != close_exec_pipe[1]) {
+	close(fd);
+      }
+      fd++;
+    }
+  }
+
+  execvp(cmd[0], cmd);
+
+  /* execvp failed */
+  vlog.error(_("execvp failed: %s"), strerror(errno));
+
+ fail:
+  if (write(close_exec_pipe[1], "E", 1) < 0) {
+    vlog.error(_("write failed: %s"), strerror(errno));
+  }
+  if (close(close_exec_pipe[1]) < 0) {
+    vlog.error(_("close failed: %s"), strerror(errno));
+  }
+  close(2);
+  _exit(71); /* system error (e.g., can't fork) */
+  return 0;
+}
+
+static void serverEvent(FL_SOCKET fd, void*data)
+{
+  static char buf[1024];
+  static char *p = NULL; /* Pointer to free space after a partial data */
+
+  if (!p) {
+    p = buf;
+  }
+
+  /* Room för trailing zero */
+  size_t room = buf + sizeof(buf) - p - 1;
+  /* If buffer was filled without any newline, just print the data */
+  if (room == 0) {
+    vlogserver.info("%s", buf);
+    p = buf;
+    room = sizeof(buf) - 1;
+  }
+
+  /* Read */
+  ssize_t nrbytes = read(fd, p, room);
+  p[nrbytes] = '\0';
+
+  /* Eliminate \r */
+  char *q = buf;
+  char *cr;
+  while ((cr = strchr(q, '\r'))) {
+    *cr = '\n';
+    q = cr;
+    q++;
+  }
+
+  /* Print with prefix */
+  q = buf;
+  char *nl;
+  while ((nl = strchr(q, '\n'))) {
+    *nl = '\0';
+    if (*q) {
+      vlogserver.info("%s", q);
+    }
+    q = nl;
+    q++;
+  }
+
+  /* q now points to the next chunk of data without newline,
+     or zero */
+  p = buf + strlen(q);
+  memmove(buf, q, p - buf + 1);
+}
+
+static int
+setup_server_process(void *data)
+{
+  int (*datapipe)[2] = (int(*)[2])data;
+
+  /* close unused read end */
+  if (close((*datapipe)[0]) < 0) {
+    vlog.error(_("child: unable to close read end of pipe: %s"), strerror(errno));
+    /* not fatal */
+  }
+
+  /* /dev/null as stdin */
+  int nullfd;
+  if ((nullfd = open("/dev/null", O_RDONLY)) < 0) {
+    vlog.error(_("child: unable to open /dev/null: %s"), strerror(errno));
+    return -1;
+  }
+  if (close(0) < 0) {
+    vlog.error(_("child: unable to close stdin: %s"), strerror(errno));
+    return -1;
+  }
+  if (dup(nullfd) < 0) {
+    vlog.error(_("child: unable to setup stdin: %s"), strerror(errno));
+    return -1;
+  }
+
+  /* make stdout and stderr */
+  if (close(1) < 0) {
+    vlog.error(_("child: unable to close stdout: %s"), strerror(errno));
+    return -1;
+  }
+  if (dup((*datapipe)[1]) < 0) {
+    vlog.error(_("child: unable to setup stdout: %s"), strerror(errno));
+    return -1;
+  }
+  if (close(2) < 0) {
+    vlog.error(_("child: unable to close stderr: %s"), strerror(errno));
+    return -1;
+  }
+  if (dup((*datapipe)[1]) < 0) {
+    vlog.error(_("child: unable to setup stderr: %s"), strerror(errno));
+    return -1;
+  }
+
+  /* disconnect from controlling terminal, so that Ctrl-C etc does not
+     go directly to this process */
+  setsid();
+
+  return 0;
+}
+
+static int startServer(const char *localUnixSocket)
+{
+  const char *x0cmd = "x0vncserver -display=\"$D\" -rfbunixpath=\"$R\" -SecurityTypes=None -RawKeyboard=1";
+  char servercmd[4096] = "";
+
+  if (strlen (via.getValueStr()) > 0) {
+    /* Start x0vncserver on remote host over SSH */
+
+    const char *gatewayHost;
+    gatewayHost = strDup(via.getValueStr());
+
+    // x0vncserver unlinks an existing socket before use, but SSH
+    // does not
+    if (unlink(localUnixSocket)) {
+      vlog.error(_("Unable to remove temporary file: %s."), strerror(errno));
+      return 1;
+    }
+
+    // Determine a name for the remote Unix socket. Unfortunately, since
+    // we are executing on the remote host, we have to guess on
+    // something unique.
+    char remoteUnixSocket[sizeof("/tmp/x11clone_remote_") + SERVERNAMELEN + 32];
+    struct timeval now;
+    gettimeofday(&now, NULL);
+    snprintf(remoteUnixSocket, sizeof(remoteUnixSocket),
+	     "/tmp/x11clone_remote_%s_%lx.%lx",
+	     serverName, now.tv_sec, now.tv_usec);
+    // Must remove any colons, or SSH will think this is a TCP port forward
+    char *colon;
+    while ((colon = strchr(remoteUnixSocket, ':')) != NULL)
+      *colon = '_';
+
+    const char *viacmd = getenv("X11CLONE_VIA_CMD");
+    if (!viacmd)
+      viacmd = "ssh -t -t -L \"$L\":\"$R\" \"$G\"";
+
+    strncpy(servercmd, viacmd, sizeof(servercmd));
+    servercmd[sizeof(servercmd)-1] = '\0';
+
+    setenv("G", gatewayHost, 1);
+    setenv("R", remoteUnixSocket, 1);
+    setenv("L", localUnixSocket, 1);
+  } else {
+    setenv("R", localUnixSocket, 1);
+  }
+
+  setenv("D", serverName, 1);
+
+  strncat(servercmd, " ", sizeof(servercmd) - strlen(servercmd) - 1);
+  strncat(servercmd, x0cmd, sizeof(servercmd) - strlen(servercmd) - 1);
+  servercmd[sizeof(servercmd)-1] = '\0';
+
+  // Using subprocess() instead of system() etc allows us to terminate
+  // SSH at exit, and more. Since we are using -t to SSH, a SIGINT to
+  // SSH will be forwarded to x0vncserver.
+  char *cmdargs[8] = { NULL };
+  int cmdargc = 0;
+  cmdargs[cmdargc++] = (char*)"/bin/sh";
+  cmdargs[cmdargc++] = (char*)"-c";
+  cmdargs[cmdargc++] = servercmd;
+  cmdargs[cmdargc++] = NULL;
+
+  // Create pipe for server output
+  int datapipe[2];
+  if (pipe(datapipe) < 0) {
+    vlog.error(_("Cannot create pipe to subprocess: %s"), strerror(errno));
+    return 0;
+  }
+
+  server_pid = subprocess(cmdargs, setup_server_process, datapipe);
+  Fl::add_fd(datapipe[0], FL_READ | FL_EXCEPT, serverEvent, NULL);
+
+  return 0;
+}
+#endif
+
 static void usage(const char *programName)
 {
 #ifdef WIN32
@@ -408,74 +717,6 @@ potentiallyLoadConfigurationFile(char *serverName)
     }
   }
 }
-
-#ifndef WIN32
-static int
-interpretViaParam(int *remotePort, int localPort)
-{
-  const int SERVER_PORT_OFFSET = 5900;
-  char *pos = strchr(serverName, ':');
-  if (pos == NULL)
-    *remotePort = SERVER_PORT_OFFSET;
-  else {
-    int portOffset = SERVER_PORT_OFFSET;
-    size_t len;
-    *pos++ = '\0';
-    len = strlen(pos);
-    if (*pos == ':') {
-      /* Two colons is an absolute port number, not an offset. */
-      pos++;
-      len--;
-      portOffset = 0;
-    }
-    if (!len || strspn (pos, "-0123456789") != len )
-      return 1;
-    *remotePort = atoi(pos) + portOffset;
-  }
-
-  snprintf(serverName, VNCSERVERNAMELEN, "localhost::%d", localPort);
-  serverName[VNCSERVERNAMELEN - 1] = '\0';
-
-  return 0;
-}
-
-static void
-createTunnel(const char *gatewayHost,
-             int remotePort, int localPort)
-{
-  const char *cmd = getenv("VNC_VIA_CMD");
-  char *cmd2, *percent;
-  char lport[10], rport[10];
-  sprintf(lport, "%d", localPort);
-  sprintf(rport, "%d", remotePort);
-  setenv("G", gatewayHost, 1);
-  setenv("R", rport, 1);
-  setenv("L", lport, 1);
-  if (!cmd)
-    cmd = "ssh -f -L \"$L\":localhost:\"$R\" \"$G\" sleep 20";
-  /* Compatibility with TigerVNC's method. */
-  cmd2 = strdup(cmd);
-  while ((percent = strchr(cmd2, '%')) != NULL)
-    *percent = '$';
-  system(cmd2);
-  free(cmd2);
-}
-
-static int mktunnel()
-{
-  const char *gatewayHost;
-  int localPort = findFreeTcpPort();
-  int remotePort;
-
-  gatewayHost = strDup(via.getValueStr());
-  if (interpretViaParam(&remotePort, localPort) != 0)
-    return 1;
-
-  createTunnel(gatewayHost, remotePort, localPort);
-
-  return 0;
-}
-#endif /* !WIN32 */
 
 int main(int argc, char** argv)
 {
@@ -575,25 +816,49 @@ int main(int argc, char** argv)
 
   Socket *sock = NULL;
 
-  {
-    if (serverName[0] == '\0') {
-      ServerDialog::run(defaultServerName, serverName);
-      if (serverName[0] == '\0')
-        return 1;
-    }
-
-#ifndef WIN32
-    if (strlen (via.getValueStr()) > 0 && mktunnel() != 0)
-      usage(argv[0]);
-#endif
+  if (serverName[0] == '\0') {
+    ServerDialog::run(defaultServerName, serverName);
+    if (serverName[0] == '\0')
+      return 1;
   }
 
-  CConn *cc = new CConn(serverName, sock);
+  // Determine a name for the local UNIX socket; to be used either by
+  // x0vncserver running locally, or ssh.
+  char localUnixSocket[] = "/tmp/x11clone_XXXXXX";
+  int fd = mkstemp(localUnixSocket);
+  if (fd < 0) {
+    vlog.error(_("Could not create temporary file: %s."), strerror(errno));
+    return 1;
+  }
+  if (close(fd) < 0) {
+    vlog.error(_("Unable to close temporary file: %s."), strerror(errno));
+    return 1;
+  }
+
+#ifndef WIN32
+  startServer(localUnixSocket);
+#endif
+
+  sock = connect_to_socket(localUnixSocket);
+  CConn *cc = new CConn("", sock);
 
   while (!exitMainloop)
     run_mainloop();
 
   delete cc;
+
+  // Stay around a little bit longer in order to catch and print
+  // server messages
+  while(Fl::wait(1));
+
+  // Terminate SSH and x0vncserver
+  kill(server_pid, SIGINT);
+
+  // Delete UNIX socket (created by ssh)
+  if (unlink(localUnixSocket)) {
+    vlog.error(_("Unable to remove temporary file: %s."), strerror(errno));
+    return 1;
+  }
 
   if (exitError != NULL && alertOnFatalError)
     fl_alert("%s", exitError);
