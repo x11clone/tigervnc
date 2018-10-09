@@ -81,6 +81,17 @@
 rfb::LogWriter vlog("main");
 rfb::LogWriter vlogserver("Server");
 
+rfb::StringParameter serverCommand("ServerCommand",
+				   "The command used for starting the VNC server. "
+				   "It is executed in a shell where the environment variables "
+				   "D and S are set to the server display, and a UNIX socket used "
+				   "for communication, respectively.",
+				   "x11clone-x0vncserver -display=\"$D\" -rfbunixpath=\"$S\" -SecurityTypes=None");
+
+rfb::StringParameter serverOptions("ServerOptions",
+				   "Options appended to ServerCommand",
+				   "");
+
 using namespace network;
 using namespace rfb;
 using namespace std;
@@ -582,26 +593,16 @@ setup_server_process(void *data)
 
 static int startServer(const char *localUnixSocket)
 {
-  const char *x0cmd = "x0vncserver -display=\"$D\" -rfbunixpath=\"$R\" -SecurityTypes=None -RawKeyboard=1";
-  char servercmd[4096] = "";
+  char servercmd[4096] = ""; // VAR=VAL + serverCommand + serverOptions
+  char localcmd[4096] = ""; // Command to local shell. servercmd or ssh 'servercmd'
+  const char *serverSocket = localUnixSocket; // or remoteUnixSocket
 
+  /* For the SSH case, determine remoteUnixSocket */
+  char remoteUnixSocket[sizeof("/tmp/x11clone_remote_") + VNCSERVERNAMELEN + 32];
   if (strlen (via.getValueStr()) > 0) {
-    /* Start x0vncserver on remote host over SSH */
-
-    const char *gatewayHost;
-    gatewayHost = strDup(via.getValueStr());
-
-    // x0vncserver unlinks an existing socket before use, but SSH
-    // does not
-    if (unlink(localUnixSocket)) {
-      vlog.error(_("Unable to remove temporary file: %s."), strerror(errno));
-      return 1;
-    }
-
     // Determine a name for the remote Unix socket. Unfortunately, since
     // we are executing on the remote host, we have to guess on
     // something unique.
-    char remoteUnixSocket[sizeof("/tmp/x11clone_remote_") + SERVERNAMELEN + 32];
     struct timeval now;
     gettimeofday(&now, NULL);
     snprintf(remoteUnixSocket, sizeof(remoteUnixSocket),
@@ -611,26 +612,47 @@ static int startServer(const char *localUnixSocket)
     char *colon;
     while ((colon = strchr(remoteUnixSocket, ':')) != NULL)
       *colon = '_';
+    serverSocket = remoteUnixSocket;
+  }
+
+  snprintf(servercmd, sizeof(servercmd), "D=\"%s\"; S=\"%s\"; %s %s",
+	   serverName, serverSocket, serverCommand.getValueStr(), serverOptions.getValueStr());
+
+  // Build localcmd
+  if (strlen (via.getValueStr()) > 0) {
+    // x0vncserver unlinks an existing socket before use, but SSH does
+    // not
+    if (unlink(localUnixSocket)) {
+      vlog.error(_("Unable to remove temporary file: %s."), strerror(errno));
+      return 1;
+    }
 
     const char *viacmd = getenv("X11CLONE_VIA_CMD");
     if (!viacmd)
       viacmd = "ssh -t -t -L \"$L\":\"$R\" \"$G\"";
 
-    strncpy(servercmd, viacmd, sizeof(servercmd));
-    servercmd[sizeof(servercmd)-1] = '\0';
+    // FIXME: Allow single quotes by escaping
+    if (strchr(servercmd, '\'')) {
+	vlog.error(_("Server command and server options must not contain single quote characters"));
+	exit(1);
+    }
+    snprintf(localcmd, sizeof(localcmd), "%s '%s'",
+	     viacmd, servercmd);
 
+    const char *gatewayHost = strDup(via.getValueStr());
     setenv("G", gatewayHost, 1);
     setenv("R", remoteUnixSocket, 1);
     setenv("L", localUnixSocket, 1);
   } else {
-    setenv("R", localUnixSocket, 1);
+    snprintf(localcmd, sizeof(localcmd), "%s",
+	     servercmd);
   }
 
-  setenv("D", serverName, 1);
-
-  strncat(servercmd, " ", sizeof(servercmd) - strlen(servercmd) - 1);
-  strncat(servercmd, x0cmd, sizeof(servercmd) - strlen(servercmd) - 1);
-  servercmd[sizeof(servercmd)-1] = '\0';
+  localcmd[sizeof(localcmd)-1] = '\0';
+  if (strlen(localcmd) == sizeof(localcmd) - 1) {
+      vlog.error(_("Via command, server command, and server options must be less than %ld characters"), sizeof(localcmd));
+      exit(1);
+  }
 
   // Using subprocess() instead of system() etc allows us to terminate
   // SSH at exit, and more. Since we are using -t to SSH, a SIGINT to
@@ -639,7 +661,7 @@ static int startServer(const char *localUnixSocket)
   int cmdargc = 0;
   cmdargs[cmdargc++] = (char*)"/bin/sh";
   cmdargs[cmdargc++] = (char*)"-c";
-  cmdargs[cmdargc++] = servercmd;
+  cmdargs[cmdargc++] = localcmd;
   cmdargs[cmdargc++] = NULL;
 
   // Create pipe for server output
@@ -861,8 +883,11 @@ int main(int argc, char** argv)
   // server messages
   while(Fl::wait(1));
 
-  // Terminate SSH and x0vncserver
-  kill(server_pid, SIGINT);
+  // Terminate SSH and x0vncserver. Note that these are executed
+  // through the shell, which have perhaps done "exec", but we don't
+  // know that. If the shell is still running, we want to terminate
+  // the children as well, so send the signal to the process group
+  kill(-server_pid, SIGINT);
 
   // Delete UNIX socket (created by ssh)
   if (unlink(localUnixSocket)) {
