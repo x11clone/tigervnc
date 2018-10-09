@@ -33,6 +33,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 
 #ifdef WIN32
 #include <os/winerrno.h>
@@ -182,6 +183,14 @@ static void CleanupSignalHandler(int sig)
 {
   vlog.info(_("Termination signal %d has been received. x11clone will now exit."), sig);
   exitMainloop = true;
+}
+
+static void ChildSignalHandler(int sig)
+{
+  int status;
+  if (waitpid(server_pid, &status, WNOHANG) > 0 && WIFEXITED(status)) {
+    server_pid = 0;
+  }
 }
 
 static void init_fltk()
@@ -354,7 +363,7 @@ static Socket *connect_to_socket(const char *localUnixSocket)
   int retries = 20;
   while (retries) {
     try {
-      if (--retries == 0 || exitMainloop) {
+      if (--retries == 0 || exitMainloop || !server_pid) {
         throw SocketException("Unable to connect to server", ECONNREFUSED);
       }
     } catch (rdr::Exception& e) {
@@ -752,6 +761,7 @@ int main(int argc, char** argv)
 #endif
   signal(SIGINT, CleanupSignalHandler);
   signal(SIGTERM, CleanupSignalHandler);
+  signal(SIGCHLD, ChildSignalHandler);
 
   init_fltk();
 
