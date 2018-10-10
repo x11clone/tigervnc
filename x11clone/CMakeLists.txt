@@ -99,3 +99,9 @@ if(UNIX)
   endforeach()
   install(FILES ../media/icons/tigervnc.svg DESTINATION ${DATA_DIR}/icons/hicolor/scalable/apps)
 endif()
+
+configure_file(maketarball.in maketarball)
+set(TARBALL_DEPENDS x11clone)
+add_custom_target(x11clone-tarball sh maketarball
+  DEPENDS ${TARBALL_DEPENDS}
+  SOURCES maketarball)

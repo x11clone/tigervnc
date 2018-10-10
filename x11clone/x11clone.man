@@ -1,0 +1,231 @@
+.TH x11clone 1
+.SH NAME
+x11clone \- view and interact with another X11 server
+.SH SYNOPSIS
+.B x11clone
+.RI [ parameters ]
+.RI [ serverDisplay ]
+.RI [ parameters ]
+.br
+.B x11clone
+.RI [ parameters ]
+--start <xinitcmd>
+[
+.RI [ client ]
+.RI options
+\&\.\|.\|. ] [
+.B \-\^\-
+.RI [ server ]
+.RI [ serverDisplay ]
+.RI options
+\&.\|.\|. ]
+.SH DESCRIPTION
+.B x11clone
+is a tool which connects two independent X11 displays. It retrieves
+the image from the "server display" and displays it in an application
+window, created on the "client display". Keyboard and mouse events in
+the application window are transferred to the "server display". This
+allows you to view and interact with another X11 session.
+
+.B x11clone
+is based on TigerVNC and is a fusion between
+.B x0vncserver
+and
+.B vncviewer.
+In some cases, documentation, log messages etc refers to the "server"
+and "client", meaning the components of
+.B x11clone
+connected to the "server display" and "client display".
+
+In the 1st form, x11clone tries to connect to "serverDisplay", if specified.
+
+In the 2nd form, the "serverDisplay" defaults to :0. If the connection
+to "serverDisplay" fails, x11clone tries to start a new Xserver
+instance using the specified command (typically xinit or startx).
+
+.SH POPUP MENU
+The application has a popup menu containing entries which perform various actions.
+It is usually brought up by pressing F8, but this can be configured with the
+MenuKey parameter.  Actions which the popup menu can perform include:
+.RS 2
+.IP * 2
+switching in and out of full-screen mode
+.IP *
+quitting the application
+.IP *
+generating key events, e.g. sending ctrl-alt-del
+.IP *
+accessing the options dialog and various other dialogs
+.RE
+.PP
+By default, key presses in the popup menu get sent to the server and
+dismiss the popup.  So to get an F8 through simply press it twice.
+.
+.SH FULL SCREEN MODE
+A full-screen mode is supported.  This is particularly useful when connecting
+to a server display which is the same size as your local one. If the server
+display is bigger, you can scroll by bumping the mouse against the edge of the
+screen.
+
+.SH OPTIONS (PARAMETERS)
+You can get a list of parameters by giving \fB\-h\fP as a command-line option
+to x11clone.  Parameters can be turned on with -\fIparam\fP or off with
+-\fIparam\fP=0.  Parameters which take a value can be specified as
+-\fIparam\fP \fIvalue\fP.  Other valid forms are \fIparam\fP\fB=\fP\fIvalue\fP
+-\fIparam\fP=\fIvalue\fP --\fIparam\fP=\fIvalue\fP.  Parameter names are
+case-insensitive.
+
+Many of the parameters can also be set graphically via the options dialog box.
+This can be accessed from the popup menu or from the "Connection details"
+dialog box.
+.
+.TP
+.B -ServerGeometry
+This option specifies the screen area to show.  The
+format is
+.B \fIwidth\fPx\fIheight\fP+\fIxoffset\fP+\fIyoffset\fP
+, where `+' signs can be replaced with `\-' signs to specify offsets from the
+right and/or from the bottom of the screen.  Offsets are optional, +0+0 is
+assumed by default (top left corner).  If the argument is empty, the entire screen
+is shown.
+.
+.TP
+.B -FrameRate
+The maximum number of updates per second sent to the client.
+.
+.TP
+.B -MaxIdleTime
+Terminate after \fIN\fP seconds of user inactivity.  Default is 0.
+.
+.TP
+.B \-MaxCutText \fIbytes\fP
+The maximum size of a clipboard update that will be accepted from a client.
+Default is \fB262144\fP.
+.
+.TP
+.B -RemapKeys
+Comma-separated list of incoming keysyms to remap.  Mappings are expressed as
+two hex values, prefixed by \fB0x\fP, and separated by \fB->\fP (`dash' and
+`greater than' characters).
+.
+.TP
+.B \-Log \fIlogname\fP:\fIdest\fP:\fIlevel\fP
+Configures the debug log settings.  \fIdest\fP can currently be \fBstderr\fP or
+\fBstdout\fP, and \fIlevel\fP is between 0 and 100, 100 meaning most verbose
+output.  \fIlogname\fP is usually \fB*\fP meaning all, but you can target a
+specific source file if you know the name of its "LogWriter".  Default is
+\fB*:stderr:20,XDesktop:stderr:30,CConn:stderr:30\fP.
+.
+.TP
+.B -RawKeyboard
+Send keyboard events straight through and avoid mapping them to the current
+keyboard layout. This effectively makes the keyboard behave according to the
+layout configured on the server instead of the layout configured on the
+client. Default is on.
+.
+.TP
+.B -MaxProcessorUsage
+Maximum percentage of CPU time to be consumed when polling the
+screen.  Default is 35.
+.
+.TP
+.B  -PollingCycle
+Milliseconds per one polling cycle.  Actual interval may be dynamically
+adjusted to satisfy \fBMaxProcessorUsage\fP setting.  Default is 30.
+.
+.B -UseSHM
+Use MIT-SHM extension if available.  Using that extension accelerates reading
+the screen.  Default is on.
+.
+.TP
+.B \-FullscreenSystemKeys
+Pass special keys (like Alt+Tab) directly to the server when in full-screen
+mode.
+.
+.TP
+.B \-MenuKey \fIkeysym-name\fP
+This option specifies the key which brings up the popup menu. The currently
+supported list is: F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, Pause,
+Scroll_Lock, Escape, Insert, Delete, Home, Page_Up, Page_Down). Default is F8.
+.
+.TP
+.B \-SendPrimary
+Send the primary selection to the server as well as the clipboard
+selection. Default is on.
+.
+.TP
+.B \-SendClipboard
+Send clipboard changes to the server. Default is on.
+.
+.TP
+.B \-SetPrimary
+Set the primary selection as well as the clipboard selection.
+Default is on.
+.TP
+.B \-AcceptClipboard
+Accept clipboard changes from the server. Default is on.
+.
+.TP
+.B \-ViewOnly
+Specifies that no keyboard or mouse events should be sent to the server.
+Useful if you want to view a desktop without interfering.
+.TP
+.B \-ServerResize
+Dynamically resize the server display as the size of the client window
+changes.
+.
+.TP
+.B \-ClientGeometry \fIgeometry\fP
+Standard X position and sizing specification.
+.
+.TP
+.B \-DesktopSize \fIwidth\fPx\fIheight\fP
+Reconfigure server display to specified desktop size on connect (if
+possible).
+.TP
+.B \-FullScreenAllMonitors
+Use all local monitors and not just the current one when switching to
+full-screen mode.
+.
+.TP
+.B \-FullScreen
+Start in full-screen mode.
+.
+.TP
+.B \-Maximize
+Maximize viewer window.
+.
+.TP
+.B \-AlertOnFatalError
+Display a dialog with any fatal error before exiting. Default is on.
+.
+.TP
+.B \-DotWhenNoCursor
+Show the dot cursor when the server sends an invisible cursor. Default is off.
+.
+.TP
+.B \-Check
+Return true if it is possible to connect to server display.
+.
+.SH EXAMPLES
+.TP
+.B "x11clone :0"
+Connect to existing server display ":0"
+.
+.TP
+.B "x11clone -FullScreen --start startx /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"
+If no server is running on ":50", start a new instance using the specified
+"startx" command line. Then, connect to server display ":50".
+.
+.SH SEE ALSO
+http://www.tigervnc.org
+
+.SH AUTHOR
+Peter Astrand <astrand@cendio.se> for Cendio AB
+
+The TigerVNC Team
+
+VNC was originally developed by the RealVNC team while at Olivetti
+Research Ltd / AT&T Laboratories Cambridge.  TightVNC additions were
+implemented by Constantin Kaplinsky. Many other people have since
+participated in development, testing and support.
