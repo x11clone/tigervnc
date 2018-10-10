@@ -101,7 +101,7 @@ if(UNIX)
 endif()
 
 configure_file(maketarball.in maketarball)
-set(TARBALL_DEPENDS x11clone)
+set(TARBALL_DEPENDS x11clone x0vncserver)
 add_custom_target(x11clone-tarball sh maketarball
   DEPENDS ${TARBALL_DEPENDS}
   SOURCES maketarball)
