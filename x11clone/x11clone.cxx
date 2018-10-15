@@ -650,7 +650,7 @@ static int startServer(const char *localUnixSocket)
 
   localcmd[sizeof(localcmd)-1] = '\0';
   if (strlen(localcmd) == sizeof(localcmd) - 1) {
-      vlog.error(_("Via command, server command, and server options must be less than %ld characters"), sizeof(localcmd));
+      vlog.error(_("Via command, server command, and server options must be less than %lu characters"), (unsigned long)sizeof(localcmd));
       exit(1);
   }
 
