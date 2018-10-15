@@ -94,10 +94,33 @@ if(UNIX)
   add_custom_target(x11clonedesktop ALL DEPENDS x11clone.desktop)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/x11clone.desktop DESTINATION ${DATA_DIR}/applications)
 
-  foreach(res 16 22 24 32 48)
-    install(FILES ../media/icons/tigervnc_${res}.png DESTINATION ${DATA_DIR}/icons/hicolor/${res}x${res}/apps RENAME tigervnc.png)
+  set(ICON_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_16.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_22.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_24.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_32.png
+    ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_48.png)
+  add_custom_target(x11cloneicons DEPENDS ${ICON_FILES})
+  find_program(CONVERT_EXECUTABLE convert)
+
+  install(FILES x11clone.svg DESTINATION ${DATA_DIR}/icons/hicolor/scalable/apps)
+
+  foreach(SIZE 16 22 24 32 48)
+
+    install(FILES icons/x11clone_${SIZE}.png
+      DESTINATION ${DATA_DIR}/icons/hicolor/${SIZE}x${SIZE}/apps
+      RENAME x11clone.png)
+
+    if(CONVERT_EXECUTABLE)
+      add_custom_command(OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_${SIZE}.png
+        COMMAND ${CONVERT_EXECUTABLE} -density 72 -resize ${SIZE}x${SIZE} -gravity center -background transparent
+          ${CMAKE_CURRENT_SOURCE_DIR}/x11clone.svg
+          ${CMAKE_CURRENT_SOURCE_DIR}/icons/x11clone_${SIZE}.png
+        DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/x11clone.svg
+        COMMENT "Generating icons/x11clone_${SIZE}.png")
+    endif()
+
   endforeach()
-  install(FILES ../media/icons/tigervnc.svg DESTINATION ${DATA_DIR}/icons/hicolor/scalable/apps)
 endif()
 
 configure_file(maketarball.in maketarball)
