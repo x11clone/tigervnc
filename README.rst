@@ -12,12 +12,9 @@ mouse events in the application window are transferred to the "server
 display". This allows you to view and interact with another X11
 session.
 
-x11clone is based on TigerVNC_ and is a fusion between x0vncserver and
-vncviewer.  In some cases, documentation, log messages etc refers to
-the "server" and "client", meaning the components of x11clone
-connected to the "server display" and "client display". Please refer
-to README.tigervnc for legal information and more information about
-TigerVNC.
+x11clone is based on the TigerVNC_ vncviewer and depends on
+x0vncserver. Please refer to README.tigervnc for legal information and
+more information about TigerVNC.
 
 x11clone can be used in conjunction with ThinLinc_. In particular, it
 makes it possible to connect to the local Xserver console (typically
@@ -26,13 +23,15 @@ makes it possible to connect to the local Xserver console (typically
 x11clone can also be used to remotely displaying 3D applications with
 server side hardware acceleration. From the application point of view,
 the best performance is achieved by running the desktop session and
-applications on the console. To access this session remotely, x11clone
-can be used from a X11 client (using X11 forwarding). Another option
-is to run x11clone with Xvnc and connect with a VNC client. In this
-context, x11clone provides an alternative to VirtualGL_. However,
-x11clone does not provide any GPU sharing: You are restricted to one
-console session per machine. Virtual machines with GPU virtualization
-can be used to provide multiple sessions on the same server hardware.
+applications on the console. To access this session remotely, connect
+using SSH, using the "-via" option. Note that in this case, x11clone
+must be installed on both the local and remote machine.
+
+For some use cases, x11clone provides an alternative to
+VirtualGL_. However, x11clone does not provide any GPU sharing: You
+are restricted to one console session per machine. Virtual machines
+with GPU virtualization can be used to provide multiple sessions on
+the same server hardware.
 
 
 Code and Issues
@@ -83,7 +82,7 @@ Installing x11clone
 
 To install x11clone, run::
 
-  make -C unix/x11clone install
+  make -C x11clone install
 
 
 Creating Binary Package
