@@ -887,7 +887,9 @@ int main(int argc, char** argv)
   // through the shell, which have perhaps done "exec", but we don't
   // know that. If the shell is still running, we want to terminate
   // the children as well, so send the signal to the process group
-  kill(-server_pid, SIGINT);
+  if (server_pid) {
+    kill(-server_pid, SIGINT);
+  }
 
   // Delete UNIX socket (created by ssh)
   if (unlink(localUnixSocket)) {
