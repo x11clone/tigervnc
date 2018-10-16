@@ -9,49 +9,76 @@ x11clone \- view and interact with another X11 server
 .br
 .B x11clone
 .RI [ parameters ]
---start <xinitcmd>
-[
-.RI [ client ]
-.RI options
-\&\.\|.\|. ] [
-.B \-\^\-
-.RI [ server ]
-.RI [ serverDisplay ]
-.RI options
-\&.\|.\|. ]
+.RI [ .tigervnc ]
 .SH DESCRIPTION
 .B x11clone
 is a tool which connects two independent X11 displays. It retrieves
-the image from the "server display" and displays it in an application
+the image from the "server display" and displays it in an viewer
 window, created on the "client display". Keyboard and mouse events in
-the application window are transferred to the "server display". This
+the viewer window are transferred to the "server display". This
 allows you to view and interact with another X11 session.
 
 .B x11clone
-is based on TigerVNC and is a fusion between
-.B x0vncserver
-and
-.B vncviewer.
-In some cases, documentation, log messages etc refers to the "server"
-and "client", meaning the components of
-.B x11clone
-connected to the "server display" and "client display".
+is based on the TigerVNC
+.B vncviewer
+and depends on
+.B x0vncserver.
 
-In the 1st form, x11clone tries to connect to "serverDisplay", if specified.
+If you run the viewer with no arguments it will prompt you for a X11
+display to connect to.  Alternatively, specify the server display as
+an argument, e.g.:
 
-In the 2nd form, the "serverDisplay" defaults to :0. If the connection
-to "serverDisplay" fails, x11clone tries to start a new Xserver
-instance using the specified command (typically xinit or startx).
+.RS
+x11clone snoopy:2
+.RE
+
+where 'snoopy' is the name of the machine, and '2' is the display number of the
+X11 server on that machine.  Either the machine name or display number can be
+omitted.  So for example ":1" means display number 1 on the same machine, and
+"snoopy" means "snoopy:0" i.e. display 0 on machine "snoopy".
+
+As another quick way to start a connection to a X11 server, specify a .tigervnc
+configuration file as an argument to the viewer, e.g.:
+
+.RS
+x11clone ./some.tigervnc
+.RE
+
+where './some.tigervnc' is an existing and valid TigerVNC configuration file.
+The file name needs to include a path separator.  Additional options may be
+given too, but the given configuration file will overwrite any conflicting
+parameters.
+
+.SH AUTOMATIC PROTOCOL SELECTION
+
+The viewer tests the speed of the connection to the server and chooses the
+encoding and pixel format (color level) appropriately.  This makes it much
+easier to use than previous versions where the user had to specify arcane
+command line arguments.
+
+The viewer normally starts out assuming the link is slow, using the
+encoding with the best compression.  If it turns out that the link is
+fast enough it switches to an encoding which compresses less but is
+faster to generate, thus improving the interactive feel.
+
+The viewer normally starts in full-color mode, but switches to
+low-color mode if the bandwidth is insufficient. However, this only
+occurs when communicating with servers supporting protocol 3.8 or
+newer, since many old servers does not support color mode changes
+safely.
+
+Automatic selection can be turned off by setting the
+\fBAutoSelect\fP parameter to false, or from the options dialog.
 
 .SH POPUP MENU
-The application has a popup menu containing entries which perform various actions.
+The viewer has a popup menu containing entries which perform various actions.
 It is usually brought up by pressing F8, but this can be configured with the
 MenuKey parameter.  Actions which the popup menu can perform include:
 .RS 2
 .IP * 2
 switching in and out of full-screen mode
 .IP *
-quitting the application
+quitting the viewer
 .IP *
 generating key events, e.g. sending ctrl-alt-del
 .IP *
@@ -78,35 +105,120 @@ case-insensitive.
 Many of the parameters can also be set graphically via the options dialog box.
 This can be accessed from the popup menu or from the "Connection details"
 dialog box.
+
+.TP
+.B \-display \fIXdisplay\fP
+Specifies the X display on which the x11clone window should appear.
 .
 .TP
-.B -ServerGeometry
-This option specifies the screen area to show.  The
-format is
-.B \fIwidth\fPx\fIheight\fP+\fIxoffset\fP+\fIyoffset\fP
-, where `+' signs can be replaced with `\-' signs to specify offsets from the
-right and/or from the bottom of the screen.  Offsets are optional, +0+0 is
-assumed by default (top left corner).  If the argument is empty, the entire screen
-is shown.
+.B \-geometry \fIgeometry\fP
+Standard X position and sizing specification.
 .
 .TP
-.B -FrameRate
-The maximum number of updates per second sent to the client.
+.B \-ServerCommand \fIcommand\fP
+The command used for starting the VNC server. It is executed in a
+shell where the environment variables D and S are set to the server
+display, and a UNIX socket used for communication, respectively. Default is
+\fBx11clone-x0vncserver -display="$D" -rfbunixpath="$S" -SecurityTypes=None\fP.
 .
 .TP
-.B -MaxIdleTime
-Terminate after \fIN\fP seconds of user inactivity.  Default is 0.
+.B \-ViewOnly
+Specifies that no keyboard or mouse events should be sent to the server.
+Useful if you want to view a desktop without interfering.
 .
 .TP
-.B \-MaxCutText \fIbytes\fP
-The maximum size of a clipboard update that will be accepted from a client.
-Default is \fB262144\fP.
+.B \-AcceptClipboard
+Accept clipboard changes from the server. Default is on.
 .
 .TP
-.B -RemapKeys
-Comma-separated list of incoming keysyms to remap.  Mappings are expressed as
-two hex values, prefixed by \fB0x\fP, and separated by \fB->\fP (`dash' and
-`greater than' characters).
+.B \-SetPrimary
+Set the primary selection as well as the clipboard selection.
+Default is on.
+.
+.TP
+.B \-SendClipboard
+Send clipboard changes to the server. Default is on.
+.
+.TP
+.B \-SendPrimary
+Send the primary selection to the server as well as the clipboard
+selection. Default is on.
+.
+.TP
+.B \-Maximize
+Maximize viewer window.
+.
+.TP
+.B \-FullScreen
+Start in full-screen mode.
+.
+.TP
+.B \-FullScreenAllMonitors
+Use all local monitors and not just the current one when switching to
+full-screen mode.
+.
+.TP
+.B \-FullscreenSystemKeys
+Pass special keys (like Alt+Tab) directly to the server when in full-screen
+mode.
+.
+.TP
+.B \-DesktopSize \fIwidth\fPx\fIheight\fP
+Reconfigure server display to specified desktop size on connect (if
+possible).
+.TP
+.B \-RemoteResize
+Dynamically resize the server display as the size of the client window
+changes.
+.TP
+.B \-AutoSelect
+Use automatic selection of encoding and pixel format (default is on).  Normally
+the viewer tests the speed of the connection to the server and chooses the
+encoding and pixel format appropriately.  Turn it off with \fB-AutoSelect=0\fP.
+.
+.TP
+.B \-FullColor, \-FullColour
+Tells the VNC server to send full-color pixels in the best format for this
+display.  This is default.
+.
+.TP
+.B \-LowColorLevel, \-LowColourLevel \fIlevel\fP
+Selects the reduced color level to use on slow links.  \fIlevel\fP can range
+from 0 to 2, 0 meaning 8 colors, 1 meaning 64 colors (the default), 2 meaning
+256 colors. Note that decision if reduced color level is used is made by
+x11clone. If you would like to force x11clone to use reduced color level
+use \fB-AutoSelect=0\fP parameter.
+.
+.TP
+.B \-PreferredEncoding \fIencoding\fP
+This option specifies the preferred encoding to use from one of "Tight", "ZRLE",
+"hextile" or "raw".
+.
+.TP
+.B \-NoJpeg
+Disable lossy JPEG compression in Tight encoding. Default is off.
+.
+.TP
+.B \-QualityLevel \fIlevel\fP
+JPEG quality level. 0 = Low, 9 = High. May be adjusted automatically if
+\fB-AutoSelect\fP is turned on. Default is 8.
+.
+.TP
+.B \-CompressLevel \fIlevel\fP
+Use specified lossless compression level. 0 = Low, 6 = High. Default is 2.
+.
+.TP
+.B \-CustomCompressLevel
+Use custom compression level. Default if \fBCompressLevel\fP is specified.
+.
+.TP
+.B \-DotWhenNoCursor
+Show the dot cursor when the server sends an invisible cursor. Default is off.
+.
+.TP
+.B \-PointerEventInterval \fItime\fP
+Time in milliseconds to rate-limit successive pointer events. Default is
+17 ms (60 Hz).
 .
 .TP
 .B \-Log \fIlogname\fP:\fIdest\fP:\fIlevel\fP
@@ -114,33 +226,7 @@ Configures the debug log settings.  \fIdest\fP can currently be \fBstderr\fP or
 \fBstdout\fP, and \fIlevel\fP is between 0 and 100, 100 meaning most verbose
 output.  \fIlogname\fP is usually \fB*\fP meaning all, but you can target a
 specific source file if you know the name of its "LogWriter".  Default is
-\fB*:stderr:20,XDesktop:stderr:30,CConn:stderr:30\fP.
-.
-.TP
-.B -RawKeyboard
-Send keyboard events straight through and avoid mapping them to the current
-keyboard layout. This effectively makes the keyboard behave according to the
-layout configured on the server instead of the layout configured on the
-client. Default is on.
-.
-.TP
-.B -MaxProcessorUsage
-Maximum percentage of CPU time to be consumed when polling the
-screen.  Default is 35.
-.
-.TP
-.B  -PollingCycle
-Milliseconds per one polling cycle.  Actual interval may be dynamically
-adjusted to satisfy \fBMaxProcessorUsage\fP setting.  Default is 30.
-.
-.B -UseSHM
-Use MIT-SHM extension if available.  Using that extension accelerates reading
-the screen.  Default is on.
-.
-.TP
-.B \-FullscreenSystemKeys
-Pass special keys (like Alt+Tab) directly to the server when in full-screen
-mode.
+\fB*:stderr:30\fP.
 .
 .TP
 .B \-MenuKey \fIkeysym-name\fP
@@ -149,75 +235,70 @@ supported list is: F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, Pause,
 Scroll_Lock, Escape, Insert, Delete, Home, Page_Up, Page_Down). Default is F8.
 .
 .TP
-.B \-SendPrimary
-Send the primary selection to the server as well as the clipboard
-selection. Default is on.
-.
-.TP
-.B \-SendClipboard
-Send clipboard changes to the server. Default is on.
-.
-.TP
-.B \-SetPrimary
-Set the primary selection as well as the clipboard selection.
-Default is on.
-.TP
-.B \-AcceptClipboard
-Accept clipboard changes from the server. Default is on.
-.
-.TP
-.B \-ViewOnly
-Specifies that no keyboard or mouse events should be sent to the server.
-Useful if you want to view a desktop without interfering.
-.TP
-.B \-ServerResize
-Dynamically resize the server display as the size of the client window
-changes.
-.
-.TP
-.B \-ClientGeometry \fIgeometry\fP
-Standard X position and sizing specification.
-.
-.TP
-.B \-DesktopSize \fIwidth\fPx\fIheight\fP
-Reconfigure server display to specified desktop size on connect (if
-possible).
-.TP
-.B \-FullScreenAllMonitors
-Use all local monitors and not just the current one when switching to
-full-screen mode.
-.
-.TP
-.B \-FullScreen
-Start in full-screen mode.
-.
-.TP
-.B \-Maximize
-Maximize viewer window.
-.
+\fB\-via\fR \fIgateway\fR
+Automatically create encrypted tunnel to the \fIgateway\fR machine
+where x0vncserver is executed, connect to the \fIserver display\fR
+from that machine. By default, this option invokes SSH Unix socket
+forwarding, assuming that SSH client binary can be accessed as
+"ssh". Note that when using the \fB\-via\fR option, the server display
+should be specified as known to the gateway machine, e.g.  "localhost"
+denotes the \fIgateway\fR, not the machine where x11clone was
+launched. The environment variable \fIX11CLONE_VIA_CMD\fR can override
+the default tunnel command of \fBssh -t -t -L "$L":"$R" "$G"\fR. The
+value of the -ServerCommand option is appended to this. The tunnel
+command is executed with the environment variables \fIL\fR, \fIR\fR,
+and \fIG\fR taken the values of the local socket, the remote socket,
+and the gateway machine respectively.
+
+This feature requires that x11clone is installed on both the local and
+remote machine.
+
+Please note that this feature requires Unix port forwarding, which
+means that OpenSSH 6.6 or newer is required on both ends. If you get
+an error message like:
+
+Server: channel 2: open failed: administratively prohibited: open failed
+
+this typically means that the SSH server does not support Unix socket
+forwarding. If you get:
+
+Server: Bad local forwarding specification
+
+this typically means that the SSH client does not support Unix socket forwarding.
 .TP
 .B \-AlertOnFatalError
 Display a dialog with any fatal error before exiting. Default is on.
-.
-.TP
-.B \-DotWhenNoCursor
-Show the dot cursor when the server sends an invisible cursor. Default is off.
-.
+
 .TP
 .B \-Check
 Return true if it is possible to connect to server display.
 .
 .SH EXAMPLES
 .TP
-.B "x11clone :0"
-Connect to existing server display ":0"
+.B x11clone :0
+Connect to server display ":0"
 .
 .TP
-.B "x11clone -FullScreen --start startx /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"
-If no server is running on ":50", start a new instance using the specified
-"startx" command line. Then, connect to server display ":50".
+.B x11clone -via gw.example.com myworkstation:0
+Using SSH, launch x0vncserver on gateway.example.com and try to open the display myworkstation:0
+.TP
+.B x11clone -via gw.example.com -ServerOptions='-StartCommand="xinit /usr/bin/xterm -- /usr/bin/Xvfb :50 -screen 0 1024x768x24"' :50
+Using SSH, launch x0vncserver on gateway.example.com. If no server is
+running on ":50", start a new instance using the specified "xinit"
+command line. Then, connect to server display ":50".
 .
+.SH FILES
+.TP
+$HOME/.vnc/default.tigervnc
+Default configuration options. This file must have a "magic" first line of
+"TigerVNC Configuration file Version 1.0" (without quotes), followed by simple
+<setting>=<value> pairs of your choosing. The available settings are those
+shown in this man page.
+
 .SH SEE ALSO
+.BR vncviewer (1),
+.BR x0vncserver (1),
+.br
 http://www.tigervnc.org
 
 .SH AUTHOR
