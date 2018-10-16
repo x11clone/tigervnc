@@ -92,6 +92,10 @@ rfb::StringParameter serverOptions("ServerOptions",
 				   "Options appended to ServerCommand",
 				   "");
 
+rfb::BoolParameter check("Check",
+			 "Return true if it is possible to connect to server display",
+			 false);
+
 using namespace network;
 using namespace rfb;
 using namespace std;
@@ -870,7 +874,7 @@ int main(int argc, char** argv)
 #endif
 
   sock = connect_to_socket(localUnixSocket);
-  if (sock) {
+  if (sock && !check) {
     CConn *cc = new CConn("", sock);
 
     while (!exitMainloop)
@@ -895,6 +899,10 @@ int main(int argc, char** argv)
   if (unlink(localUnixSocket)) {
     vlog.error(_("Unable to remove temporary file: %s."), strerror(errno));
     return 1;
+  }
+
+  if (check) {
+    return !sock;
   }
 
   if (exitError != NULL && alertOnFatalError)
