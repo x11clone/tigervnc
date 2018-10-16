@@ -379,10 +379,8 @@ static Socket *connect_to_socket(const char *localUnixSocket)
       }
     } catch (rdr::Exception& e) {
       vlog.error("%s", e.str());
-      if (alertOnFatalError)
-        fl_alert("%s", e.str());
-      exit_vncviewer();
-      exit(1);
+      exit_vncviewer(e.str());
+      return sock;
     }
 
     try {
@@ -872,12 +870,14 @@ int main(int argc, char** argv)
 #endif
 
   sock = connect_to_socket(localUnixSocket);
-  CConn *cc = new CConn("", sock);
+  if (sock) {
+    CConn *cc = new CConn("", sock);
 
-  while (!exitMainloop)
-    run_mainloop();
+    while (!exitMainloop)
+      run_mainloop();
 
-  delete cc;
+    delete cc;
+  }
 
   // Stay around a little bit longer in order to catch and print
   // server messages
