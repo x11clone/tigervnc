@@ -759,7 +759,7 @@ int main(int argc, char** argv)
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE_NAME, LOCALE_DIR);
-  textdomain(PACKAGE_NAME);
+  //textdomain(PACKAGE_NAME);
 
   rfb::SecurityClient::setDefaults();
 
