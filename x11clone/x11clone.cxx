@@ -609,7 +609,7 @@ static int startServer(const char *localUnixSocket)
     gettimeofday(&now, NULL);
     snprintf(remoteUnixSocket, sizeof(remoteUnixSocket),
 	     "/tmp/x11clone_remote_%s_%lx.%lx",
-	     serverName, now.tv_sec, now.tv_usec);
+	     serverName, now.tv_sec, (long int)now.tv_usec);
     // Must remove any colons, or SSH will think this is a TCP port forward
     char *colon;
     while ((colon = strchr(remoteUnixSocket, ':')) != NULL)
