@@ -303,7 +303,9 @@ if(BUILD_VIEWER)
   add_subdirectory(media)
 endif()
 
-add_subdirectory(x11clone)
+if (NOT WIN32)
+  add_subdirectory(x11clone)
+endif()
 
 add_subdirectory(tests)
 
