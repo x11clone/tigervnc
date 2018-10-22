@@ -8,7 +8,7 @@ set(X11CLONE_SOURCES
   ../vncviewer/CConn.cxx
   ../vncviewer/DesktopWindow.cxx
   ../vncviewer/UserDialog.cxx
-  ServerDialog.cxx
+  ../vncviewer/ServerDialog.cxx
   ../vncviewer/Surface.cxx
   OptionsDialog.cxx
   ../vncviewer/PlatformPixelBuffer.cxx

@@ -64,6 +64,7 @@
 #include <FL/Fl_Sys_Menu_Bar.H>
 #include <FL/fl_ask.H>
 #include <FL/x.H>
+#include <FL/Fl_Input.H>
 
 #include "i18n.h"
 #include "parameters.h"
@@ -680,6 +681,33 @@ static int startServer(const char *localUnixSocket)
 }
 #endif
 
+
+class XServerDialog : ServerDialog {
+
+public:
+  static void run(const char* servername, char *newservername) {
+
+    XServerDialog dialog;
+    dialog.label("x11clone: Connection Details");
+
+    // Must use something shorter than "VNC server:"
+    dialog.serverName->label("Display: ");
+    dialog.serverName->value(servername);
+
+    dialog.show();
+    while (dialog.shown()) Fl::wait();
+
+    if (dialog.serverName->value() == NULL) {
+      newservername[0] = '\0';
+      return;
+    }
+
+    strncpy(newservername, dialog.serverName->value(), VNCSERVERNAMELEN);
+    newservername[VNCSERVERNAMELEN - 1] = '\0';
+  }
+};
+
+
 static void usage(const char *programName)
 {
 #ifdef WIN32
@@ -851,7 +879,7 @@ int main(int argc, char** argv)
   Socket *sock = NULL;
 
   if (serverName[0] == '\0') {
-    ServerDialog::run(defaultServerName, serverName);
+    XServerDialog::run(defaultServerName, serverName);
     if (serverName[0] == '\0')
       return 1;
   }
