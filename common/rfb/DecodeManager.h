@@ -46,7 +46,6 @@ namespace rfb {
   public:
     DecodeManager(CConnection *conn);
     ~DecodeManager();
-    static size_t maxThreads;
 
     void decodeRect(const Rect& r, int encoding,
                     ModifiablePixelBuffer* pb);

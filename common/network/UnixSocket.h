@@ -35,7 +35,7 @@ namespace network {
 
   class UnixSocket : public Socket {
   public:
-    UnixSocket(int sock, int bufSize=0);
+    UnixSocket(int sock);
     UnixSocket(const char *name);
 
     virtual char* getPeerAddress();

@@ -36,7 +36,7 @@ namespace network {
 
   class Socket {
   public:
-    Socket(int fd, int bufSize=0);
+    Socket(int fd);
     virtual ~Socket();
 
     rdr::FdInStream &inStream() {return *instream;}
@@ -59,7 +59,7 @@ namespace network {
   protected:
     Socket();
 
-    void setFd(int fd, int bufSize=0);
+    void setFd(int fd);
 
   private:
     rdr::FdInStream* instream;

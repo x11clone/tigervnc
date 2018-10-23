@@ -39,7 +39,7 @@ static rfb::LogWriter vlog("UnixSocket");
 
 // -=- UnixSocket
 
-UnixSocket::UnixSocket(int sock, int bufSize) : Socket(sock, bufSize)
+UnixSocket::UnixSocket(int sock) : Socket(sock)
 {
 }
 

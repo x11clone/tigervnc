@@ -67,12 +67,12 @@ bool network::isSocketListening(int sock)
   return listening != 0;
 }
 
-Socket::Socket(int fd, int bufSize)
+Socket::Socket(int fd)
   : instream(0), outstream(0),
     isShutdown_(false), queryConnection(false)
 {
   initSockets();
-  setFd(fd, bufSize);
+  setFd(fd);
 }
 
 Socket::Socket()
@@ -113,7 +113,7 @@ bool Socket::requiresQuery() const
   return queryConnection;
 }
 
-void Socket::setFd(int fd, int bufSize)
+void Socket::setFd(int fd)
 {
 #ifndef WIN32
   // - By default, close the socket on exec()
@@ -121,7 +121,7 @@ void Socket::setFd(int fd, int bufSize)
 #endif
 
   instream = new rdr::FdInStream(fd);
-  outstream = new rdr::FdOutStream(fd, true, -1, bufSize);
+  outstream = new rdr::FdOutStream(fd);
   isShutdown_ = false;
 }
 
