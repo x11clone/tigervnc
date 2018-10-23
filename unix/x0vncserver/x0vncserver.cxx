@@ -546,7 +546,7 @@ int main(int argc, char** argv)
   for (std::list<SocketListener*>::iterator i = listeners.begin();
        i != listeners.end();
        i++) {
-      delete *i;
+    delete *i;
   }
 
   vlog.info("Terminated");
