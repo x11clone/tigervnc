@@ -101,7 +101,7 @@ using namespace network;
 using namespace rfb;
 using namespace std;
 
-char serverName[VNCSERVERNAMELEN] = { '\0' }; // "server display"
+char xServerName[VNCSERVERNAMELEN] = { '\0' }; // "server display"
 
 // Local x0vncserver process, or over SSH
 pid_t server_pid = 0;
@@ -610,7 +610,7 @@ static int startServer(const char *localUnixSocket)
     gettimeofday(&now, NULL);
     snprintf(remoteUnixSocket, sizeof(remoteUnixSocket),
 	     "/tmp/x11clone_remote_%s_%lx.%lx",
-	     serverName, now.tv_sec, (long int)now.tv_usec);
+	     xServerName, now.tv_sec, (long int)now.tv_usec);
     // Must remove any colons, or SSH will think this is a TCP port forward
     char *colon;
     while ((colon = strchr(remoteUnixSocket, ':')) != NULL)
@@ -619,7 +619,7 @@ static int startServer(const char *localUnixSocket)
   }
 
   snprintf(servercmd, sizeof(servercmd), "D=\"%s\"; S=\"%s\"; %s %s",
-	   serverName, serverSocket, serverCommand.getValueStr(), serverOptions.getValueStr());
+	   xServerName, serverSocket, serverCommand.getValueStr(), serverOptions.getValueStr());
 
   // Build localcmd
   if (strlen (via.getValueStr()) > 0) {
@@ -856,13 +856,13 @@ int main(int argc, char** argv)
       usage(argv[0]);
     }
 
-    strncpy(serverName, argv[i], VNCSERVERNAMELEN);
-    serverName[VNCSERVERNAMELEN - 1] = '\0';
+    strncpy(xServerName, argv[i], VNCSERVERNAMELEN);
+    xServerName[VNCSERVERNAMELEN - 1] = '\0';
     i++;
   }
 
   // Check if the server name in reality is a configuration file
-  potentiallyLoadConfigurationFile(serverName);
+  potentiallyLoadConfigurationFile(xServerName);
 
   mkvnchomedir();
 
@@ -878,9 +878,9 @@ int main(int argc, char** argv)
 
   Socket *sock = NULL;
 
-  if (serverName[0] == '\0') {
-    XServerDialog::run(defaultServerName, serverName);
-    if (serverName[0] == '\0')
+  if (xServerName[0] == '\0') {
+    XServerDialog::run(defaultServerName, xServerName);
+    if (xServerName[0] == '\0')
       return 1;
   }
 
