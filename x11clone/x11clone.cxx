@@ -376,8 +376,9 @@ static Socket *connect_to_socket(const char *localUnixSocket)
 
   // It might take some time until SSH has created the local socket
   // and for x0vncserver to start accepting connections on the remote
-  // socket, so loop
-  int retries = 20;
+  // socket, so loop. This also includes the time it takes for a user
+  // to enter any passphrase.
+  int retries = 40;
   while (retries) {
     try {
       if (--retries == 0 || exitMainloop || !server_pid) {
