@@ -117,9 +117,10 @@ Standard X position and sizing specification.
 .TP
 .B \-ServerCommand \fIcommand\fP
 The command used for starting the VNC server. It is executed in a
-shell where the environment variables D and S are set to the server
-display, and a UNIX socket used for communication, respectively. Default is
-\fBx11clone-x0vncserver -display="$D" -rfbunixpath="$S" -SecurityTypes=None\fP.
+shell where the environment variables O, D, and S are set to the directory
+of x11clone, the server display, and a UNIX socket used for communication,
+respectively. Default is
+\fB"$O"/x11clone-x0vncserver -display="$D" -rfbunixpath="$S" -SecurityTypes=None\fP.
 .
 .TP
 .B \-ViewOnly

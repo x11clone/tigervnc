@@ -34,6 +34,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
+#include <libgen.h>
 
 #ifdef WIN32
 #include <os/winerrno.h>
@@ -87,7 +88,7 @@ rfb::StringParameter serverCommand("ServerCommand",
 				   "It is executed in a shell where the environment variables "
 				   "D and S are set to the server display, and a UNIX socket used "
 				   "for communication, respectively.",
-				   "x11clone-x0vncserver -display=\"$D\" -rfbunixpath=\"$S\" -SecurityTypes=None");
+				   "\"$O\"/x11clone-x0vncserver -display=\"$D\" -rfbunixpath=\"$S\" -SecurityTypes=None");
 
 rfb::StringParameter serverOptions("ServerOptions",
 				   "Options appended to ServerCommand",
@@ -594,6 +595,15 @@ setup_server_process(void *data)
   return 0;
 }
 
+static char *get_origin()
+{
+  // FIXME: Handle platforms without link below, such as Darwin
+  char *rp = realpath("/proc/self/exe", NULL);
+  char *origin = strdup(dirname(rp));
+  free(rp);
+  return origin;
+}
+
 static int startServer(const char *localUnixSocket)
 {
   char servercmd[4096] = ""; // VAR=VAL + serverCommand + serverOptions
@@ -618,8 +628,12 @@ static int startServer(const char *localUnixSocket)
     serverSocket = remoteUnixSocket;
   }
 
-  snprintf(servercmd, sizeof(servercmd), "D=\"%s\"; S=\"%s\"; %s %s",
-	   xServerName, serverSocket, serverCommand.getValueStr(), serverOptions.getValueStr());
+  char *origin = get_origin();
+  // Build servercmd
+  snprintf(servercmd, sizeof(servercmd), "O=\"%s\";D=\"%s\";S=\"%s\"; %s %s",
+	   origin, xServerName, serverSocket,
+	   serverCommand.getValueStr(), serverOptions.getValueStr());
+  free(origin);
 
   // Build localcmd
   if (strlen (via.getValueStr()) > 0) {
