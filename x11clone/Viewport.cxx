@@ -1176,7 +1176,7 @@ void Viewport::initContextMenu()
 {
   contextMenu->clear();
 
-  fltk_menu_add(contextMenu, p_("ContextMenu|", "E&xit viewer"),
+  fltk_menu_add(contextMenu, p_("ContextMenu|", "E&xit x11clone"),
                 0, NULL, (void*)ID_EXIT, FL_MENU_DIVIDER);
 
   fltk_menu_add(contextMenu, p_("ContextMenu|", "&Full screen"),
