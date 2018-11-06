@@ -61,6 +61,12 @@ if(APPLE)
   target_link_libraries(x11clone "-framework IOKit")
 endif()
 
+# For now, ship our own x0vncserver
+add_custom_target(x11clone-x0vncserver ALL
+  DEPENDS x0vncserver
+  COMMAND ${CMAKE_COMMAND} -E copy ../unix/x0vncserver/x0vncserver x11clone-x0vncserver)
+install(PROGRAMS x11clone-x0vncserver DESTINATION ${BIN_DIR})
+
 install(TARGETS x11clone DESTINATION ${BIN_DIR})
 if(UNIX)
   install(FILES x11clone.man DESTINATION ${MAN_DIR}/man1 RENAME x11clone.1)

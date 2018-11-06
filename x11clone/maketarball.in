@@ -35,11 +35,6 @@ mkdir -p $OUTDIR/bin
 mkdir -p $OUTDIR/man/man1
 
 make DESTDIR=$TMPDIR/inst install/strip
-# For now, ship our own x0vncserver
-pushd ../unix/x0vncserver
-make DESTDIR=$TMPDIR/inst install/strip
-mv $OUTDIR/bin/x0vncserver $OUTDIR/bin/x11clone-x0vncserver
-popd
 
 pushd $TMPDIR/inst
 tar cfz ../$PACKAGE_FILE .
